@@ -1,3 +1,5 @@
+Family Guard
+Tree Project
 lib/
 ├── core/                          # Shared resources toàn app
 │   ├── constants/                 # Hằng số (color, text, key, ...)
