@@ -1,31 +1,36 @@
 Family Guard
 Tree Project
+```    
 lib/
-├── core/                          # Shared resources toàn app
-│   ├── constants/                 # Hằng số (color, text, key, ...)
-│   ├── theme/                     # App theme, color scheme, text style
-│   ├── utils/                     # Helper, extension, formatter, ...
-│   ├── network/                   # Dio client, interceptors, API config
-│   ├── error/                     # Exception, failure handling
-│   └── widgets/                   # Reusable global widgets
+├── core/
+│   ├── constants/            # App constants (color, text, key, ...)
+│   ├── theme/                # Theme, color scheme, text style
+│   ├── utils/                # Helpers, extensions, formatters
+│   ├── network/              # Dio client, interceptors, API config
+│   ├── error/                # Exception & failure handling
+│   └── widgets/              # Global reusable widgets
 │
-├── features/                      # Feature-based modules
+├── features/
 │   ├── login/
-│   │   ├── data/                  # Data layer
-│   │   │   ├── datasources/       # Remote & local data source
-│   │   │   ├── models/            # DTO models (JSON)
-│   │   │   └── repositories_impl/ # Repository implementation
+│   │   ├── data/
+│   │   │   ├── datasources/        # Remote & local data sources
+│   │   │   ├── models/             # DTO models (JSON)
+│   │   │   └── repositories_impl/  # Repository implementation
 │   │   │
-│   │   ├── domain/                # Business logic layer
-│   │   │   ├── entities/          # Core business entities
-│   │   │   ├── repositories/      # Abstract repository
-│   │   │   └── usecases/          # Login use case
+│   │   ├── domain/
+│   │   │   ├── entities/           # Core business entities
+│   │   │   ├── repositories/       # Abstract repositories
+│   │   │   └── usecases/           # Login use cases
 │   │   │
-│   │   └── presentation/          # UI layer
-│   │       ├── screens/           # Login screens
-│   │       ├── cubit/             # State management (Cubit/Bloc)
-│   │       └── widgets/           # Local widgets (if needed)
+│   │   └── presentation/
+│   │       ├── screens/            # Login screens
+│   │       ├── cubit/              # State management (Cubit/Bloc)
+│   │       └── widgets/            # Feature-specific widgets
 │   │
-│   └── ...                        # Other features (register, home, sos,...)
+│   ├── home/
+│   ├── sos/
+│   ├── tracking/
+│   └── settings/
 │
 └── main.dart                      # Entry point
+```
