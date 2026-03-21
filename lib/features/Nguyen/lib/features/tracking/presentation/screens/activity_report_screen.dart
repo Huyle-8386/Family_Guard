@@ -1,8 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'dart:math' as math;
 import 'package:figma_app/core/theme/theme.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 class ActivityReportScreen extends StatefulWidget {
   const ActivityReportScreen({super.key});
@@ -21,11 +22,41 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            AppHeader(
+              title: 'Báo cáo hoạt động',
+              actions: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRoutes.historyStatistics);
+                  },
+                  child: const Icon(
+                    Icons.filter_list,
+                    color: Color(0xFF2196F3),
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: ResponsiveHelper.horizontalPadding(context),
+                right: ResponsiveHelper.horizontalPadding(context),
+                bottom: 8,
+              ),
+              child: Row(
+                children: [
+                  _buildPeriodChip('Hôm nay'),
+                  const SizedBox(width: 8),
+                  _buildPeriodChip('Tuần này'),
+                  const SizedBox(width: 8),
+                  _buildPeriodChip('Tháng này'),
+                ],
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 102),
+                  padding: const EdgeInsets.only(top: 16, bottom: 102),
                   child: Column(
                     children: [
                       _buildCompletionRateCard(),
@@ -44,81 +75,6 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.80),
-        border: const Border(
-          bottom: BorderSide(
-            width: 1,
-            color: Color(0x1900ACB2),
-          ),
-        ),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'Báo cáo hoạt động',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF0F172A),
-                      fontSize: ResponsiveHelper.sp(context, 18),
-                      fontFamily: 'Lexend',
-                      fontWeight: FontWeight.w700,
-                      height: 1.56,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.historyStatistics);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.filter_list,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: ResponsiveHelper.horizontalPadding(context), right: ResponsiveHelper.horizontalPadding(context), bottom: 8),
-            child: Row(
-              children: [
-                _buildPeriodChip('Hôm nay'),
-                const SizedBox(width: 8),
-                _buildPeriodChip('Tuần này'),
-                const SizedBox(width: 8),
-                _buildPeriodChip('Tháng này'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildPeriodChip(String label) {
     final isSelected = selectedPeriod == label;
@@ -154,7 +110,8 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
   Widget _buildCompletionRateCard() {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 22),
+      margin: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.horizontalPadding(context)),
       padding: EdgeInsets.all(24),
       decoration: ShapeDecoration(
         color: Colors.white,
@@ -252,7 +209,8 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
 
   Widget _buildStatsRow() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 22),
+      padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.horizontalPadding(context)),
       child: Row(
         children: [
           Expanded(
@@ -374,8 +332,8 @@ class _ActivityReportScreenState extends State<ActivityReportScreen> {
       width: double.infinity,
       padding: EdgeInsets.only(
         top: 8,
-        left: 22,
-        right: 22,
+        left: ResponsiveHelper.horizontalPadding(context),
+        right: ResponsiveHelper.horizontalPadding(context),
         bottom: 16,
       ),
       child: Column(

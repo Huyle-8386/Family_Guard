@@ -1,10 +1,11 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/theme/app_text_styles.dart';
 import 'package:figma_app/core/theme/app_dimens.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// Screen: Ghi âm lời nhắc (Voice Recording)
 /// Giao diện ghi âm với:
@@ -73,7 +74,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
       body: Column(
         children: [
           // Header
-          _buildHeader(context),          // Main content area — cố định, không scroll
+            AppHeader(
+              title: 'Ghi âm lời nhắc',
+              onBack: () => _showDiscardDialog(context),
+            ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -116,55 +120,6 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // ── Header ──
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + AppDimens.spacing16,
-        left: AppDimens.spacing16,
-        right: AppDimens.spacing16,
-        bottom: AppDimens.spacing16,
-      ),
-      color: AppColors.surface,
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => _showDiscardDialog(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                borderRadius: null,
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                size: AppDimens.iconSmall,
-                color: AppColors.textDark,
-              ),
-            ),
-          ),
-
-          // Title centered
-          Expanded(
-            child: Text(
-              'Ghi âm lời nhắc',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.h3.copyWith(
-                color: AppColors.textSlate,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ),
-
-          // Invisible spacer
-          const SizedBox(width: 40),
-        ],
-      ),
-    );
-  }
 
   // ── Mic with animated rings + waveform ──
   Widget _buildMicSection() {

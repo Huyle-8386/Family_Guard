@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// MÀN HÌNH: Chi tiết nhắc nhở
@@ -28,7 +29,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
       body: Column(
         children: [
           // Header
-          _buildHeader(context),
+          const AppHeader(title: 'Chi tiết nhắc nhở'),
 
           // Scrollable content
           Expanded(
@@ -58,66 +59,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
     );
   }
 
-  /// Header with back button
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16),
-      decoration: ShapeDecoration(
-        color: const Color(0xCCF0F9F7),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: const Color(0x1900ACB2),
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(9999),
-                  ),
-                ),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFF0C1D1A),
-                  size: 24,
-                ),
-              ),
-            ),
-
-            // Title
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(right: 40),
-                child: Text(
-                  'Chi tiết nhắc nhở',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: const Color(0xFF0C1D1A),
-                    fontSize: ResponsiveHelper.sp(context, 18),
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w700,
-                    height: 1.25,
-                    letterSpacing: -0.45,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// Main reminder card với icon và thông tin
   Widget _buildReminderCard() {

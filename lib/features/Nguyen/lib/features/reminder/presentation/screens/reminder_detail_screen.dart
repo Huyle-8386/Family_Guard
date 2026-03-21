@@ -1,8 +1,9 @@
-﻿import 'dart:math';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/theme.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// MÀN HÌNH: Chi tiết lịch nhắc (Redesigned)
@@ -110,7 +111,26 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _buildHeader(),
+          AppHeader(
+            title: _isEditing ? 'Chỉnh sửa' : 'Chi tiết lịch nhắc',
+            onBack: () {
+              if (_hasUnsavedChanges) {
+                _showDiscardDialog();
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+            actions: [
+              GestureDetector(
+                onTap: _toggleEditMode,
+                child: Icon(
+                  _isEditing ? Icons.check_rounded : Icons.edit_outlined,
+                  color: const Color(0xFF2196F3),
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -139,50 +159,6 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ HEADER ═══════════════════════
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: const Color(0x1900ACB2), width: 1),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            children: [
-              _buildHeaderIcon(
-                icon: Icons.arrow_back_rounded,
-                onTap: () => Navigator.pop(context),
-              ),
-              const Spacer(),
-              Text(
-                'Chi tiết lịch nhắc',
-                style: TextStyle(
-                  color: const Color(0xFF0F172A),
-                  fontSize: ResponsiveHelper.sp(context, 18),
-                  fontFamily: 'Lexend',
-                  fontWeight: FontWeight.w700,
-                  height: 1.56,
-                ),
-              ),
-              const Spacer(),
-              _buildHeaderIcon(
-                icon: _isEditing ? Icons.check_rounded : Icons.edit_outlined,
-                color: _isEditing ? Colors.white : AppColors.textPrimary,
-                bgColor: _isEditing ? AppColors.primary : Colors.transparent,
-                onTap: _toggleEditMode,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildHeaderIcon({
     required IconData icon,
@@ -1211,6 +1187,21 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
             ),
           ),
         );
+      },
+    );
+  }
+
+  void _showDiscardDialog() {
+    AppDialog.show(
+      context: context,
+      type: AppDialogType.warning,
+      title: 'Hủy thay đổi?',
+      content: 'Những thay đổi bạn vừa thực hiện sẽ không được lưu.',
+      confirmText: 'Hủy thay đổi',
+      cancelText: 'Tiếp tục chỉnh sửa',
+      onConfirm: () {
+        Navigator.pop(context); // close dialog
+        Navigator.pop(context); // go back
       },
     );
   }

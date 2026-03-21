@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// SAFE ZONE INFO SCREEN - Thông tin vùng an toàn
@@ -71,7 +72,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
+      appBar: const AppHeader(title: 'Thông tin vùng an toàn'),
       body: Stack(
         children: [
           // ── Nội dung cuộn ──────────────────────────────────────────
@@ -127,65 +128,6 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // ── AppBar ────────────────────────────────────────────────────────
-  PreferredSizeWidget _buildAppBar() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(73),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.80),
-          border: const Border(
-            bottom: BorderSide(width: 1, color: Color(0x1900ACB2)),
-          ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                // Nút back
-                GestureDetector(
-                  onTap: () => Navigator.of(context).maybePop(),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.transparent,
-                      border: Border.all(
-                          width: 1, color: const Color(0x3300ACB2)),
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 16,
-                      color: Color(0xFF0C1D1A),
-                    ),
-                  ),
-                ),
-                // Tiêu đề căn giữa
-                Expanded(
-                  child: Text(
-                    'Thông tin vùng an toàn',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF0C1D1A),
-                      fontSize: ResponsiveHelper.sp(context, 18),
-                      fontFamily: 'Lexend',
-                      fontWeight: FontWeight.w700,
-                      height: 1.56,
-                    ),
-                  ),
-                ),
-                // Spacer để cân bằng bên phải
-                const SizedBox(width: 40),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   // ── Section label ─────────────────────────────────────────────────
   Widget _buildSectionLabel(String label) {

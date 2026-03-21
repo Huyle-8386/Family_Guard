@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// SAFE ZONE ALERT SETTINGS SCREEN - Cài đặt cảnh báo vùng an toàn
@@ -67,7 +68,7 @@ class _SafeZoneAlertSettingsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── AppBar ────────────────────────────────────────
-                  _buildAppBar(context),
+                  const AppHeader(title: 'Cài đặt cảnh báo'),
 
                   const SizedBox(height: 8),
 
@@ -110,49 +111,6 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── AppBar ────────────────────────────────────────────────────────
-  Widget _buildAppBar(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(top: 52, left: 24, right: 24, bottom: 16),
-      child: Row(
-        children: [
-          // Nút back
-          GestureDetector(
-            onTap: () => Navigator.of(context).maybePop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1, color: Color(0x3300ACB2)),
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: Color(0xFF004D40),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Tiêu đề
-          Text(
-            'Cài đặt cảnh báo',
-            style: TextStyle(
-              color: Color(0xFF004D40),
-              fontSize: ResponsiveHelper.sp(context, 20),
-              fontFamily: 'Lexend',
-              fontWeight: FontWeight.w700,
-              height: 1.40,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   // ── Card: Khi rời vùng (active) ───────────────────────────────────
   Widget _buildLeaveZoneCard() {

@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/theme/app_text_styles.dart';
 import 'package:figma_app/core/theme/app_dimens.dart';
 import 'package:figma_app/core/theme/app_shadows.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// Screen: Tần suất lặp lại (Repeat Frequency)
 /// Cho phép người dùng cấu hình:
@@ -58,16 +59,16 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          // Header (frosted white bar)
-          _buildHeader(context),
+          // Header (blue border bar)
+          AppHeader(title: 'Tần suất lặp lại'),
 
           // Content
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
-                AppDimens.spacing16,
+                ResponsiveHelper.horizontalPadding(context),
                 AppDimens.spacing24,
-                AppDimens.spacing16,
+                ResponsiveHelper.horizontalPadding(context),
                 AppDimens.spacing24,
               ),
               child: Column(
@@ -102,54 +103,6 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Header ──
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + AppDimens.spacing16,
-        left: AppDimens.spacing16,
-        right: AppDimens.spacing16,
-        bottom: AppDimens.spacing16,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.8),
-        border: const Border(
-          bottom: BorderSide(color: AppColors.tealTint),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                borderRadius: null,
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                size: AppDimens.iconSmall,
-                color: AppColors.textDark,
-              ),
-            ),
-          ),
-          const SizedBox(width: AppDimens.spacing16),
-          Text(
-            'Tần suất lặp lại',
-            style: AppTextStyles.h3.copyWith(
-              color: AppColors.textDark,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   // ── Mode tabs (Hàng ngày / Hàng tuần / Tùy chỉnh) ──
 
@@ -222,12 +175,12 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
         ),
         const SizedBox(height: AppDimens.spacing16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: List.generate(_dayLabels.length, (i) {
             final isSelected = _selectedDays.contains(i);
-            return Padding(
+            return Expanded(
+              child: Padding(
               padding: EdgeInsets.only(
-                right: i < _dayLabels.length - 1 ? AppDimens.spacing8 : 0,
+                right: i < _dayLabels.length - 1 ? 6 : 0,
               ),
               child: GestureDetector(
                 onTap: () {
@@ -241,8 +194,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 42,
-                  height: 42,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary : AppColors.surface,
                     shape: BoxShape.circle,
@@ -256,7 +208,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
                     _dayLabels[i],
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: ResponsiveHelper.sp(context, 14),
+                      fontSize: ResponsiveHelper.sp(context, 13),
                       fontWeight:
                           isSelected ? FontWeight.w700 : FontWeight.w500,
                       color:
@@ -264,6 +216,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
                     ),
                   ),
                 ),
+              ),
               ),
             );
           }),

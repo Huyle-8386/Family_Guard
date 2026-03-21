@@ -1,8 +1,9 @@
-﻿import 'dart:math';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/utils/responsive/responsive_helper.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// Hoạt động thể chất – dashboard + quản lý lịch tập
 class PhysicalActivityScreen extends StatefulWidget {
@@ -266,10 +267,14 @@ class _PhysicalActivityScreenState extends State<PhysicalActivityScreen>
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(children: [
-          _buildHeader(),
+          const AppHeader(title: 'Hoạt động thể chất'),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+              padding: EdgeInsets.fromLTRB(
+                  ResponsiveHelper.horizontalPadding(context),
+                  4,
+                  ResponsiveHelper.horizontalPadding(context),
+                  100),
               children: [
                 _buildDashboard(),
                 const SizedBox(height: 20),
@@ -303,58 +308,6 @@ class _PhysicalActivityScreenState extends State<PhysicalActivityScreen>
     );
   }
 
-  // ── Header ──────────────────────────────────────────────────────
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        ResponsiveHelper.horizontalPadding(context),
-        16,
-        ResponsiveHelper.horizontalPadding(context),
-        12,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.gradientStart, AppColors.background],
-        ),
-      ),
-      child: Row(children: [
-        GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.borderLight),
-              boxShadow: const [
-                BoxShadow(
-                    color: AppColors.shadowPrimary,
-                    blurRadius: 8,
-                    offset: Offset(0, 2)),
-              ],
-            ),
-            child: const Icon(Icons.arrow_back_ios_new_rounded,
-                size: 16, color: AppColors.primaryDark),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            'Hoạt động thể chất',
-            style: TextStyle(
-              fontFamily: 'Lexend',
-              fontSize: ResponsiveHelper.sp(context, 20),
-              fontWeight: FontWeight.w700,
-              color: AppColors.primaryDark,
-            ),
-          ),
-        ),
-      ]),
-    );
-  }
 
   // ── Dashboard ───────────────────────────────────────────────────
   Widget _buildDashboard() {

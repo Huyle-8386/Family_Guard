@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/features/member/domain/entities/family_member.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// MÀN HÌNH: Danh sách thành viên — chọn thành viên để xem
@@ -128,50 +129,7 @@ class MemberListScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── App Bar ──
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveHelper.horizontalPadding(context),
-                  vertical: 12,
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x0C000000),
-                              blurRadius: 2,
-                              offset: Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 18,
-                          color: Color(0xFF00ACB2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Danh sách thành viên',
-                      style: TextStyle(
-                        fontFamily: 'Lexend',
-                        fontSize: ResponsiveHelper.sp(context, 20),
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF006D5B),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const AppHeader(title: 'Danh sách thành viên'),
 
               const SizedBox(height: 8),
 

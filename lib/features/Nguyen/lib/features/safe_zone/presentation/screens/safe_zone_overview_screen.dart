@@ -1,10 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
 import 'safe_zone_active_screen.dart';
 import 'safe_zone_screen.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // SAFE ZONE OVERVIEW SCREEN
@@ -70,24 +71,8 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F8F7),
       // ── AppBar với nút back ─────────────────────────────────────
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0C1D1A),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'Quản lí vùng an toàn',
-          style: TextStyle(
-            color: Color(0xFF00ACB2),
-            fontSize: 18,
-            fontFamily: 'Lexend',
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        centerTitle: false,
+      appBar: AppHeader(
+        title: 'Quản lí vùng an toàn',
         actions: [
           TextButton(
             onPressed: () {

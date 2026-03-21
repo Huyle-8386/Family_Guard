@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/utils/responsive/responsive_helper.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// Lịch hẹn khám bệnh – quản lý danh sách lịch khám
 class MedicalAppointmentScreen extends StatefulWidget {
@@ -517,13 +518,36 @@ class _MedicalAppointmentScreenState extends State<MedicalAppointmentScreen>
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(children: [
-          _buildHeader(),
+          AppHeader(
+            title: 'Lịch hẹn khám bệnh',
+            actions: [
+               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withAlpha(25),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_appointments.length}',
+                  style: const TextStyle(
+                      fontFamily: 'Lexend',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary),
+                ),
+              ),
+            ],
+          ),
           _buildFilterChips(),
           Expanded(
             child: filtered.isEmpty
                 ? _buildEmpty()
                 : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+                    padding: EdgeInsets.fromLTRB(
+                      ResponsiveHelper.horizontalPadding(context),
+                      8,
+                      ResponsiveHelper.horizontalPadding(context),
+                      100),
                     itemCount: filtered.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (_, i) {
@@ -553,74 +577,6 @@ class _MedicalAppointmentScreenState extends State<MedicalAppointmentScreen>
     );
   }
 
-  // ── Header ──────────────────────────────────────────────────────
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        ResponsiveHelper.horizontalPadding(context),
-        16,
-        ResponsiveHelper.horizontalPadding(context),
-        12,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.gradientStart, AppColors.background],
-        ),
-      ),
-      child: Row(children: [
-        GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.borderLight),
-              boxShadow: const [
-                BoxShadow(
-                    color: AppColors.shadowPrimary,
-                    blurRadius: 8,
-                    offset: Offset(0, 2)),
-              ],
-            ),
-            child: const Icon(Icons.arrow_back_ios_new_rounded,
-                size: 16, color: AppColors.primaryDark),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            'Lịch hẹn khám bệnh',
-            style: TextStyle(
-              fontFamily: 'Lexend',
-              fontSize: ResponsiveHelper.sp(context, 20),
-              fontWeight: FontWeight.w700,
-              color: AppColors.primaryDark,
-            ),
-          ),
-        ),
-        // Count badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withAlpha(25),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            '${_appointments.length}',
-            style: const TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: AppColors.primary),
-          ),
-        ),
-      ]),
-    );
-  }
 
   // ── Filter Chips ────────────────────────────────────────────────
   Widget _buildFilterChips() {

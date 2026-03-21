@@ -1,7 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/theme.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 import 'package:figma_app/core/widgets/common_widgets.dart';
 
 /// ============================================================
@@ -21,15 +22,13 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(
-          'Hồ sơ',
-          style: TextStyle(fontSize: ResponsiveHelper.sp(context, 18)),
-        ),
+      appBar: AppHeader(
+        title: 'Hồ sơ',
         actions: [
           IconButton(
             icon: Icon(Icons.settings_outlined,
-                size: ResponsiveHelper.sp(context, 24)),
+                size: ResponsiveHelper.sp(context, 24),
+                color: AppColors.primary),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Cài đặt sẽ được cập nhật')),

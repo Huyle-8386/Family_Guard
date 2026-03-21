@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
@@ -7,6 +7,7 @@ import 'package:figma_app/features/safe_zone/domain/entities/safe_zone.dart';
 import 'package:figma_app/features/safe_zone/data/datasources/safe_zone_service.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/widgets/app_dialog.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // SAFE ZONE MEMBER SCREEN – Redesigned
@@ -112,19 +113,13 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Vùng an toàn'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            if (Navigator.of(context, rootNavigator: true).canPop()) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
-          },
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+      appBar: AppHeader(
+        title: 'Vùng an toàn',
+        onBack: () {
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+        },
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomPad),

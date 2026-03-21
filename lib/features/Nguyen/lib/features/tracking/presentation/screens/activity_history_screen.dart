@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/theme.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 // ── Data models ──────────────────────────────────────────────────────
 
@@ -712,7 +713,9 @@ class _ActivityHistoryScreenState extends State<ActivityHistoryScreen> {
       ),
       body: Column(
         children: [
-          _buildHeader(),
+          const AppHeader(title: 'Lịch sử hoạt động'),
+          _buildMemberSelector(),
+          _buildDateSelector(),
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
@@ -744,72 +747,6 @@ class _ActivityHistoryScreenState extends State<ActivityHistoryScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.80),
-        border: const Border(
-          bottom: BorderSide(
-            width: 1,
-            color: Color(0x1900ACB2),
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).maybePop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(9999),
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Text(
-                        'Lịch sử hoạt động',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: const Color(0xFF0C1D1A),
-                          fontSize: ResponsiveHelper.sp(context, 18),
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w700,
-                          height: 1.25,
-                          letterSpacing: -0.45,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _buildMemberSelector(),
-            const SizedBox(height: 16),
-            _buildDateSelector(),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildMemberSelector() {
     return Padding(

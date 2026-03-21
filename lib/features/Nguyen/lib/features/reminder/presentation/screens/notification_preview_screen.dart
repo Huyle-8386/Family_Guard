@@ -1,8 +1,9 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// NOTIFICATION PREVIEW SCREEN – Xem trước thông báo
@@ -94,7 +95,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
       body: SafeArea(
         bottom: false,
         child: Column(children: [
-          _buildHeader(),
+          const AppHeader(title: 'Xem trước thông báo'),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -125,65 +126,6 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // ── Header ────────────────────────────────────────────────────
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        ResponsiveHelper.horizontalPadding(context), 12,
-        ResponsiveHelper.horizontalPadding(context), 12,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.kPrimaryLight, AppColors.background],
-        ),
-      ),
-      child: Column(children: [
-        Row(children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 40, height: 40,
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(9999)),
-                ),
-                shadows: [
-                  BoxShadow(color: Color(0x0C000000), blurRadius: 2, offset: Offset(0, 1)),
-                ],
-              ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  size: 18, color: Color(0xFF00ACB2)),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              'Xem trước thông báo',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: ResponsiveHelper.sp(context, 20),
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF006D5B),
-              ),
-            ),
-          ),
-          const SizedBox(width: 40),
-        ]),
-        const SizedBox(height: 4),
-        Text(
-          'Đây là giao diện thông báo người nhận sẽ thấy',
-          style: TextStyle(
-            fontFamily: 'Lexend',
-            fontSize: ResponsiveHelper.sp(context, 12),
-            color: const Color(0xFF6B7280),
-          ),
-        ),
-      ]),
-    );
-  }
 
   // ── Phone Mockup ──────────────────────────────────────────────
   Widget _buildPhoneMockup() {

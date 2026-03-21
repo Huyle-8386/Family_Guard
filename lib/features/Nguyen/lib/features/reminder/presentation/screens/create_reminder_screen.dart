@@ -1,12 +1,14 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
 import 'package:figma_app/core/theme/app_text_styles.dart';
 import 'package:figma_app/core/theme/app_dimens.dart';
 import 'package:figma_app/core/theme/app_shadows.dart';
+import 'package:figma_app/core/utils/responsive/responsive_helper.dart';
 import 'package:figma_app/features/reminder/domain/entities/reminder_type.dart';
 import 'package:figma_app/core/widgets/gradient_background.dart';
 import 'package:figma_app/core/widgets/time_picker_bottom_sheet.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// Screen 3: Tạo lịch nhắc mới (Create New Reminder)
 /// Cho phép người dùng tạo lịch nhắc nhở mới với:
@@ -75,13 +77,13 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
           child: Column(
             children: [
               // Header
-              _buildHeader(context),
+              const AppHeader(title: 'Tạo lịch nhắc mới'),
 
               // Scrollable content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimens.spacing24,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveHelper.horizontalPadding(context),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,54 +134,6 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  /// Header: nút quay lại + tiêu đề căn giữa
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimens.spacing8,
-        vertical: AppDimens.spacing12,
-      ),
-      child: Row(
-        children: [
-          // Back button
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: AppDimens.borderRadiusLarge,
-                boxShadow: AppShadows.small,
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                size: AppDimens.iconSmall,
-                color: AppColors.textDark,
-              ),
-            ),
-          ),
-
-          // Centered title
-          const Expanded(
-            child: Text(
-              'Tạo lịch nhắc mới',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-                height: 1.44,
-              ),
-            ),
-          ),
-
-          // Invisible spacer (same width as back button for centering)
-          const SizedBox(width: 56),
-        ],
-      ),
-    );
-  }
 
   /// Section: Chọn loại nhắc nhở (2x2 grid)
   Widget _buildReminderTypeSection() {

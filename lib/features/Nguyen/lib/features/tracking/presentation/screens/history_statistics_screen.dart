@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/utils/responsive/responsive.dart';
 import 'package:figma_app/core/theme/theme.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 class HistoryStatisticsScreen extends StatefulWidget {
   const HistoryStatisticsScreen({super.key});
@@ -39,7 +40,7 @@ class _HistoryStatisticsScreenState extends State<HistoryStatisticsScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(),
+              AppHeader(title: 'Lịch sử & Thống kê'),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -59,69 +60,13 @@ class _HistoryStatisticsScreenState extends State<HistoryStatisticsScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: 24,
-        left: 16,
-        right: 16,
-        bottom: 8,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: ShapeDecoration(
-                color: Colors.white.withOpacity(0.80),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-                shadows: const [
-                  BoxShadow(
-                    color: Color(0x0C000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                    spreadRadius: 0,
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.arrow_back,
-                color: Color(0xFF0C1D1A),
-                size: 24,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: 40),
-              child: Text(
-                'Lịch sử & Thống kê',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xFF0C1D1A),
-                  fontSize: ResponsiveHelper.sp(context, 18),
-                  fontFamily: 'Lexend',
-                  fontWeight: FontWeight.w700,
-                  height: 1.56,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildFilters() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveHelper.horizontalPadding(context),
+          vertical: 12),
       child: Row(
         children: [
           Expanded(

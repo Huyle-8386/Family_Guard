@@ -1,7 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:figma_app/core/theme/app_colors.dart';
+import 'package:figma_app/core/utils/responsive/responsive_helper.dart';
 import 'package:figma_app/features/home/domain/entities/models.dart';
 import 'package:figma_app/core/routes/app_routes.dart';
+import 'package:figma_app/core/widgets/app_header.dart';
 
 /// ============================================================
 /// MÀN HÌNH: Chi tiết thành viên
@@ -61,12 +63,13 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hPad = ResponsiveHelper.horizontalPadding(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
           // === Header (không có gradient) ===
-          _buildHeader(),
+          const AppHeader(title: 'Chi tiết thành viên'),
 
           // === Content scrollable (có gradient) ===
           Expanded(
@@ -80,16 +83,16 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
               ),
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: hPad),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 8),
-                      _buildProfileCard(),
+                      _buildProfileCard(context),
                       const SizedBox(height: 16),
-                      _buildHealthSection(),
+                      _buildHealthSection(context),
                       const SizedBox(height: 24),
-                      _buildQuickActionsSection(),
+                      _buildQuickActionsSection(context),
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -102,64 +105,9 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
     );
   }
 
-  /// === HEADER: Back + Title ===
-  Widget _buildHeader() {
-    return SafeArea(
-      bottom: false,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Navigator.of(context).maybePop(),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x0C000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 20,
-                  color: AppColors.textDark,
-                ),
-              ),
-            ),
-
-            // Title (centered)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 40), // offset for centering
-                child: const Text(
-                  'Chi tiết thành viên',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.textDark,
-                    fontSize: 18,
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w700,
-                    height: 1.56,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   /// === PROFILE CARD: Avatar + Name + Role + Status ===
-  Widget _buildProfileCard() {
+  Widget _buildProfileCard(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 25),
@@ -227,9 +175,9 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
           // Name
           Text(
             widget.member?.name ?? 'Bà Lan',
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textDark,
-              fontSize: 24,
+              fontSize: ResponsiveHelper.sp(context, 22),
               fontFamily: 'Lexend',
               fontWeight: FontWeight.w700,
               height: 1.33,
@@ -240,9 +188,9 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
           // Role
           Text(
             widget.member?.role ?? 'Người cao tuổi',
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.primary,
-              fontSize: 16,
+              fontSize: ResponsiveHelper.sp(context, 15),
               fontFamily: 'Lexend',
               fontWeight: FontWeight.w500,
               height: 1.5,
@@ -273,7 +221,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
                   'Đang ở nhà',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontFamily: 'Lexend',
                     fontWeight: FontWeight.w400,
                     height: 1.43,
@@ -288,7 +236,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
   }
 
   /// === SECTION: Chỉ số sức khỏe ===
-  Widget _buildHealthSection() {
+  Widget _buildHealthSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -300,7 +248,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
               'Chỉ số sức khỏe',
               style: TextStyle(
                 color: AppColors.textDark,
-                fontSize: 18,
+                fontSize: 17,
                 fontFamily: 'Lexend',
                 fontWeight: FontWeight.w700,
                 height: 1.56,
@@ -425,7 +373,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
   }
 
   /// === SECTION: Hành động nhanh ===
-  Widget _buildQuickActionsSection() {
+  Widget _buildQuickActionsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -433,7 +381,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
           'Hành động nhanh',
           style: TextStyle(
             color: AppColors.textDark,
-            fontSize: 18,
+            fontSize: 17,
             fontFamily: 'Lexend',
             fontWeight: FontWeight.w700,
             height: 1.56,
@@ -716,9 +664,9 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
                 children: [
                   Text(
                     action.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.textDark,
-                      fontSize: 16,
+                      fontSize: ResponsiveHelper.sp(context, 15),
                       fontFamily: 'Lexend',
                       fontWeight: FontWeight.w700,
                       height: 1.5,
