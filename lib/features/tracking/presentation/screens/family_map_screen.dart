@@ -14,12 +14,28 @@ class FamilyMapScreen extends StatefulWidget {
   State<FamilyMapScreen> createState() => _FamilyMapScreenState();
 }
 
-class _FamilyMapScreenState extends State<FamilyMapScreen> {
+class _FamilyMapScreenState extends State<FamilyMapScreen>
+    with SingleTickerProviderStateMixin {
+  static const LatLng _initialCenter = LatLng(16.0544, 108.2022);
+  static const double _initialZoom = 15;
+  static const LatLng _safeZoneCenter = LatLng(16.0544, 108.2022);
+  static const double _safeZoneRadius = 200;
+
+  final MapController _mapController = MapController();
+  late final AnimationController _mapAnimationController;
+
+  _LatLngTween? _centerTween;
+  Tween<double>? _zoomTween;
+  bool _isMapReady = false;
+
   _MemberFilter _selectedFilter = _MemberFilter.children;
   String? _selectedMemberName;
 
+  // Fake tracking data for now.
+  // TODO: replace with repository/use case calling GET /tracking/locations/current.
   static const List<_MapMember> _members = [
     _MapMember(
+      id: '1',
       name: 'Xôi',
       role: _MemberFilter.children,
       battery: 82,
@@ -27,10 +43,19 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
       distanceLabel: '0.5 km',
       activityIcon: Icons.directions_walk,
       markerBorderColor: Color(0xFF60A5FA),
-      location: LatLng(40.7212, -73.9950),
-      avatarUrl: 'https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?q=80&w=300&auto=format&fit=crop',
+      location: LatLng(16.0544, 108.2022),
+      routeHistory: [
+        LatLng(16.0528, 108.1988),
+        LatLng(16.0533, 108.1998),
+        LatLng(16.0539, 108.2007),
+        LatLng(16.0544, 108.2015),
+        LatLng(16.0544, 108.2022),
+      ],
+      avatarUrl:
+          'https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?q=80&w=300&auto=format&fit=crop',
     ),
     _MapMember(
+      id: '2',
       name: 'Bố xôi',
       role: _MemberFilter.adults,
       battery: 82,
@@ -38,10 +63,19 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
       distanceLabel: '3 km',
       activityIcon: Icons.pedal_bike_rounded,
       markerBorderColor: Color(0xFF17E8E8),
-      location: LatLng(40.7342, -74.0195),
-      avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop',
+      location: LatLng(16.0560, 108.2040),
+      routeHistory: [
+        LatLng(16.0581, 108.2062),
+        LatLng(16.0574, 108.2056),
+        LatLng(16.0569, 108.2050),
+        LatLng(16.0564, 108.2044),
+        LatLng(16.0560, 108.2040),
+      ],
+      avatarUrl:
+          'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop',
     ),
     _MapMember(
+      id: '3',
       name: 'Bà nội',
       role: _MemberFilter.seniors,
       battery: 82,
@@ -49,8 +83,16 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
       distanceLabel: '5 km',
       activityIcon: Icons.directions_walk,
       markerBorderColor: Color(0xFF4ADE80),
-      location: LatLng(40.7539, -73.9880),
-      avatarUrl: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=300&auto=format&fit=crop',
+      location: LatLng(16.0529, 108.2058),
+      routeHistory: [
+        LatLng(16.0518, 108.2074),
+        LatLng(16.0521, 108.2069),
+        LatLng(16.0524, 108.2064),
+        LatLng(16.0527, 108.2060),
+        LatLng(16.0529, 108.2058),
+      ],
+      avatarUrl:
+          'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=300&auto=format&fit=crop',
     ),
   ];
 
@@ -62,9 +104,27 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _mapAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..addListener(_handleMapAnimation);
+  }
+
+  @override
+  void dispose() {
+    _mapAnimationController
+      ..removeListener(_handleMapAnimation)
+      ..dispose();
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final visibleMembers = _filteredMembers;
-    final selectedMember = _resolveSelectedMember(visibleMembers);
+    final selectedMember = _resolveSelectedMemberForUi(visibleMembers);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -77,10 +137,14 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
                 Positioned.fill(
                   child: _MapLayer(
                     members: visibleMembers,
-                    mapCenter: selectedMember.location,
-                    mapKey: ValueKey(_selectedFilter),
+                    selectedMember: selectedMember,
+                    mapCenter: _initialCenter,
+                    mapController: _mapController,
+                    safeZoneCenter: _safeZoneCenter,
+                    safeZoneRadius: _safeZoneRadius,
+                    onMapReady: _handleMapReady,
                     onSelectMember: (memberName) {
-                      setState(() => _selectedMemberName = memberName);
+                      _selectMember(memberName);
                     },
                   ),
                 ),
@@ -93,6 +157,22 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
                           setState(() {
                             _selectedFilter = filter;
                             _selectedMemberName = null;
+                          });
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (!mounted) {
+                              return;
+                            }
+                            if (filter == _MemberFilter.all) {
+                              moveToLocation(_initialCenter);
+                              return;
+                            }
+
+                            final nextSelected = _resolveSelectedMemberForUi(
+                              _filteredMembers,
+                            );
+                            if (nextSelected != null) {
+                              moveToLocation(nextSelected.location);
+                            }
                           });
                         },
                       ),
@@ -123,19 +203,94 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
     }
     return visibleMembers.first;
   }
+
+  _MapMember? _resolveSelectedMemberForUi(List<_MapMember> visibleMembers) {
+    if (visibleMembers.isEmpty) {
+      return null;
+    }
+
+    if (_selectedMemberName == null) {
+      return _selectedFilter == _MemberFilter.all ? null : visibleMembers.first;
+    }
+
+    for (final member in visibleMembers) {
+      if (member.name == _selectedMemberName) {
+        return member;
+      }
+    }
+
+    return _selectedFilter == _MemberFilter.all ? null : visibleMembers.first;
+  }
+
+  void _selectMember(String memberName) {
+    final member = _members.firstWhere((item) => item.name == memberName);
+    setState(() => _selectedMemberName = memberName);
+    moveToLocation(member.location);
+  }
+
+  void _handleMapReady() {
+    _isMapReady = true;
+    final selectedMember = _resolveSelectedMemberForUi(_filteredMembers);
+    if (selectedMember != null) {
+      moveToLocation(selectedMember.location);
+    }
+  }
+
+  void moveToLocation(LatLng target) {
+    if (!_isMapReady) {
+      return;
+    }
+
+    _mapAnimationController.stop();
+    _centerTween = _LatLngTween(
+      begin: _mapController.camera.center,
+      end: target,
+    );
+    _zoomTween = Tween<double>(
+      begin: _mapController.camera.zoom,
+      end: _mapController.camera.zoom < _initialZoom
+          ? _initialZoom
+          : _mapController.camera.zoom,
+    );
+    _mapAnimationController.forward(from: 0);
+  }
+
+  void _handleMapAnimation() {
+    if (!_isMapReady || _centerTween == null || _zoomTween == null) {
+      return;
+    }
+
+    final animationValue = Curves.easeInOutCubic.transform(
+      _mapAnimationController.value,
+    );
+
+    _mapController.move(
+      _centerTween!.transform(animationValue),
+      _zoomTween!.transform(animationValue),
+      id: 'family-member-focus',
+    );
+  }
 }
 
 class _MapLayer extends StatelessWidget {
   const _MapLayer({
     required this.members,
+    required this.selectedMember,
     required this.mapCenter,
-    required this.mapKey,
+    required this.mapController,
+    required this.safeZoneCenter,
+    required this.safeZoneRadius,
+    required this.onMapReady,
     required this.onSelectMember,
   });
 
   final List<_MapMember> members;
+  final _MapMember? selectedMember;
   final LatLng mapCenter;
-  final Key mapKey;
+  final MapController mapController;
+  final LatLng safeZoneCenter;
+  final double safeZoneRadius;
+  final VoidCallback onMapReady;
   final ValueChanged<String> onSelectMember;
 
   @override
@@ -144,12 +299,13 @@ class _MapLayer extends StatelessWidget {
       children: [
         Positioned.fill(
           child: FlutterMap(
-            key: mapKey,
+            mapController: mapController,
             options: MapOptions(
               initialCenter: mapCenter,
-              initialZoom: 12.7,
+              initialZoom: _FamilyMapScreenState._initialZoom,
               minZoom: 3,
               maxZoom: 18,
+              onMapReady: onMapReady,
             ),
             children: [
               TileLayer(
@@ -157,11 +313,35 @@ class _MapLayer extends StatelessWidget {
                 userAgentPackageName: 'com.familyguard.app',
               ),
               CircleLayer(
+                circles: [
+                  CircleMarker(
+                    point: safeZoneCenter,
+                    radius: safeZoneRadius,
+                    useRadiusInMeter: true,
+                    color: const Color(0x333B82F6),
+                    borderColor: const Color(0xFF3B82F6),
+                    borderStrokeWidth: 2,
+                  ),
+                ],
+              ),
+              if (selectedMember != null)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: selectedMember!.routeHistory,
+                      color: const Color(0xFF01ADB2),
+                      strokeWidth: 4,
+                      borderColor: Colors.white.withValues(alpha: 0.85),
+                      borderStrokeWidth: 1.5,
+                    ),
+                  ],
+                ),
+              CircleLayer(
                 circles: members
                     .map(
                       (member) => CircleMarker(
                         point: member.location,
-                        radius: 52,
+                        radius: member.name == selectedMember?.name ? 62 : 52,
                         color: const Color(0x4417E8E8),
                         borderColor: const Color(0x6617E8E8),
                         borderStrokeWidth: 1,
@@ -193,7 +373,7 @@ class _MapLayer extends StatelessWidget {
               const MarkerLayer(
                 markers: [
                   Marker(
-                    point: LatLng(40.7218, -74.0020),
+                    point: _FamilyMapScreenState._safeZoneCenter,
                     width: 16,
                     height: 16,
                     alignment: Alignment.center,
@@ -204,25 +384,14 @@ class _MapLayer extends StatelessWidget {
             ],
           ),
         ),
-        Positioned.fill(
-          child: Container(
-            color: const Color(0x6617E8E8),
-          ),
-        ),
         Positioned(
           right: 14,
           bottom: 286,
           child: Column(
             children: [
-              _MapActionButton(
-                icon: Icons.gps_fixed,
-                onTap: () {},
-              ),
+              _MapActionButton(icon: Icons.gps_fixed, onTap: () {}),
               const SizedBox(height: 10),
-              _MapActionButton(
-                icon: Icons.layers_outlined,
-                onTap: () {},
-              ),
+              _MapActionButton(icon: Icons.layers_outlined, onTap: () {}),
             ],
           ),
         ),
@@ -231,12 +400,7 @@ class _MapLayer extends StatelessWidget {
   }
 }
 
-enum _MemberFilter {
-  all,
-  children,
-  adults,
-  seniors,
-}
+enum _MemberFilter { all, children, adults, seniors }
 
 class _TopControls extends StatelessWidget {
   const _TopControls({required this.selected, required this.onChanged});
@@ -307,7 +471,11 @@ class _TopControls extends StatelessWidget {
             ),
             child: IconButton(
               onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
-              icon: const Icon(Icons.settings, size: 21, color: Color(0xFF334155)),
+              icon: const Icon(
+                Icons.settings,
+                size: 21,
+                color: Color(0xFF334155),
+              ),
             ),
           ),
         ],
@@ -344,7 +512,9 @@ class _FilterPill extends StatelessWidget {
           child: Text(
             label,
             style: GoogleFonts.inter(
-              color: selected ? const Color(0xFF0F172A) : const Color(0xFF64748B),
+              color: selected
+                  ? const Color(0xFF0F172A)
+                  : const Color(0xFF64748B),
               fontSize: 14,
               fontWeight: FontWeight.w500,
               height: 1,
@@ -465,6 +635,7 @@ class _CenterMapDot extends StatelessWidget {
 
 class _MapMember {
   const _MapMember({
+    required this.id,
     required this.name,
     required this.role,
     required this.battery,
@@ -473,9 +644,11 @@ class _MapMember {
     required this.activityIcon,
     required this.markerBorderColor,
     required this.location,
+    required this.routeHistory,
     required this.avatarUrl,
   });
 
+  final String id;
   final String name;
   final _MemberFilter role;
   final int battery;
@@ -484,13 +657,14 @@ class _MapMember {
   final IconData activityIcon;
   final Color markerBorderColor;
   final LatLng location;
+  final List<LatLng> routeHistory;
   final String avatarUrl;
 }
 
 class _BottomSheetAndNav extends StatelessWidget {
   const _BottomSheetAndNav({required this.selectedMember});
 
-  final _MapMember selectedMember;
+  final _MapMember? selectedMember;
 
   @override
   Widget build(BuildContext context) {
@@ -507,8 +681,15 @@ class _BottomSheetAndNav extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _BottomSheetContent(selectedMember: selectedMember),
-          const AppBottomMenu(current: AppNavTab.tracking),
+          if (selectedMember != null)
+            _BottomSheetContent(selectedMember: selectedMember!),
+          Container(
+            width: double.infinity,
+            color: selectedMember != null
+                ? const Color(0xFFF0F8F7)
+                : Colors.transparent,
+            child: const AppBottomMenu(current: AppNavTab.tracking),
+          ),
         ],
       ),
     );
@@ -555,7 +736,10 @@ class _BottomSheetContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                _selectedAvatar(selectedMember.avatarUrl, selectedMember.activityIcon),
+                _selectedAvatar(
+                  selectedMember.avatarUrl,
+                  selectedMember.activityIcon,
+                ),
                 const SizedBox(width: 18),
                 Expanded(
                   child: Column(
@@ -591,14 +775,21 @@ class _BottomSheetContent extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF1F5F9),
                               borderRadius: BorderRadius.circular(32),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.battery_charging_full, size: 14, color: Color(0xFF64748B)),
+                                const Icon(
+                                  Icons.battery_charging_full,
+                                  size: 14,
+                                  color: Color(0xFF64748B),
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   '${selectedMember.battery}%',
@@ -621,7 +812,10 @@ class _BottomSheetContent extends StatelessWidget {
                             child: SizedBox(
                               height: 40,
                               child: ElevatedButton(
-                                onPressed: () => Navigator.pushNamed(context, AppRoutes.kidManagement),
+                                onPressed: () => Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.kidManagement,
+                                ),
                                 style: ElevatedButton.styleFrom(
                                   elevation: 1,
                                   backgroundColor: const Color(0xFF01ADB2),
@@ -698,14 +892,15 @@ class _BottomSheetContent extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF17E8E8), width: 2, style: BorderStyle.solid),
+            border: Border.all(
+              color: const Color(0xFF17E8E8),
+              width: 2,
+              style: BorderStyle.solid,
+            ),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(999),
-            child: Image.network(
-              avatarUrl,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(avatarUrl, fit: BoxFit.cover),
           ),
         ),
         Positioned(
@@ -850,6 +1045,21 @@ class _NavItem extends StatelessWidget {
         size: 24,
         color: selected ? const Color(0xFF002244) : const Color(0xFF9CA3AF),
       ),
+    );
+  }
+}
+
+class _LatLngTween extends Tween<LatLng> {
+  _LatLngTween({required super.begin, required super.end});
+
+  @override
+  LatLng lerp(double t) {
+    final begin = this.begin!;
+    final end = this.end!;
+
+    return LatLng(
+      begin.latitude + (end.latitude - begin.latitude) * t,
+      begin.longitude + (end.longitude - begin.longitude) * t,
     );
   }
 }

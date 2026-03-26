@@ -64,5 +64,6 @@ class AppRouter {
       final data = args is SignupFormData ? args : const SignupFormData();
       return SignupSecurityScreen(initialData: data);
     },
+    A
   };
 }
