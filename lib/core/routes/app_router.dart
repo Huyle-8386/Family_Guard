@@ -63,7 +63,6 @@ class AppRouter {
       final args = ModalRoute.of(context)?.settings.arguments;
       final data = args is SignupFormData ? args : const SignupFormData();
       return SignupSecurityScreen(initialData: data);
-    },
-    A
+    }
   };
 }
