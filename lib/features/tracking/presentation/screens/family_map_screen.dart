@@ -3,6 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
+import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
+import 'package:family_guard/features/calling/presentation/widgets/call_bottom_sheets.dart';
+import 'package:family_guard/features/chat/presentation/screens/chat_models.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
@@ -56,7 +60,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     ),
     _MapMember(
       id: '2',
-      name: 'Bố xôi',
+      name: 'Bố Xôi',
       role: _MemberFilter.adults,
       battery: 82,
       subtitle: 'Đang lái xe',
@@ -153,6 +157,8 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                     children: [
                       _TopControls(
                         selected: _selectedFilter,
+                        onChatTap: () =>
+                            Navigator.pushNamed(context, AppRoutes.chatList),
                         onChanged: (filter) {
                           setState(() {
                             _selectedFilter = filter;
@@ -177,7 +183,18 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                         },
                       ),
                       const Spacer(),
-                      _BottomSheetAndNav(selectedMember: selectedMember),
+                      _BottomSheetAndNav(
+                        selectedMember: selectedMember,
+                        onViewDetails: selectedMember == null
+                            ? null
+                            : () => _openMemberDetails(selectedMember),
+                        onCallTap: selectedMember == null
+                            ? null
+                            : () => _openCallOptions(selectedMember),
+                        onChatTap: selectedMember == null
+                            ? null
+                            : () => _openMemberChat(selectedMember),
+                      ),
                     ],
                   ),
                 ),
@@ -268,6 +285,110 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       _centerTween!.transform(animationValue),
       _zoomTween!.transform(animationValue),
       id: 'family-member-focus',
+    );
+  }
+
+  void _openMemberDetails(_MapMember member) {
+    if (member.role == _MemberFilter.children) {
+      Navigator.pushNamed(context, AppRoutes.kidManagement);
+      return;
+    }
+
+    if (member.role == _MemberFilter.adults) {
+      Navigator.pushNamed(
+        context,
+        AppRoutes.adultMemberDetail,
+        arguments: _buildMemberTrackingArgs(member),
+      );
+      return;
+    }
+
+    Navigator.pushNamed(
+      context,
+      AppRoutes.seniorMemberDetail,
+      arguments: _buildMemberTrackingArgs(member),
+    );
+  }
+
+  void _openCallOptions(_MapMember member) {
+    showRoleCallOptionsSheet(
+      context,
+      target: CallTargetArgs(
+        name: member.name,
+        avatarUrl: member.avatarUrl,
+        role: switch (member.role) {
+          _MemberFilter.children => MemberRole.child,
+          _MemberFilter.adults => MemberRole.adult,
+          _MemberFilter.seniors => MemberRole.senior,
+          _MemberFilter.all => MemberRole.child,
+        },
+      ),
+    );
+  }
+
+  void _openMemberChat(_MapMember member) {
+    final normalizedName = member.name.toLowerCase();
+    final thread = ChatThreadArgs.demoThreads.firstWhere(
+      (item) => item.memberName.toLowerCase() == normalizedName,
+      orElse: () => ChatThreadArgs.fallback,
+    );
+    Navigator.pushNamed(context, AppRoutes.chatConversation, arguments: thread);
+  }
+
+  MemberTrackingArgs _buildMemberTrackingArgs(_MapMember member) {
+    final isAdult = member.role == _MemberFilter.adults;
+    return MemberTrackingArgs(
+      role: isAdult ? MemberRole.adult : MemberRole.senior,
+      name: member.name,
+      status: member.subtitle,
+      avatarUrl: member.avatarUrl,
+      phoneNumber: '+1 (555) 0123',
+      relationship: isAdult ? 'Chồng' : 'Mẹ',
+      battery: member.battery,
+      connectionStatus: 'Trực tuyến',
+      deviceName: 'iPhone 13',
+      lastActive: '2 phút trước',
+      timeLabel: '08:42 AM',
+      mapCenter: member.location,
+      routeHistory: member.routeHistory,
+      playbackStartLabel: '08:00 AM',
+      playbackEndLabel: '04:30 PM',
+      totalDistanceLabel: isAdult ? '3.2 km' : '2.4 km',
+      totalDurationLabel: isAdult ? '2h 15m' : '1h 40m',
+      stopCount: isAdult ? 1 : 2,
+      averageSpeedLabel: isAdult ? '2.8 km/h' : '1.9 km/h',
+      timelineItems: isAdult
+          ? const [
+              TrackingTimelineItem(timeLabel: '08:00 AM', title: 'Nhà'),
+              TrackingTimelineItem(timeLabel: '08:30 AM', title: 'Đến trường'),
+              TrackingTimelineItem(
+                timeLabel: '08:35 AM',
+                title: 'Rời khỏi trường',
+              ),
+              TrackingTimelineItem(
+                timeLabel: '12:35 PM',
+                title: 'Ở văn phòng',
+                highlighted: true,
+              ),
+              TrackingTimelineItem(timeLabel: '01:00 PM', title: 'Lái xe'),
+            ]
+          : const [
+              TrackingTimelineItem(timeLabel: '08:00 AM', title: 'Nhà'),
+              TrackingTimelineItem(
+                timeLabel: '09:15 AM',
+                title: 'Công viên gần nhà',
+              ),
+              TrackingTimelineItem(
+                timeLabel: '10:00 AM',
+                title: 'Quán tạp hóa',
+              ),
+              TrackingTimelineItem(
+                timeLabel: '12:35 PM',
+                title: 'Ở nhà',
+                highlighted: true,
+              ),
+              TrackingTimelineItem(timeLabel: '01:00 PM', title: 'Nghỉ ngơi'),
+            ],
     );
   }
 }
@@ -403,10 +524,15 @@ class _MapLayer extends StatelessWidget {
 enum _MemberFilter { all, children, adults, seniors }
 
 class _TopControls extends StatelessWidget {
-  const _TopControls({required this.selected, required this.onChanged});
+  const _TopControls({
+    required this.selected,
+    required this.onChanged,
+    required this.onChatTap,
+  });
 
   final _MemberFilter selected;
   final ValueChanged<_MemberFilter> onChanged;
+  final VoidCallback onChatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -470,9 +596,9 @@ class _TopControls extends StatelessWidget {
               ],
             ),
             child: IconButton(
-              onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
+              onPressed: onChatTap,
               icon: const Icon(
-                Icons.settings,
+                Icons.chat_bubble_outline_rounded,
                 size: 21,
                 color: Color(0xFF334155),
               ),
@@ -662,9 +788,17 @@ class _MapMember {
 }
 
 class _BottomSheetAndNav extends StatelessWidget {
-  const _BottomSheetAndNav({required this.selectedMember});
+  const _BottomSheetAndNav({
+    required this.selectedMember,
+    required this.onViewDetails,
+    required this.onCallTap,
+    required this.onChatTap,
+  });
 
   final _MapMember? selectedMember;
+  final VoidCallback? onViewDetails;
+  final VoidCallback? onCallTap;
+  final VoidCallback? onChatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -682,7 +816,12 @@ class _BottomSheetAndNav extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (selectedMember != null)
-            _BottomSheetContent(selectedMember: selectedMember!),
+            _BottomSheetContent(
+              selectedMember: selectedMember!,
+              onViewDetails: onViewDetails!,
+              onCallTap: onCallTap!,
+              onChatTap: onChatTap!,
+            ),
           Container(
             width: double.infinity,
             color: selectedMember != null
@@ -697,9 +836,17 @@ class _BottomSheetAndNav extends StatelessWidget {
 }
 
 class _BottomSheetContent extends StatelessWidget {
-  const _BottomSheetContent({required this.selectedMember});
+  const _BottomSheetContent({
+    required this.selectedMember,
+    required this.onViewDetails,
+    required this.onCallTap,
+    required this.onChatTap,
+  });
 
   final _MapMember selectedMember;
+  final VoidCallback onViewDetails;
+  final VoidCallback onCallTap;
+  final VoidCallback onChatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -812,10 +959,7 @@ class _BottomSheetContent extends StatelessWidget {
                             child: SizedBox(
                               height: 40,
                               child: ElevatedButton(
-                                onPressed: () => Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.kidManagement,
-                                ),
+                                onPressed: onViewDetails,
                                 style: ElevatedButton.styleFrom(
                                   elevation: 1,
                                   backgroundColor: const Color(0xFF01ADB2),
@@ -831,9 +975,15 @@ class _BottomSheetContent extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          _circleIconButton(Icons.call_outlined),
+                          _circleIconButton(
+                            Icons.call_outlined,
+                            onTap: onCallTap,
+                          ),
                           const SizedBox(width: 8),
-                          _circleIconButton(Icons.chat_bubble_outline),
+                          _circleIconButton(
+                            Icons.chat_bubble_outline,
+                            onTap: onChatTap,
+                          ),
                         ],
                       ),
                     ],
@@ -921,15 +1071,19 @@ class _BottomSheetContent extends StatelessWidget {
     );
   }
 
-  Widget _circleIconButton(IconData icon) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF1F5F9),
-        shape: BoxShape.circle,
+  Widget _circleIconButton(IconData icon, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: const BoxDecoration(
+          color: Color(0xFFF1F5F9),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 20, color: const Color(0xFF475569)),
       ),
-      child: Icon(icon, size: 20, color: const Color(0xFF475569)),
     );
   }
 }

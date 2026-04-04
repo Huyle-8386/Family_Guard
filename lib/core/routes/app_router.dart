@@ -1,4 +1,6 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/features/chat/presentation/screens/chat_conversation_screen.dart';
+import 'package:family_guard/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/screens/checkin_reminder_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/widgets/checkin_reminder_selected_screen.dart';
 import 'package:family_guard/features/emotion/presentation/screens/emotion_pulse_screen.dart';
@@ -23,8 +25,12 @@ import 'package:family_guard/features/signup/presentation/screens/signup_persona
 import 'package:family_guard/features/signup/presentation/screens/signup_security_screen.dart';
 import 'package:family_guard/features/signup/presentation/widgets/signup_form_data.dart';
 import 'package:family_guard/features/splash/presentation/screens/splash_screen.dart';
+import 'package:family_guard/features/calling/presentation/screens/in_app_call_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
-import 'package:family_guard/features/tracking/presentation/widgets/kid_management_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/adult_member_detail_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/child_member_detail_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/route_playback_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/senior_member_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {
@@ -49,10 +55,25 @@ class AppRouter {
     AppRoutes.priorityContacts: (context) => const PriorityContactsScreen(),
     AppRoutes.addPriorityContact: (context) => const AddPriorityContactScreen(),
     AppRoutes.checkinReminder: (context) => const CheckinReminderScreen(),
-    AppRoutes.checkinReminderSelected: (context) => const CheckinReminderSelectedScreen(),
+    AppRoutes.checkinReminderSelected: (context) =>
+        const CheckinReminderSelectedScreen(),
     AppRoutes.emotionPulse: (context) => const EmotionPulseScreen(),
     AppRoutes.emotionJournal: (context) => const EmotionJournalScreen(),
-    AppRoutes.kidManagement: (context) => const KidManagementScreen(),
+    AppRoutes.kidManagement: (context) => const ChildMemberDetailScreen(),
+    AppRoutes.adultMemberDetail: (context) => AdultMemberDetailScreen(
+      args: AdultMemberDetailScreen.fromRoute(context),
+    ),
+    AppRoutes.seniorMemberDetail: (context) => SeniorMemberDetailScreen(
+      args: SeniorMemberDetailScreen.fromRoute(context),
+    ),
+    AppRoutes.routePlayback: (context) =>
+        RoutePlaybackScreen(args: RoutePlaybackScreen.fromRoute(context)),
+    AppRoutes.inAppCall: (context) =>
+        InAppCallScreen(args: InAppCallScreen.fromRoute(context)),
+    AppRoutes.chatList: (context) => const ChatListScreen(),
+    AppRoutes.chatConversation: (context) => ChatConversationScreen(
+      thread: ChatConversationScreen.fromRoute(context),
+    ),
     AppRoutes.signup: (context) => const SignupPersonalInfoScreen(),
     AppRoutes.signupAccount: (context) {
       final args = ModalRoute.of(context)?.settings.arguments;
@@ -63,6 +84,6 @@ class AppRouter {
       final args = ModalRoute.of(context)?.settings.arguments;
       final data = args is SignupFormData ? args : const SignupFormData();
       return SignupSecurityScreen(initialData: data);
-    }
+    },
   };
 }

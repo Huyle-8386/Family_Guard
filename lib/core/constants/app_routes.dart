@@ -24,6 +24,12 @@ class AppRoutes {
   static const emotionPulse = '/emotion-pulse';
   static const emotionJournal = '/emotion-journal';
   static const kidManagement = '/kid-management';
+  static const adultMemberDetail = '/adult-member-detail';
+  static const seniorMemberDetail = '/senior-member-detail';
+  static const routePlayback = '/route-playback';
+  static const inAppCall = '/in-app-call';
+  static const chatList = '/chat-list';
+  static const chatConversation = '/chat-conversation';
   static const about = '/about';
   static const signup = '/signup';
   static const signupAccount = '/signup-account';
