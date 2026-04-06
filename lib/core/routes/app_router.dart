@@ -6,27 +6,53 @@ import 'package:family_guard/features/emotion/presentation/widgets/emotion_journ
 import 'package:family_guard/features/home/presentation/screens/homepage.dart';
 import 'package:family_guard/features/login/presentation/screens/forgot_password_screen.dart';
 import 'package:family_guard/features/login/presentation/screens/login_screen.dart';
+import 'package:family_guard/features/medical/presentation/screens/medical_appointment_screen.dart';
 import 'package:family_guard/features/member_management/presentation/screens/member_management_screen.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/add_member_screen.dart';
 import 'package:family_guard/features/member_management/presentation/screens/member_screen_homepage.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/member_list_screen.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/member_selection_screen.dart';
 import 'package:family_guard/features/notification/presentation/screens/notification_screen.dart';
+import 'package:family_guard/features/physical/presentation/screens/physical_activity_screen.dart';
 import 'package:family_guard/features/priority_contacts/presentation/screens/priority_contacts_screen.dart';
 import 'package:family_guard/features/priority_contacts/presentation/widgets/add_priority_contact_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/widgets/password_security_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/create_reminder_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/notification_preview_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/reminder_detail_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/reminder_details_view_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/reminder_list_delete_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/reminder_list_editable_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/reminder_list_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/repeat_frequency_screen.dart';
+import 'package:family_guard/features/reminder/presentation/widgets/voice_recording_screen.dart';
 import 'package:family_guard/features/safe_zone/presentation/screens/safe_zone_screen.dart';
 import 'package:family_guard/features/safe_zone/presentation/widgets/legacy_safe_zone_scope.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_active_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_add_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_alert_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_alert_settings_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_config_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_delete_confirm_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_detail_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_edit_active_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_edit_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_empty_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_info_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_select_member_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_time_rules_screen.dart';
 import 'package:family_guard/features/settings/presentation/screens/settings_screen.dart';
 import 'package:family_guard/features/signup/presentation/screens/signup_account_info_screen.dart';
 import 'package:family_guard/features/signup/presentation/screens/signup_personal_info_screen.dart';
 import 'package:family_guard/features/signup/presentation/screens/signup_security_screen.dart';
 import 'package:family_guard/features/signup/presentation/widgets/signup_form_data.dart';
 import 'package:family_guard/features/splash/presentation/screens/splash_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/activity_history_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
+import 'package:family_guard/features/tracking/presentation/widgets/activity_report_screen.dart';
+import 'package:family_guard/features/tracking/presentation/widgets/history_statistics_screen.dart';
 import 'package:family_guard/features/tracking/presentation/widgets/kid_management_screen.dart';
-import 'package:family_guard/lib/core/routes/app_routes.dart' as legacy_routes;
 import 'package:flutter/material.dart';
 
 class AppRouter {
@@ -48,10 +74,47 @@ class AppRouter {
     AppRoutes.addMember: (context) => const AddMemberScreen(),
     AppRoutes.memberSelection: (context) => const MemberSelectionScreen(),
     AppRoutes.safeZone: (context) => const SafeZoneScreen(),
+    AppRoutes.safeZoneAlert: (context) => _safeZoneRoute(const SafeZoneAlertScreen()),
+    AppRoutes.safeZoneSelectMember: (context) =>
+        _safeZoneRoute(const SafeZoneSelectMemberScreen()),
+    AppRoutes.safeZoneEmpty: (context) => _safeZoneRoute(const SafeZoneEmptyScreen()),
+    AppRoutes.safeZoneAdd: (context) => _safeZoneRoute(const SafeZoneAddScreen()),
+    AppRoutes.safeZoneDetail: (context) => _safeZoneRoute(const SafeZoneDetailScreen()),
+    AppRoutes.safeZoneTimeRules: (context) =>
+        _safeZoneRoute(const SafeZoneTimeRulesScreen()),
+    AppRoutes.safeZoneEdit: (context) => _safeZoneRoute(const SafeZoneEditScreen()),
+    AppRoutes.safeZoneDeleteConfirm: (context) =>
+        _safeZoneRoute(const SafeZoneDeleteConfirmScreen()),
+    AppRoutes.safeZoneAlertSettings: (context) =>
+        _safeZoneRoute(const SafeZoneAlertSettingsScreen()),
+    AppRoutes.safeZoneInfo: (context) => _safeZoneRoute(const SafeZoneInfoScreen()),
+    AppRoutes.safeZoneConfig: (context) => _safeZoneRoute(const SafeZoneConfigScreen()),
+    AppRoutes.safeZoneActive: (context) => _safeZoneRoute(const SafeZoneMemberScreen()),
+    AppRoutes.safeZoneEditActive: (context) =>
+        _safeZoneRoute(const SafeZoneEditActiveScreen()),
     AppRoutes.priorityContacts: (context) => const PriorityContactsScreen(),
     AppRoutes.addPriorityContact: (context) => const AddPriorityContactScreen(),
     AppRoutes.checkinReminder: (context) => const CheckinReminderScreen(),
     AppRoutes.checkinReminderSelected: (context) => const CheckinReminderSelectedScreen(),
+    AppRoutes.reminderList: (context) => const ReminderListScreen(),
+    AppRoutes.reminderListEditable: (context) =>
+        const ReminderListEditableScreen(),
+    AppRoutes.reminderListDelete: (context) => const ReminderListDeleteScreen(),
+    AppRoutes.reminderDetail: (context) => const ReminderDetailScreen(),
+    AppRoutes.reminderDetailsView: (context) =>
+        const ReminderDetailsViewScreen(),
+    AppRoutes.notificationPreview: (context) =>
+        const NotificationPreviewScreen(),
+    AppRoutes.createReminder: (context) => const CreateReminderScreen(),
+    AppRoutes.repeatFrequency: (context) => const RepeatFrequencyScreen(),
+    AppRoutes.voiceRecording: (context) => const VoiceRecordingScreen(),
+    AppRoutes.historyStatistics: (context) =>
+        const HistoryStatisticsScreen(),
+    AppRoutes.activityReport: (context) => const ActivityReportScreen(),
+    AppRoutes.activityHistory: (context) => const ActivityHistoryScreen(),
+    AppRoutes.medicalAppointment: (context) =>
+        const MedicalAppointmentScreen(),
+    AppRoutes.physicalActivity: (context) => const PhysicalActivityScreen(),
     AppRoutes.emotionPulse: (context) => const EmotionPulseScreen(),
     AppRoutes.emotionJournal: (context) => const EmotionJournalScreen(),
     AppRoutes.kidManagement: (context) => const KidManagementScreen(),
@@ -66,51 +129,7 @@ class AppRouter {
       final data = args is SignupFormData ? args : const SignupFormData();
       return SignupSecurityScreen(initialData: data);
     },
-    ..._legacyFeatureRoutes,
   };
 
-  static Map<String, WidgetBuilder> get _legacyFeatureRoutes {
-    const excludedRoutes = {
-      legacy_routes.AppRoutes.home,
-      legacy_routes.AppRoutes.login,
-      legacy_routes.AppRoutes.mainShell,
-      legacy_routes.AppRoutes.profile,
-      legacy_routes.AppRoutes.memberList,
-      legacy_routes.AppRoutes.settings,
-    };
-
-    const safeZoneRoutes = {
-      legacy_routes.AppRoutes.safeZoneAlert,
-      legacy_routes.AppRoutes.safeZoneManagement,
-      legacy_routes.AppRoutes.safeZoneSelectMember,
-      legacy_routes.AppRoutes.safeZoneEmpty,
-      legacy_routes.AppRoutes.safeZoneAdd,
-      legacy_routes.AppRoutes.safeZoneDetail,
-      legacy_routes.AppRoutes.safeZoneTimeRules,
-      legacy_routes.AppRoutes.safeZoneEdit,
-      legacy_routes.AppRoutes.safeZoneDeleteConfirm,
-      legacy_routes.AppRoutes.safeZoneAlertSettings,
-      legacy_routes.AppRoutes.safeZoneInfo,
-      legacy_routes.AppRoutes.safeZoneConfig,
-      legacy_routes.AppRoutes.safeZoneActive,
-      legacy_routes.AppRoutes.safeZoneEditActive,
-    };
-
-    return Map<String, WidgetBuilder>.fromEntries(
-      legacy_routes.AppRoutes.routes.entries.where(
-        (entry) => !excludedRoutes.contains(entry.key),
-      ).map((entry) {
-        if (!safeZoneRoutes.contains(entry.key)) {
-          return entry;
-        }
-
-        return MapEntry<String, WidgetBuilder>(
-          entry.key,
-          (context) => LegacySafeZoneScope(
-            child: entry.value(context),
-          ),
-        );
-      }),
-    );
-  }
+  static Widget _safeZoneRoute(Widget child) => LegacySafeZoneScope(child: child);
 }

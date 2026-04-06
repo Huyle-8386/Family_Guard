@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:family_guard/lib/core/routes/app_routes.dart';
-import 'package:family_guard/lib/core/theme/app_colors.dart';
-import 'package:family_guard/lib/core/utils/responsive/responsive.dart';
-import 'package:family_guard/lib/features/member/domain/entities/family_member.dart';
+import 'package:family_guard/core/routes/app_routes.dart';
+import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/utils/responsive/responsive.dart';
+import 'package:family_guard/features/member/domain/entities/family_member.dart';
 
 class CheckinReminderMemberListScreen extends StatelessWidget {
   const CheckinReminderMemberListScreen({super.key});

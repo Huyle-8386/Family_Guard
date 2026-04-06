@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:family_guard/lib/core/utils/responsive/responsive.dart';
-import 'package:family_guard/lib/core/routes/app_routes.dart';
-import 'package:family_guard/lib/features/safe_zone/presentation/widgets/safe_zone_active_screen.dart';
-import 'package:family_guard/features/safe_zone/presentation/widgets/legacy_safe_zone_full_screen.dart';
+import 'package:family_guard/core/utils/responsive/responsive.dart';
+import 'package:family_guard/core/routes/app_routes.dart';
+import '../widgets/safe_zone_active_screen.dart';
+import '../widgets/safe_zone_screen.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // SAFE ZONE OVERVIEW SCREEN
@@ -93,7 +93,7 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const LegacySafeZoneFullScreen()),
+                MaterialPageRoute(builder: (_) => SafeZoneScreen()),
               );
             },
             child: const Text(
@@ -127,6 +127,28 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
               _buildMembersSection(),
               _buildActionsGrid(),
             ],
+          ),
+        ),
+      ),
+
+      // ── Bottom Navbar (floating pill) ───────────────────────────
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+          child: _PillNavBar(
+            currentIndex: 1, // map tab active
+            onTap: (i) {
+              // Tab 0 = home, 1 = map (ta đang ở), 2 = notif, 3 = profile
+              if (i == 0) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, AppRoutes.home, (r) => false);
+              } else if (i == 2) {
+                Navigator.pushNamed(context, AppRoutes.safeZoneAlert);
+              } else if (i == 3) {
+                Navigator.pushNamed(context, AppRoutes.profile);
+              }
+            },
           ),
         ),
       ),

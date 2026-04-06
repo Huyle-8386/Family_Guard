@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:family_guard/lib/features/safe_zone/data/datasources/safe_zone_service.dart';
+import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 
 class LegacySafeZoneScope extends StatelessWidget {
   const LegacySafeZoneScope({
