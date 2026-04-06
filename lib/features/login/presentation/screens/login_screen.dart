@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/constants/app_colors.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/widgets/buttons/app_button.dart';
+import 'package:family_guard/core/widgets/display/app_field_label.dart';
+import 'package:family_guard/core/widgets/inputs/app_text_input.dart';
 import 'package:family_guard/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,15 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bgColor = Color(0xFFF5F8F8);
-    const brandColor = Color(0xFF0E8C8F);
-    const actionColor = Color(0xFF00ADB2);
-    const borderColor = Color(0xFF0F172A);
-    const textMuted = Color(0xFF475569);
-    const lineColor = Color(0xFFE2E8F0);
-
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -63,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       'Family Guard',
                       style: GoogleFonts.beVietnamPro(
-                        color: brandColor,
+                        color: AppColors.brand,
                         fontSize: 30,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.75,
@@ -79,25 +76,34 @@ class _LoginScreenState extends State<LoginScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        _Label(text: 'Email'),
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: AppFieldLabel(text: 'Email'),
+                        ),
                         const SizedBox(height: 8),
-                        _InputField(
+                        AppTextInput(
                           controller: _emailController,
-                          obscureText: false,
-                          borderColor: borderColor,
-                          backgroundColor: bgColor,
                           keyboardType: TextInputType.emailAddress,
                           validator: Validators.email,
+                          borderRadius: 8,
+                          fillColor: AppColors.background,
+                          enabledBorderColor: AppColors.borderDark,
+                          focusedBorderColor: AppColors.borderDark,
                         ),
                         const SizedBox(height: 20),
-                        _Label(text: 'Mật khẩu'),
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: AppFieldLabel(text: 'Mật khẩu'),
+                        ),
                         const SizedBox(height: 8),
-                        _InputField(
+                        AppTextInput(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
-                          borderColor: borderColor,
-                          backgroundColor: bgColor,
                           validator: Validators.password,
+                          borderRadius: 8,
+                          fillColor: AppColors.background,
+                          enabledBorderColor: AppColors.borderDark,
+                          focusedBorderColor: AppColors.borderDark,
                           suffix: IconButton(
                             onPressed: () {
                               setState(() => _obscurePassword = !_obscurePassword);
@@ -124,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               'Quên mật khẩu?',
                               style: GoogleFonts.publicSans(
-                                color: actionColor,
+                                color: AppColors.primary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 height: 20 / 14,
@@ -137,34 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 48),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: actionColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                      shadowColor: const Color(0x3300ADB2),
-                    ),
-                    child: Text(
-                      'Đăng nhập',
-                      style: GoogleFonts.publicSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        height: 24 / 16,
-                      ),
-                    ),
-                  ),
+                AppPrimaryButton(
+                  label: 'Đăng nhập',
+                  onPressed: _handleLogin,
                 ),
                 const SizedBox(height: 32),
                 Row(
                   children: [
-                    const Expanded(child: Divider(color: lineColor, thickness: 1)),
+                    const Expanded(child: Divider(color: AppColors.divider, thickness: 1)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
@@ -177,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const Expanded(child: Divider(color: lineColor, thickness: 1)),
+                    const Expanded(child: Divider(color: AppColors.divider, thickness: 1)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -187,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: OutlinedButton.icon(
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: lineColor),
+                          side: const BorderSide(color: AppColors.divider),
                           minimumSize: const Size.fromHeight(48),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -204,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         label: Text(
                           'Google',
                           style: GoogleFonts.publicSans(
-                            color: borderColor,
+                            color: AppColors.borderDark,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             height: 20 / 14,
@@ -217,17 +203,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: OutlinedButton.icon(
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: lineColor),
+                          side: const BorderSide(color: AppColors.divider),
                           minimumSize: const Size.fromHeight(48),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        icon: const Icon(Icons.apple, color: borderColor, size: 16),
+                        icon: const Icon(Icons.apple, color: AppColors.borderDark, size: 16),
                         label: Text(
                           'Apple',
                           style: GoogleFonts.publicSans(
-                            color: borderColor,
+                            color: AppColors.borderDark,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             height: 20 / 14,
@@ -244,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text(
                       'Bạn chưa có tài khoản? ',
                       style: GoogleFonts.publicSans(
-                        color: textMuted,
+                        color: AppColors.textMuted,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         height: 20 / 14,
@@ -260,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         'Đăng ký',
                         style: GoogleFonts.publicSans(
-                          color: actionColor,
+                          color: AppColors.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           height: 20 / 14,
@@ -274,81 +260,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _Label extends StatelessWidget {
-  const _Label({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        text,
-        style: GoogleFonts.publicSans(
-          color: const Color(0xFF0F172A),
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          height: 24 / 16,
-        ),
-      ),
-    );
-  }
-}
-
-class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.controller,
-    required this.obscureText,
-    required this.borderColor,
-    required this.backgroundColor,
-    this.keyboardType,
-    this.suffix,
-    this.validator,
-  });
-
-  final TextEditingController controller;
-  final bool obscureText;
-  final Color borderColor;
-  final Color backgroundColor;
-  final TextInputType? keyboardType;
-  final Widget? suffix;
-  final String? Function(String?)? validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      style: GoogleFonts.publicSans(
-        color: Colors.black,
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: backgroundColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        suffixIcon: suffix,
       ),
     );
   }

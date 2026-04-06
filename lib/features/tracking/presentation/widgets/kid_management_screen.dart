@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class KidManagementScreen extends StatelessWidget {
@@ -246,23 +247,20 @@ class _LocationCard extends StatelessWidget {
                   child: _LocationInfo(),
                 ),
                 const SizedBox(width: 10),
-                ElevatedButton(
+                AppPrimaryButton(
+                  label: 'Xem vị trí',
                   onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: const Color(0xFF00ADB2),
-                    foregroundColor: Colors.white,
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                    minimumSize: const Size(0, 34),
-                  ),
-                  child: Text(
-                    'Xem vị trí',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      height: 1,
-                    ),
+                  width: 108,
+                  height: 34,
+                  borderRadius: 999,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  backgroundColor: const Color(0xFF00ADB2),
+                  elevation: 0,
+                  textStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    height: 1,
+                    color: Colors.white,
                   ),
                 ),
               ],

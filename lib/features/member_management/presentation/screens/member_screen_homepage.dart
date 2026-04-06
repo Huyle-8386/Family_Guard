@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/inputs/app_text_input.dart';
 
 class MemberScreen extends StatefulWidget {
   const MemberScreen({super.key});
@@ -73,31 +74,26 @@ class _MemberScreenState extends State<MemberScreen> {
                 color: mintColor,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: TextField(
-                cursorColor: hintTextColor,
-                style: const TextStyle(color: iconColor, fontSize: 16),
-                decoration: InputDecoration(
-                  hintText: 'Tìm thành viên',
-                  hintStyle: const TextStyle(
-                    color: hintTextColor, 
-                    fontSize: 15.5,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  // Kính lúp - xác định vị trí chính xác
-                  prefixIcon: const Padding(
-                    padding: EdgeInsets.only(left: 10, right: 4),
-                    child: Icon(Icons.search, color: iconColor, size: 22),
-                  ),
-                  prefixIconConstraints: const BoxConstraints(minWidth: 35),
-                  // Micro - nhỏ hơn kính lúp một chút
-                  suffixIcon: const Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(Icons.mic, color: iconColor, size: 20),
-                  ),
-                  suffixIconConstraints: const BoxConstraints(minWidth: 35),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 9), // Căn chữ nằm giữa
+              child: AppTextInput(
+                controller: _searchController,
+                textStyle: const TextStyle(color: iconColor, fontSize: 16),
+                filled: false,
+                contentPadding: const EdgeInsets.symmetric(vertical: 9),
+                enabledBorderColor: Colors.transparent,
+                focusedBorderColor: Colors.transparent,
+                hintText: 'Tìm thành viên',
+                hintStyle: const TextStyle(
+                  color: hintTextColor,
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w400,
+                ),
+                prefix: const Padding(
+                  padding: EdgeInsets.only(left: 10, right: 4),
+                  child: Icon(Icons.search, color: iconColor, size: 22),
+                ),
+                suffix: const Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(Icons.mic, color: iconColor, size: 20),
                 ),
               ),
             ),
@@ -338,70 +334,4 @@ class _StatusDot extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _buildCircleButton({required IconData icon, required VoidCallback onTap}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1A000000),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Icon(icon, color: const Color(0xFF00ACB1)),
-    ),
-  );
-}
-
-Widget _buildSearchBar({required TextEditingController controller, required VoidCallback onMicTap}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    decoration: BoxDecoration(
-      color: const Color(0xFF87E4DB),
-      borderRadius: BorderRadius.circular(999),
-    ),
-    child: Row(
-      children: [
-        const Icon(Icons.search, size: 22, color: Color(0xFF333333)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              isDense: true,
-              hintText: 'Tìm thành viên',
-              hintStyle: TextStyle(
-                color: Color(0x993C3C43),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'SF Pro',
-              ),
-              border: InputBorder.none,
-            ),
-            style: const TextStyle(
-              color: Color(0xFF333333),
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              fontFamily: 'SF Pro',
-            ),
-            textInputAction: TextInputAction.search,
-          ),
-        ),
-        GestureDetector(
-          onTap: onMicTap,
-          behavior: HitTestBehavior.opaque,
-          child: const Icon(Icons.mic, size: 22, color: Color(0xFF333333)),
-        ),
-      ],
-    ),
-  );
 }

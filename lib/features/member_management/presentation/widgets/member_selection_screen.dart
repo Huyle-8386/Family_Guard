@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MemberSelectionScreen extends StatefulWidget {
@@ -109,22 +110,17 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
                 ),
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: AppPrimaryButton(
+                    label: 'Xác nhận',
                     onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: const Color(0xFF00ADB2),
-                      foregroundColor: Colors.white,
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Text(
-                      'Xác nhận',
-                      style: GoogleFonts.beVietnamPro(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        height: 28 / 18,
-                      ),
+                    borderRadius: 999,
+                    height: 56,
+                    backgroundColor: const Color(0xFF00ADB2),
+                    textStyle: GoogleFonts.beVietnamPro(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      height: 28 / 18,
+                      color: Colors.white,
                     ),
                   ),
                 ),

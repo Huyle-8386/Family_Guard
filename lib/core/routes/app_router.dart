@@ -8,8 +8,8 @@ import 'package:family_guard/features/login/presentation/screens/forgot_password
 import 'package:family_guard/features/login/presentation/screens/login_screen.dart';
 import 'package:family_guard/features/member_management/presentation/screens/member_management_screen.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/add_member_screen.dart';
-import 'package:family_guard/features/member_management/presentation/widgets/member_list_screen.dart';
 import 'package:family_guard/features/member_management/presentation/screens/member_screen_homepage.dart';
+import 'package:family_guard/features/member_management/presentation/widgets/member_list_screen.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/member_selection_screen.dart';
 import 'package:family_guard/features/notification/presentation/screens/notification_screen.dart';
 import 'package:family_guard/features/priority_contacts/presentation/screens/priority_contacts_screen.dart';
@@ -17,6 +17,7 @@ import 'package:family_guard/features/priority_contacts/presentation/widgets/add
 import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/widgets/password_security_screen.dart';
 import 'package:family_guard/features/safe_zone/presentation/screens/safe_zone_screen.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/legacy_safe_zone_scope.dart';
 import 'package:family_guard/features/settings/presentation/screens/settings_screen.dart';
 import 'package:family_guard/features/signup/presentation/screens/signup_account_info_screen.dart';
 import 'package:family_guard/features/signup/presentation/screens/signup_personal_info_screen.dart';
@@ -25,6 +26,7 @@ import 'package:family_guard/features/signup/presentation/widgets/signup_form_da
 import 'package:family_guard/features/splash/presentation/screens/splash_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
 import 'package:family_guard/features/tracking/presentation/widgets/kid_management_screen.dart';
+import 'package:family_guard/lib/core/routes/app_routes.dart' as legacy_routes;
 import 'package:flutter/material.dart';
 
 class AppRouter {
@@ -64,5 +66,51 @@ class AppRouter {
       final data = args is SignupFormData ? args : const SignupFormData();
       return SignupSecurityScreen(initialData: data);
     },
+    ..._legacyFeatureRoutes,
   };
+
+  static Map<String, WidgetBuilder> get _legacyFeatureRoutes {
+    const excludedRoutes = {
+      legacy_routes.AppRoutes.home,
+      legacy_routes.AppRoutes.login,
+      legacy_routes.AppRoutes.mainShell,
+      legacy_routes.AppRoutes.profile,
+      legacy_routes.AppRoutes.memberList,
+      legacy_routes.AppRoutes.settings,
+    };
+
+    const safeZoneRoutes = {
+      legacy_routes.AppRoutes.safeZoneAlert,
+      legacy_routes.AppRoutes.safeZoneManagement,
+      legacy_routes.AppRoutes.safeZoneSelectMember,
+      legacy_routes.AppRoutes.safeZoneEmpty,
+      legacy_routes.AppRoutes.safeZoneAdd,
+      legacy_routes.AppRoutes.safeZoneDetail,
+      legacy_routes.AppRoutes.safeZoneTimeRules,
+      legacy_routes.AppRoutes.safeZoneEdit,
+      legacy_routes.AppRoutes.safeZoneDeleteConfirm,
+      legacy_routes.AppRoutes.safeZoneAlertSettings,
+      legacy_routes.AppRoutes.safeZoneInfo,
+      legacy_routes.AppRoutes.safeZoneConfig,
+      legacy_routes.AppRoutes.safeZoneActive,
+      legacy_routes.AppRoutes.safeZoneEditActive,
+    };
+
+    return Map<String, WidgetBuilder>.fromEntries(
+      legacy_routes.AppRoutes.routes.entries.where(
+        (entry) => !excludedRoutes.contains(entry.key),
+      ).map((entry) {
+        if (!safeZoneRoutes.contains(entry.key)) {
+          return entry;
+        }
+
+        return MapEntry<String, WidgetBuilder>(
+          entry.key,
+          (context) => LegacySafeZoneScope(
+            child: entry.value(context),
+          ),
+        );
+      }),
+    );
+  }
 }

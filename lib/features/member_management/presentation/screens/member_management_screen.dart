@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
+import 'package:family_guard/core/widgets/display/app_avatar.dart';
+import 'package:family_guard/core/widgets/feedback/app_status_badge.dart';
+import 'package:family_guard/core/widgets/layout/app_card_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MemberManagementScreen extends StatelessWidget {
@@ -159,16 +162,14 @@ class _AddMemberButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCardContainer(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 13, 14, 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF17E8E8),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
-        ],
-      ),
+      backgroundColor: const Color(0xFF17E8E8),
+      borderRadius: 24,
+      boxShadow: const [
+        BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
+      ],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -198,16 +199,14 @@ class _MemberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final pending = member.status == 'Đã gửi lời mời';
 
-    return Container(
+    return AppCardContainer(
       padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-        boxShadow: const [
-          BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
-        ],
-      ),
+      backgroundColor: Colors.white,
+      borderRadius: 24,
+      borderColor: const Color(0xFFF3F4F6),
+      boxShadow: const [
+        BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
+      ],
       child: Row(
         children: [
           _Avatar(member: member),
@@ -229,21 +228,20 @@ class _MemberCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
+                    AppStatusBadge(
+                      label: member.role,
+                      type: AppStatusBadgeType.info,
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0x1A17E8E8),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        member.role,
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF0EA5A5),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.275,
-                          height: 1.5,
-                        ),
+                      borderRadius: 999,
+                      backgroundColor: const Color(0x1A17E8E8),
+                      foregroundColor: const Color(0xFF0EA5A5),
+                      borderColor: null,
+                      textStyle: GoogleFonts.inter(
+                        color: const Color(0xFF0EA5A5),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.275,
+                        height: 1.5,
                       ),
                     ),
                   ],
@@ -263,20 +261,19 @@ class _MemberCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     const _Dot(),
                     const SizedBox(width: 8),
-                    Container(
+                    AppStatusBadge(
+                      label: member.status,
+                      type: pending ? AppStatusBadgeType.neutral : AppStatusBadgeType.success,
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: pending ? const Color(0xFFF3F4F6) : const Color(0xFFECFDF5),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        member.status,
-                        style: GoogleFonts.inter(
-                          color: pending ? const Color(0xFF6B7280) : const Color(0xFF10B981),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          height: 16 / 12,
-                        ),
+                      borderRadius: 16,
+                      backgroundColor: pending ? const Color(0xFFF3F4F6) : const Color(0xFFECFDF5),
+                      foregroundColor: pending ? const Color(0xFF6B7280) : const Color(0xFF10B981),
+                      borderColor: null,
+                      textStyle: GoogleFonts.inter(
+                        color: pending ? const Color(0xFF6B7280) : const Color(0xFF10B981),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        height: 16 / 12,
                       ),
                     ),
                   ],
@@ -300,52 +297,19 @@ class _Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (member.avatarUrl != null) {
-      return Container(
-        width: 56,
-        height: 56,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFF3F4F6)),
-        ),
-        child: ClipOval(
-          child: Image.network(
-            member.avatarUrl!,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => _InitialAvatar(member: member),
-          ),
-        ),
+      return AppAvatar(
+        size: 56,
+        imageUrl: member.avatarUrl,
+        border: Border.fromBorderSide(BorderSide(color: Color(0xFFF3F4F6))),
       );
     }
 
-    return _InitialAvatar(member: member);
-  }
-}
-
-class _InitialAvatar extends StatelessWidget {
-  const _InitialAvatar({required this.member});
-
-  final _MemberData member;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        color: member.avatarBg,
-        shape: BoxShape.circle,
-        border: Border.all(color: member.avatarBorder),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        member.initials ?? '',
-        style: GoogleFonts.inter(
-          color: member.avatarText,
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          height: 28 / 20,
-        ),
-      ),
+    return AppAvatar(
+      size: 56,
+      initials: member.initials,
+      backgroundColor: member.avatarBg,
+      textColor: member.avatarText,
+      border: Border.fromBorderSide(BorderSide(color: member.avatarBorder)),
     );
   }
 }
@@ -358,16 +322,14 @@ class _ShortcutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCardContainer(
       padding: const EdgeInsets.fromLTRB(16, 17, 16, 17),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-        boxShadow: const [
-          BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
-        ],
-      ),
+      backgroundColor: Colors.white,
+      borderRadius: 24,
+      borderColor: const Color(0xFFF3F4F6),
+      boxShadow: const [
+        BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
+      ],
       child: Column(
         children: [
           Container(

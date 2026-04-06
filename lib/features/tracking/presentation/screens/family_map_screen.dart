@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
+import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
@@ -15,7 +16,7 @@ class FamilyMapScreen extends StatefulWidget {
 }
 
 class _FamilyMapScreenState extends State<FamilyMapScreen> {
-  _MemberFilter _selectedFilter = _MemberFilter.children;
+  _MemberFilter _selectedFilter = _MemberFilter.all;
   String? _selectedMemberName;
 
   static const List<_MapMember> _members = [
@@ -65,6 +66,8 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
   Widget build(BuildContext context) {
     final visibleMembers = _filteredMembers;
     final selectedMember = _resolveSelectedMember(visibleMembers);
+    final mapCenter = _resolveMapCenter(visibleMembers, selectedMember);
+    final mapZoom = _resolveMapZoom(selectedMember);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -77,8 +80,10 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
                 Positioned.fill(
                   child: _MapLayer(
                     members: visibleMembers,
-                    mapCenter: selectedMember.location,
-                    mapKey: ValueKey(_selectedFilter),
+                    mapCenter: mapCenter,
+                    initialZoom: mapZoom,
+                    mapKey: ValueKey('${_selectedFilter.name}-${selectedMember?.name ?? 'all'}'),
+                    showDetails: selectedMember != null,
                     onSelectMember: (memberName) {
                       setState(() => _selectedMemberName = memberName);
                     },
@@ -109,19 +114,41 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
     );
   }
 
-  _MapMember _resolveSelectedMember(List<_MapMember> visibleMembers) {
-    if (visibleMembers.isEmpty) {
-      return _members.first;
-    }
+  _MapMember? _resolveSelectedMember(List<_MapMember> visibleMembers) {
     if (_selectedMemberName == null) {
-      return visibleMembers.first;
+      return null;
     }
     for (final member in visibleMembers) {
       if (member.name == _selectedMemberName) {
         return member;
       }
     }
-    return visibleMembers.first;
+    return null;
+  }
+
+  LatLng _resolveMapCenter(List<_MapMember> visibleMembers, _MapMember? selectedMember) {
+    if (selectedMember != null) {
+      return selectedMember.location;
+    }
+
+    final members = visibleMembers.isEmpty ? _members : visibleMembers;
+    final totalLatitude = members.fold<double>(0, (sum, member) => sum + member.location.latitude);
+    final totalLongitude = members.fold<double>(0, (sum, member) => sum + member.location.longitude);
+
+    return LatLng(
+      totalLatitude / members.length,
+      totalLongitude / members.length,
+    );
+  }
+
+  double _resolveMapZoom(_MapMember? selectedMember) {
+    if (selectedMember != null) {
+      return 12.7;
+    }
+    if (_selectedFilter == _MemberFilter.all) {
+      return 11.9;
+    }
+    return 12.3;
   }
 }
 
@@ -129,13 +156,17 @@ class _MapLayer extends StatelessWidget {
   const _MapLayer({
     required this.members,
     required this.mapCenter,
+    required this.initialZoom,
     required this.mapKey,
+    required this.showDetails,
     required this.onSelectMember,
   });
 
   final List<_MapMember> members;
   final LatLng mapCenter;
+  final double initialZoom;
   final Key mapKey;
+  final bool showDetails;
   final ValueChanged<String> onSelectMember;
 
   @override
@@ -147,7 +178,7 @@ class _MapLayer extends StatelessWidget {
             key: mapKey,
             options: MapOptions(
               initialCenter: mapCenter,
-              initialZoom: 12.7,
+              initialZoom: initialZoom,
               minZoom: 3,
               maxZoom: 18,
             ),
@@ -175,9 +206,9 @@ class _MapLayer extends StatelessWidget {
                     .map(
                       (member) => Marker(
                         point: member.location,
-                        width: 76,
-                        height: 98,
-                        alignment: Alignment.topCenter,
+                        width: 92,
+                        height: 92,
+                        alignment: Alignment.center,
                         child: GestureDetector(
                           onTap: () => onSelectMember(member.name),
                           child: _MemberMarker(
@@ -204,14 +235,9 @@ class _MapLayer extends StatelessWidget {
             ],
           ),
         ),
-        Positioned.fill(
-          child: Container(
-            color: const Color(0x6617E8E8),
-          ),
-        ),
         Positioned(
           right: 14,
-          bottom: 286,
+          bottom: showDetails ? 286 : 104,
           child: Column(
             children: [
               _MapActionButton(
@@ -369,48 +395,54 @@ class _MemberMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(color: borderColor, width: 3),
-            image: DecorationImage(
-              image: NetworkImage(avatarUrl),
-              fit: BoxFit.cover,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x22000000),
-                blurRadius: 8,
-                offset: Offset(0, 2),
+    return SizedBox(
+      width: 92,
+      height: 92,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: borderColor, width: 3),
+              image: DecorationImage(
+                image: NetworkImage(avatarUrl),
+                fit: BoxFit.cover,
               ),
-            ],
-          ),
-          child: null,
-        ),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.94),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Text(
-            name,
-            style: GoogleFonts.inter(
-              color: const Color(0xFF0F172A),
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              height: 1,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x22000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: -14,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.94),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                name,
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF0F172A),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -490,7 +522,7 @@ class _MapMember {
 class _BottomSheetAndNav extends StatelessWidget {
   const _BottomSheetAndNav({required this.selectedMember});
 
-  final _MapMember selectedMember;
+  final _MapMember? selectedMember;
 
   @override
   Widget build(BuildContext context) {
@@ -507,7 +539,7 @@ class _BottomSheetAndNav extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _BottomSheetContent(selectedMember: selectedMember),
+          if (selectedMember != null) _BottomSheetContent(selectedMember: selectedMember!),
           const AppBottomMenu(current: AppNavTab.tracking),
         ],
       ),
@@ -618,21 +650,17 @@ class _BottomSheetContent extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: SizedBox(
+                            child: AppPrimaryButton(
+                              label: 'Xem chi tiết',
+                              onPressed: () => Navigator.pushNamed(context, AppRoutes.kidManagement),
                               height: 40,
-                              child: ElevatedButton(
-                                onPressed: () => Navigator.pushNamed(context, AppRoutes.kidManagement),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 1,
-                                  backgroundColor: const Color(0xFF01ADB2),
-                                  foregroundColor: Colors.white,
-                                  shape: const StadiumBorder(),
-                                  textStyle: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                child: const Text('Xem chi tiết'),
+                              borderRadius: 999,
+                              backgroundColor: const Color(0xFF01ADB2),
+                              elevation: 1,
+                              textStyle: GoogleFonts.inter(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
                               ),
                             ),
                           ),

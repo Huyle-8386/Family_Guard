@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/inputs/app_text_input.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 enum _AddMemberTab { phone, email }
@@ -130,22 +131,22 @@ class _SearchCard extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   alignment: Alignment.centerLeft,
-                  child: TextField(
+                  child: AppTextInput(
                     controller: controller,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: tab == _AddMemberTab.phone
-                          ? 'Nhập số điện thoại người thân'
-                          : 'Nhập email người thân',
-                      hintStyle: GoogleFonts.inter(
-                        color: _AddMemberPalette.hint,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        height: 1.2,
-                      ),
-                      border: InputBorder.none,
+                    filled: false,
+                    contentPadding: EdgeInsets.zero,
+                    enabledBorderColor: Colors.transparent,
+                    focusedBorderColor: Colors.transparent,
+                    hintText: tab == _AddMemberTab.phone
+                        ? 'Nhập số điện thoại người thân'
+                        : 'Nhập email người thân',
+                    hintStyle: GoogleFonts.inter(
+                      color: _AddMemberPalette.hint,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
                     ),
-                    style: GoogleFonts.inter(
+                    textStyle: GoogleFonts.inter(
                       color: Colors.black,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/display/app_field_label.dart';
+import 'package:family_guard/core/widgets/inputs/app_text_input.dart';
+import 'package:family_guard/core/widgets/layout/app_card_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AddPriorityContactScreen extends StatefulWidget {
@@ -181,16 +184,15 @@ class _InfoFormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(26),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF87E4DB), width: 2),
-        boxShadow: const [
-          BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
-        ],
-      ),
+    return const AppCardContainer(
+      padding: EdgeInsets.all(26),
+      backgroundColor: Colors.white,
+      borderRadius: 20,
+      borderColor: Color(0xFF87E4DB),
+      borderWidth: 2,
+      boxShadow: [
+        BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
+      ],
       child: Column(
         children: const [
           _AddPhotoBlock(),
@@ -275,31 +277,29 @@ class _LabeledInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: const Color(0xFF94A3B8),
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-          ),
+        AppFieldLabel(
+          text: label,
+          color: const Color(0xFF94A3B8),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
         ),
         const SizedBox(height: 6),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+        AppTextInput(
+          hintText: hint,
+          borderRadius: 12,
+          fillColor: const Color(0xFFF8FAFC),
+          enabledBorderColor: const Color(0xFFE2E8F0),
+          focusedBorderColor: const Color(0xFF00ACB1),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
+          textStyle: GoogleFonts.inter(
+            color: const Color(0xFF111818),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
-          child: Text(
-            hint,
-            style: GoogleFonts.inter(
-              color: const Color(0xFF6B7280),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
+          hintStyle: GoogleFonts.inter(
+            color: const Color(0xFF6B7280),
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ],
@@ -316,14 +316,11 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
-        text,
-        style: GoogleFonts.inter(
-          color: const Color(0xFF04A8AE),
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.2,
-        ),
+      child: AppFieldLabel(
+        text: text,
+        color: const Color(0xFF04A8AE),
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
       ),
     );
   }
@@ -344,16 +341,15 @@ class _PermissionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppCardContainer(
       padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-        boxShadow: const [
-          BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
-        ],
-      ),
+      backgroundColor: Colors.white,
+      borderRadius: 12,
+      borderColor: const Color(0xFFF1F5F9),
+      borderWidth: 1,
+      boxShadow: const [
+        BoxShadow(color: Color(0x0D000000), blurRadius: 2, offset: Offset(0, 1)),
+      ],
       child: Row(
         children: [
           Container(

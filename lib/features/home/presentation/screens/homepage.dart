@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
+import 'package:family_guard/core/widgets/display/app_section_title.dart';
+import 'package:family_guard/core/widgets/layout/app_card_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
@@ -481,28 +483,18 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.publicSans(
-              color: color,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              height: 28 / 18,
-            ),
+      child: AppSectionTitle(
+        title: title,
+        titleColor: color,
+        trailing: Text(
+          action,
+          style: GoogleFonts.beVietnamPro(
+            color: color,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            height: 28 / 14,
           ),
-          Text(
-            action,
-            style: GoogleFonts.beVietnamPro(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              height: 28 / 14,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -577,61 +569,57 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(40),
+    return AppCardContainer(
       onTap: () => Navigator.pushNamed(context, routeName),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(22, 22, 22, 22),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: const Color(0xFF87E4DB), width: 2),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFF7EE7E0), width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: iconBg,
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: Icon(icon, color: iconColor, size: 24),
+      padding: const EdgeInsets.fromLTRB(22, 22, 22, 22),
+      backgroundColor: Colors.white,
+      borderRadius: 40,
+      borderColor: const Color(0xFF87E4DB),
+      borderWidth: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFF7EE7E0), width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: iconBg,
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: GoogleFonts.publicSans(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                height: 24 / 16,
-              ),
+            child: Icon(icon, color: iconColor, size: 24),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: GoogleFonts.publicSans(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              height: 24 / 16,
             ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.publicSans(
-                color: const Color(0xFF6B7280),
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                height: 16 / 12,
-              ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.publicSans(
+              color: const Color(0xFF6B7280),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              height: 16 / 12,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

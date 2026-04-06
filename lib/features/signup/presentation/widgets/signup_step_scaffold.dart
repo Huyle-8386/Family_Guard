@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupStepScaffold extends StatelessWidget {
@@ -82,24 +83,16 @@ class SignupStepScaffold extends StatelessWidget {
                 border: Border(top: BorderSide(color: Color(0xFFD6E7EA))),
               ),
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 20),
-              child: SizedBox(
-                width: double.infinity,
+              child: AppPrimaryButton(
+                label: buttonText,
+                onPressed: onPrimaryPressed,
                 height: 56,
-                child: ElevatedButton(
-                  onPressed: onPrimaryPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _accent,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  child: Text(
-                    buttonText,
-                    style: GoogleFonts.publicSans(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                borderRadius: 14,
+                backgroundColor: _accent,
+                textStyle: GoogleFonts.publicSans(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
