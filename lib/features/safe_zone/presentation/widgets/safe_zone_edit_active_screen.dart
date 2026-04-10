@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -7,25 +7,9 @@ import 'package:family_guard/features/safe_zone/domain/entities/safe_zone.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_dialog.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 
-/// ============================================================
-/// SAFE ZONE EDIT ACTIVE SCREEN - Chá»‰nh sá»­a vÃ¹ng an toÃ n Ä‘ang hoáº¡t Ä‘á»™ng
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode (class ChNhSAVNgAnToNAngHoTNg)
-///
-/// Lá»—i Figma Ä‘Ã£ sá»­a:
-/// - `children: [,]` rá»—ng (icon Sá»¬A, XÃ“A, FAB +) â†’ Icon thá»±c táº¿
-/// - `BoxShadow(...)BoxShadow(...)` thiáº¿u `,` â†’ thÃªm `,` (FAB button)
-/// - `Expanded(...)` trong `Stack` (card map thumbnail Ã— 3, col TrÆ°á»ng há»c)
-///   â†’ StackFit.expand + CustomPaint
-/// - `Opacity(child: Expanded(...))` â†’ `Opacity(child: CustomPaint...)`
-/// - `NetworkImage("https://placehold.co/...")` Ã— 4 â†’ CustomPainter
-/// - FAB `Positioned(left: 322, top: 716)` tuyá»‡t Ä‘á»‘i â†’ `Positioned(right,bottom)`
-/// - Swipe-to-reveal: `Container(width: 518)` + `Positioned(left: 160)` Figma
-///   (2 action panel Sá»¬A/XÃ“A Ä‘áº±ng sau card) â†’ GestureDetector + AnimatedContainer
-/// - `spacing:` Figma property â†’ SizedBox
-/// - `class ChNhSAVNgAnToNAngHoTNg` â†’ SafeZoneEditActiveScreen
-/// ============================================================
 
 class SafeZoneEditActiveScreen extends StatefulWidget {
   const SafeZoneEditActiveScreen({super.key});
@@ -41,6 +25,23 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
 
   List<SafeZone> get _zones => SafeZoneProvider.of(context).zones;
   int get _activeCount => _zones.where((z) => z.isActive).length;
+  SafeZoneMember? get _primaryMember {
+    final members = SafeZoneProvider.of(context).members;
+    if (members.isEmpty) return null;
+    final recipientIds = _zones.expand((zone) => zone.recipientIds).toSet();
+    for (final member in members) {
+      if (recipientIds.contains(member.id)) return member;
+    }
+    return members.first;
+  }
+
+  String get _displayName => _primaryMember?.name ?? 'Thành viên gia đình';
+
+  String get _avatarLetter {
+    final name = _displayName.trim();
+    if (name.isEmpty) return 'G';
+    return name.substring(0, 1).toUpperCase();
+  }
 
   void _onEdit(int index) {
     if (index < _cardKeys.length) _cardKeys[index].currentState?.close();
@@ -56,9 +57,9 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'XÃ³a vÃ¹ng an toÃ n',
-      content: 'Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a "${_zones[index].name}" khÃ´ng?',
-      confirmText: 'XÃ³a',
+      title: 'Xóa vùng an toàn',
+      content: 'Bạn có chắc muốn xóa "${_zones[index].name}" không?',
+      confirmText: 'Xóa',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
         SafeZoneProvider.read(context).removeZone(_zones[index].id);
@@ -69,18 +70,17 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // MediaQuery Ä‘á»ƒ tÃ­nh safe area bottom (notch, home indicator)
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
+      appBar: const AppBackHeaderBar(
+        title: 'Vùng an toàn',
+      ),
       backgroundColor: AppColors.background,
-      // SafeArea bao ngoÃ i toÃ n bá»™ body Ä‘á»ƒ khÃ´ng bá»‹ status bar / notch overlap
       body: SafeArea(
-        bottom: false, // bottom xá»­ lÃ½ thá»§ cÃ´ng qua MediaQuery Ä‘á»ƒ FAB chÃ­nh xÃ¡c
         child: Stack(
           children: [
             SingleChildScrollView(
-              // bottom padding = FAB height(56) + khoáº£ng cÃ¡ch(32) + safe area bottom
               padding: EdgeInsets.only(
                 top: 0,
                 left: 16,
@@ -90,15 +90,9 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // â”€â”€ NÃºt quay láº¡i â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                  const SizedBox(height: 16),
-                  _buildBackButton(),
-
-                  // â”€â”€ Profile card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   const SizedBox(height: 12),
                   _buildProfileCard(),
 
-                  // â”€â”€ TiÃªu Ä‘á» â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -106,7 +100,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            'VÃ¹ng an toÃ n Ä‘ang hoáº¡t Ä‘á»™ng',
+                            'Vùng an toàn đang hoạt động',
                             style: TextStyle(
                               color: const Color(0xFF0C1D1A),
                               fontSize: ResponsiveHelper.sp(context, 18),
@@ -116,10 +110,8 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                             ),
                           ),
                         ),
-                        // Hint vuá»‘t
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.kPrimaryLight,
                             borderRadius: BorderRadius.circular(20),
@@ -127,11 +119,10 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.swipe_left_rounded,
-                                  size: 14, color: Color(0xFF00ACB2)),
+                              const Icon(Icons.swipe_left_rounded, size: 14, color: Color(0xFF00ACB2)),
                               const SizedBox(width: 4),
                               Text(
-                                'Vuá»‘t Ä‘á»ƒ sá»­a/xÃ³a',
+                                'Vuốt để sửa/xóa',
                                 style: TextStyle(
                                   color: const Color(0xFF00ACB2),
                                   fontSize: ResponsiveHelper.sp(context, 11),
@@ -146,15 +137,13 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                     ),
                   ),
 
-                  // â”€â”€ Zone cards (swipeable) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   const SizedBox(height: 16),
                   ...List.generate(_zones.length, (i) {
                     while (_cardKeys.length <= i) {
                       _cardKeys.add(GlobalKey<_SwipeableCardState>());
                     }
                     return Padding(
-                      padding: EdgeInsets.only(
-                          bottom: i < _zones.length - 1 ? 16 : 0),
+                      padding: EdgeInsets.only(bottom: i < _zones.length - 1 ? 16 : 0),
                       child: _SwipeableCard(
                         key: _cardKeys[i],
                         onEdit: () => _onEdit(i),
@@ -165,9 +154,9 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                   }),
                 ],
               ),
-            ),
+              ),
+            
 
-            // â”€â”€ FAB: bottom cÄƒn theo safe area, khÃ´ng bá»‹ home indicator che â”€
             Positioned(
               right: 16,
               bottom: 32 + bottomPadding,
@@ -179,36 +168,6 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     );
   }
 
-  // â”€â”€ NÃºt quay láº¡i â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  Widget _buildBackButton() {
-    return GestureDetector(
-      onTap: () => Navigator.of(context).pop(),
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: const ShapeDecoration(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(9999)),
-          ),
-          shadows: [
-            BoxShadow(
-              color: Color(0x0C000000),
-              blurRadius: 2,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
-        child: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 18,
-          color: Color(0xFF00ACB2),
-        ),
-      ),
-    );
-  }
-
-  // â”€â”€ Profile card â”€â”€ responsive, khÃ´ng overflow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildProfileCard() {
     return Container(
       width: double.infinity,
@@ -231,23 +190,21 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Avatar + badge â€” Stack cáº§n clipBehavior Ä‘á»ƒ badge khÃ´ng trÃ n
           SizedBox(
-            width: 68, // 64 avatar + 4px overflow badge
+            width: 68,
             height: 68,
             child: Stack(
-              clipBehavior: Clip.none, // badge dot hiá»ƒn thá»‹ táº¡i bottom-right
+              clipBehavior: Clip.none,
               children: [
                 Container(
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border:
-                        Border.all(width: 2, color: const Color(0x3300ACB2)),
+                    border: Border.all(width: 2, color: const Color(0x3300ACB2)),
                   ),
                   child: ClipOval(
-                    child: CustomPaint(painter: _ProfileAvatarPainter()),
+                    child: CustomPaint(painter: _ProfileAvatarPainter(_avatarLetter)),
                   ),
                 ),
                 Positioned(
@@ -269,14 +226,13 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
 
           const SizedBox(width: 16),
 
-          // TÃªn + Ä‘áº¿m vÃ¹ng â€” Expanded + mainAxisSize.min Ä‘á»ƒ khÃ´ng bá»‹ Ã©p cao
           Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.min, // tá»± co theo ná»™i dung
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Nguyá»…n VÄƒn A',
+                  _displayName,
                   style: TextStyle(
                     color: const Color(0xFF0C1D1A),
                     fontSize: ResponsiveHelper.sp(context, 20),
@@ -291,12 +247,11 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.shield_rounded,
-                        color: Color(0xFF45A191), size: 16),
+                    const Icon(Icons.shield_rounded, color: Color(0xFF45A191), size: 16),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        '$_activeCount vÃ¹ng an toÃ n Ä‘ang báº­t',
+                        '$_activeCount vùng an toàn đang bật',
                         style: TextStyle(
                           color: const Color(0xFF45A191),
                           fontSize: ResponsiveHelper.sp(context, 14),
@@ -316,7 +271,6 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
 
           const SizedBox(width: 12),
 
-          // NÃºt cÃ i Ä‘áº·t â€” kÃ­ch thÆ°á»›c cá»‘ Ä‘á»‹nh 36Ã—36 (icon 20 + padding 8)
           GestureDetector(
             onTap: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneConfig),
             child: Container(
@@ -665,7 +619,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
                                 color: Colors.white, size: 22),
                             const SizedBox(height: 4),
                             Text(
-                              'Sá»¬A',
+                              'Sửa',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveHelper.sp(context, 12),
@@ -693,7 +647,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
                                 color: Colors.white, size: 22),
                             const SizedBox(height: 4),
                             Text(
-                              'XÃ“A',
+                              'Xóa',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveHelper.sp(context, 12),
@@ -747,6 +701,10 @@ class _SwipeableCardState extends State<_SwipeableCard>
 
 // â”€â”€ Painters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ProfileAvatarPainter extends CustomPainter {
+  const _ProfileAvatarPainter(this.letter);
+
+  final String letter;
+
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
@@ -760,8 +718,8 @@ class _ProfileAvatarPainter extends CustomPainter {
         ).createShader(rect),
     );
     final tp = TextPainter(
-      text: const TextSpan(
-        text: 'A',
+      text: TextSpan(
+        text: letter,
         style: TextStyle(
           color: Color(0xFF00796B),
           fontSize: 28,

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/validators.dart';
+import 'package:family_guard/features/login/domain/entities/auth_user.dart';
 import 'package:family_guard/features/login/domain/usecases/login_usecase.dart';
 import 'package:family_guard/features/login/presentation/cubit/login_state.dart';
+import 'package:flutter/material.dart';
 
 class LoginCubit extends ChangeNotifier {
   LoginCubit(this._loginUseCase);
@@ -24,30 +25,40 @@ class LoginCubit extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> submit() async {
+  Future<AuthUser?> submit() async {
     if (!(formKey.currentState?.validate() ?? false)) {
-      return false;
+      return null;
     }
 
-    _state = _state.copyWith(isLoading: true, clearError: true);
+    _state = _state.copyWith(
+      isLoading: true,
+      clearError: true,
+      clearUser: true,
+    );
     notifyListeners();
 
     try {
-      await _loginUseCase(
+      final user = await _loginUseCase(
         email: emailController.text.trim(),
         password: passwordController.text,
       );
 
-      _state = _state.copyWith(isLoading: false, clearError: true);
-      notifyListeners();
-      return true;
-    } catch (_) {
       _state = _state.copyWith(
         isLoading: false,
-        errorMessage: 'Đăng nhập thất bại. Vui lòng thử lại.',
+        clearError: true,
+        user: user,
       );
       notifyListeners();
-      return false;
+      return user;
+    } catch (error) {
+      _state = _state.copyWith(
+        isLoading: false,
+        errorMessage: error is AuthException
+            ? error.message
+            : 'Đăng nhập thất bại. Vui lòng thử lại.',
+      );
+      notifyListeners();
+      return null;
     }
   }
 

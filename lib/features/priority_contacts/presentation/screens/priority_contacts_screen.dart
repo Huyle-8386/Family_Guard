@@ -108,12 +108,12 @@ class _PriorityTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 73,
+      height: 56,
       color: const Color(0xFF75EFEF),
       foregroundDecoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0x1A299497), width: 1)),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 9),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
       child: Stack(
         alignment: Alignment.center,
         children: [

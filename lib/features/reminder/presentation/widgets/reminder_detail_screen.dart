@@ -1,12 +1,13 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/widgets/app_dialog.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/theme/theme.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 
 /// ============================================================
-/// MÀN HÌNH: Chi tiết lịch nhắc (Redesigned)
+/// MÃ€N HÃŒNH: Chi tiáº¿t lá»‹ch nháº¯c (Redesigned)
 /// ============================================================
 class ReminderDetailScreen extends StatefulWidget {
   const ReminderDetailScreen({super.key});
@@ -30,7 +31,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   String _selectedFrequency = 'Mỗi ngày';
   final List<String> _frequencies = ['Mỗi ngày', 'Hằng tuần', 'Tùy chỉnh'];
 
-  // Snapshot để phát hiện thay đổi
+  // Snapshot Ä‘á»ƒ phÃ¡t hiá»‡n thay Ä‘á»•i
   String _savedTitle = 'Uống thuốc huyết áp';
   String _savedSubtitle = 'Nhắc nhở sức khỏe định kỳ';
   TimeOfDay _savedTime = const TimeOfDay(hour: 8, minute: 0);
@@ -104,7 +105,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   String get _timeStr =>
       '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
 
-  // ═══════════════════════ BUILD ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BUILD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,47 +141,12 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ HEADER ═══════════════════════
   Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: Color(0x1900ACB2), width: 1),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            children: [
-              _buildHeaderIcon(
-                icon: Icons.arrow_back_rounded,
-                onTap: () => Navigator.pop(context),
-              ),
-              const Spacer(),
-              Text(
-                'Chi tiết lịch nhắc',
-                style: TextStyle(
-                  color: const Color(0xFF0F172A),
-                  fontSize: ResponsiveHelper.sp(context, 18),
-                  fontFamily: 'Lexend',
-                  fontWeight: FontWeight.w700,
-                  height: 1.56,
-                ),
-              ),
-              const Spacer(),
-              _buildHeaderIcon(
-                icon: _isEditing ? Icons.check_rounded : Icons.edit_outlined,
-                color: _isEditing ? Colors.white : AppColors.textPrimary,
-                bgColor: _isEditing ? AppColors.primary : Colors.transparent,
-                onTap: _toggleEditMode,
-              ),
-            ],
-          ),
-        ),
+    return AppBackHeaderBar(
+      title: 'Chi tiết lịch nhắc',
+      trailing: _buildHeaderIcon(
+        icon: _isEditing ? Icons.check_rounded : Icons.edit_outlined,
+        onTap: _toggleEditMode,
       ),
     );
   }
@@ -206,7 +172,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ TITLE CARD ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TITLE CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildTitleCard() {
     return _CardWrapper(
       child: Row(
@@ -313,7 +279,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ TIME CARD ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TIME CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildTimeCard() {
     return _CardWrapper(
       child: Column(
@@ -417,13 +383,13 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ VOICE CARD ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VOICE CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildVoiceCard() {
     return _CardWrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionLabel('GHI ÂM GIỌNG NÓI'),
+          _buildSectionLabel('GHI \u00C2M GI\u1ECCNG N\u00D3I'),
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(10),
@@ -489,7 +455,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
 
     return AnimatedBuilder(
       animation: _waveAnimController,
-      builder: (_, __) {
+      builder: (context, child) {
         final animating = _isPlaying || _isRecording;
         return SizedBox(
           height: 32,
@@ -542,7 +508,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
       },
       child: AnimatedBuilder(
         animation: _recordPulseController,
-        builder: (_, __) {
+        builder: (context, child) {
           return Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -598,7 +564,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ RECIPIENT CARD ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RECIPIENT CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildRecipientCard() {
     return _CardWrapper(
       child: Column(
@@ -689,7 +655,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ ACTIVATION CARD ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACTIVATION CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildActivationCard() {
     return _CardWrapper(
       child: Row(
@@ -769,7 +735,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ PREVIEW BUTTON ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PREVIEW BUTTON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildPreviewButton() {
     return OutlinedButton.icon(
       onPressed: _showNotificationPreview,
@@ -783,7 +749,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ BOTTOM BAR ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BOTTOM BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildBottomBar() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -847,7 +813,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ SHARED WIDGETS ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SHARED WIDGETS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   Widget _buildSectionLabel(String text) {
     return Text(
       text,
@@ -873,7 +839,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // ═══════════════════════ ACTIONS ═══════════════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACTIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   void _toggleEditMode() {
     if (_isEditing) {
       if (_titleController.text.trim().isEmpty) {
@@ -1096,7 +1062,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
           child: FadeTransition(opacity: anim, child: child),
         );
       },
-      pageBuilder: (context, _, __) {
+      pageBuilder: (context, animation, secondaryAnimation) {
         return Align(
           alignment: Alignment.topCenter,
           child: SafeArea(
@@ -1187,7 +1153,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '$_timeStr · $_selectedFrequency',
+                            '$_timeStr \u00B7 $_selectedFrequency',
                             style: const TextStyle(
                               color: Color(0xFF64748B),
                               fontSize: 13,
@@ -1196,7 +1162,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Gửi đến: ${_recipients.map((r) => r.name).join(', ')}',
+                            'Gửi đến: ${_recipients.map((r) => r.name).join(", ")}',
                             style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 12,
@@ -1217,7 +1183,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   }
 }
 
-// ═══════════════════════ CARD WRAPPER ═══════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CARD WRAPPER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 class _CardWrapper extends StatelessWidget {
   final Widget child;
   const _CardWrapper({required this.child});
@@ -1244,7 +1210,7 @@ class _CardWrapper extends StatelessWidget {
   }
 }
 
-// ═══════════════════════ RECIPIENT MODEL ═══════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RECIPIENT MODEL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 class _Recipient {
   final String name;
   final String imageUrl;

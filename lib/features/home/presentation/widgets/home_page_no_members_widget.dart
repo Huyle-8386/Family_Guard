@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
-import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePageNoMember extends StatelessWidget {
@@ -225,18 +224,24 @@ class _EmptyStateCard extends StatelessWidget {
           const SizedBox(height: 28),
           SizedBox(
             width: double.infinity,
-            child: AppPrimaryButton(
-              label: 'Kết nối ngay',
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _AppColors.primary,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shadowColor: _AppColors.primary.withOpacity(0.3),
+              ),
               onPressed: () {},
-              backgroundColor: _AppColors.primary,
-              borderRadius: 20,
-              height: 52,
-              elevation: 4,
-              shadowColor: _AppColors.primary.withOpacity(0.3),
-              textStyle: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              child: Text(
+                'Kết nối ngay',
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

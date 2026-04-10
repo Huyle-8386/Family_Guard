@@ -1,3 +1,4 @@
+import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,7 +15,7 @@ class CheckinReminderSelectedScreen extends StatelessWidget {
             const _TopDecoration(),
             Positioned.fill(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(12, 54, 12, 24),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
                 child: Column(
                   children: [
                     const _Header(),
@@ -73,56 +74,15 @@ class _TopDecoration extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   const _Header();
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 64,
-      child: Stack(
-        children: [
-          Positioned(
-            left: 24,
-            top: 16,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.8),
-                shape: BoxShape.circle,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x0D000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                onPressed: () => Navigator.maybePop(context),
-                padding: EdgeInsets.zero,
-                icon: const Icon(Icons.arrow_back, size: 20, color: Color(0xFF1A3C40)),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Center(
-              child: Text(
-                'Lời nhắc hỏi thăm',
-                style: GoogleFonts.beVietnamPro(
-                  color: const Color(0xFF00ACB1),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  height: 28 / 20,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return AppBackHeaderBar(
+      title: 'Lời nhắc hỏi thăm',
+      onBack: () => Navigator.maybePop(context),
+      titleFontSize: 20,
     );
   }
 }
-
 class _SelectedMembersRow extends StatelessWidget {
   const _SelectedMembersRow();
 
@@ -242,7 +202,8 @@ class _AvatarTag extends StatelessWidget {
                         child: Image.network(
                           imageUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.person),
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.person),
                         ),
                       ),
           ),
@@ -584,3 +545,5 @@ class _SaveButton extends StatelessWidget {
     );
   }
 }
+
+

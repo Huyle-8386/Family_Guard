@@ -71,7 +71,7 @@ class AppDialog {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dContext).pop(),
-              child: const Text('Há»§y', style: TextStyle(color: Colors.grey)),
+              child: const Text('Hủy', style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(

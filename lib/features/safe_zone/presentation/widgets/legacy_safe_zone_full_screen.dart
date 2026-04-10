@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:family_guard/features/safe_zone/presentation/widgets/legacy_safe_zone_scope.dart';
-import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_screen.dart'
+import 'package:family_guard/features/safe_zone/presentation/screens/safe_zone_screen.dart'
     as legacy_safe_zone;
 
 class LegacySafeZoneFullScreen extends StatelessWidget {
@@ -9,7 +9,7 @@ class LegacySafeZoneFullScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LegacySafeZoneScope(
-      child: legacy_safe_zone.SafeZoneScreen(),
+      child: const legacy_safe_zone.SafeZoneScreen(),
     );
   }
 }

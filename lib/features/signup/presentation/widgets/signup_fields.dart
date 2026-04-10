@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:family_guard/core/widgets/display/app_field_label.dart';
-import 'package:family_guard/core/widgets/inputs/app_text_input.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SignupLabel extends StatelessWidget {
   const SignupLabel({super.key, required this.text});
@@ -9,10 +8,13 @@ class SignupLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppFieldLabel(
-      text: text,
-      fontSize: 16.5,
-      fontWeight: FontWeight.w700,
+    return Text(
+      text,
+      style: GoogleFonts.publicSans(
+        color: const Color(0xFF0F172A),
+        fontSize: 33 / 2,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 }
@@ -45,9 +47,8 @@ class SignupTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppTextInput(
+    return TextFormField(
       controller: controller,
-      hintText: hint,
       keyboardType: keyboardType,
       obscureText: obscureText,
       readOnly: readOnly,
@@ -55,17 +56,44 @@ class SignupTextField extends StatelessWidget {
       validator: validator,
       onChanged: onChanged,
       autovalidateMode: autovalidateMode,
-      borderRadius: 14,
-      fillColor: const Color(0xFFF8FBFC),
-      enabledBorderColor: const Color(0xFFB2E9EE),
-      focusedBorderColor: const Color(0xFF07A9B0),
-      errorBorderColor: const Color(0xFFFF2D2D),
-      suffix: trailing,
-      errorStyle: const TextStyle(
-        color: Color(0xFFFF2D2D),
+      style: GoogleFonts.publicSans(
+        color: const Color(0xFF334155),
         fontSize: 16,
         fontWeight: FontWeight.w500,
-        height: 1.2,
+      ),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: GoogleFonts.publicSans(
+          color: const Color(0xFF94A3B8),
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: const Color(0xFFF8FBFC),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        errorStyle: GoogleFonts.publicSans(
+          color: const Color(0xFFFF2D2D),
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          height: 1.2,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFB2E9EE)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFF07A9B0)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFFF2D2D)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFFF2D2D)),
+        ),
+        suffixIcon: trailing,
       ),
     );
   }

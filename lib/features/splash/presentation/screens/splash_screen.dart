@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FamilyGuardSplashScreen extends StatelessWidget {
@@ -138,17 +137,30 @@ class _LowerSection extends StatelessWidget {
 						),
 					),
 					const SizedBox(height: 32),
-					AppPrimaryButton(
-						label: 'BẮT ĐẦU',
-						onPressed: () => Navigator.pushNamed(context, AppRoutes.signup),
+					SizedBox(
+						width: double.infinity,
 						height: 56,
-						borderRadius: 999,
-						backgroundColor: FamilyGuardSplashScreen._ctaTeal,
-						textStyle: GoogleFonts.publicSans(
-							color: Colors.white,
-							fontSize: 18,
-							fontWeight: FontWeight.w700,
-							letterSpacing: 0.45,
+						child: ElevatedButton(
+							onPressed: () => Navigator.pushNamed(context, AppRoutes.signup),
+							style: ElevatedButton.styleFrom(
+								backgroundColor: FamilyGuardSplashScreen._ctaTeal,
+								foregroundColor: Colors.white,
+								elevation: 0,
+								shape: const StadiumBorder(),
+								shadowColor: const Color(0x3300ADB2),
+							).copyWith(
+								elevation: const WidgetStatePropertyAll(0),
+								shadowColor: const WidgetStatePropertyAll(Color(0x3300ADB2)),
+							),
+							child: Text(
+								'BẮT ĐẦU',
+								style: GoogleFonts.publicSans(
+									color: Colors.white,
+									fontSize: 18,
+									fontWeight: FontWeight.w700,
+									letterSpacing: 0.45,
+								),
+							),
 						),
 					),
 					const SizedBox(height: 16),

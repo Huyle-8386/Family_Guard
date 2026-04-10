@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SELECT MEMBER SCREEN - Chọn thành viên (Safe Zone)
-/// Được dịch và sửa lỗi từ Figma Dev Mode export
+/// SELECT MEMBER SCREEN - Chá»n thÃ nh viÃªn (Safe Zone)
+/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
 /// ============================================================
 class SafeZoneSelectMemberScreen extends StatelessWidget {
   const SafeZoneSelectMemberScreen({super.key});
@@ -13,6 +14,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const AppBackHeaderBar(title: 'Chọn thành viên'),
       backgroundColor: AppColors.background,
       body: Container(
         width: double.infinity,
@@ -28,66 +30,13 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
+          top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header: nút back + tiêu đề ─────────────────────
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 24,
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Nút back
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).maybePop(),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: ShapeDecoration(
-                          color: Colors.white.withValues(alpha: 0.80),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(9999),
-                          ),
-                          shadows: const [
-                            BoxShadow(
-                              color: Color(0x0C000000),
-                              blurRadius: 2,
-                              offset: Offset(0, 1),
-                              spreadRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Color(0xFF0C1D1A),
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Tiêu đề
-                    const Text(
-                      'Chọn thành viên',
-                      style: TextStyle(
-                        color: Color(0xFF0C1D1A),
-                        fontSize: 20,
-                        fontFamily: 'Lexend',
-                        fontWeight: FontWeight.w700,
-                        height: 1.40,
-                        letterSpacing: -0.50,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
-              // ── Danh sách thành viên ────────────────────────────
+              // â”€â”€ Danh sÃ¡ch thÃ nh viÃªn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(
@@ -125,11 +74,13 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      // Nút "Thêm thành viên mới"
+                      // NÃºt "ThÃªm thÃ nh viÃªn má»›i"
                       OutlinedButton.icon(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Tính năng thêm thành viên mới sẽ được cập nhật')),
+                            const SnackBar(
+                              content: Text('Tính năng thêm thành viên mới sẽ được cập nhật'),
+                            ),
                           );
                         },
                         style: OutlinedButton.styleFrom(
@@ -151,7 +102,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
   }
 }
 
-// ── Widget thẻ chọn thành viên ─────────────────────────────────────
+// â”€â”€ Widget tháº» chá»n thÃ nh viÃªn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _MemberSelectCard extends StatelessWidget {
   const _MemberSelectCard({
     required this.name,
@@ -198,7 +149,7 @@ class _MemberSelectCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Avatar + dot trạng thái online
+          // Avatar + dot tráº¡ng thÃ¡i online
           Stack(
             children: [
               Container(
@@ -249,13 +200,13 @@ class _MemberSelectCard extends StatelessWidget {
           ),
           const SizedBox(width: 16),
 
-          // Thông tin thành viên
+          // ThÃ´ng tin thÃ nh viÃªn
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Tên
+                // TÃªn
                 Text(
                   name,
                   style: const TextStyle(
@@ -267,7 +218,7 @@ class _MemberSelectCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Badge nhóm tuổi / vai trò
+                // Badge nhÃ³m tuá»•i / vai trÃ²
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
@@ -291,7 +242,7 @@ class _MemberSelectCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Số vùng an toàn
+                // Sá»‘ vÃ¹ng an toÃ n
                 Text(
                   zoneCount,
                   style: const TextStyle(
@@ -306,7 +257,7 @@ class _MemberSelectCard extends StatelessWidget {
             ),
           ),
 
-          // Nút mũi tên chọn
+          // NÃºt mÅ©i tÃªn chá»n
           const Icon(
             Icons.chevron_right_rounded,
             color: Color(0xFF00ACB2),

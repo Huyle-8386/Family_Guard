@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/theme/theme.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 class ReminderListDeleteScreen extends StatefulWidget {
   const ReminderListDeleteScreen({super.key});
@@ -34,38 +35,19 @@ class _ReminderListDeleteScreenState extends State<ReminderListDeleteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF00ACB2), size: 20),
-          onPressed: () => Navigator.maybePop(context),
-        ),
-        title: Text(
-          'Xóa lịch nhắc',
-          style: TextStyle(
-            color: Color(0xFF0C1D1A),
-            fontSize: ResponsiveHelper.sp(context, 18),
-            fontFamily: 'Lexend',
-            fontWeight: FontWeight.w700,
-            height: 1.56,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: _deleteAndReturn,
-            child: Text(
-              'Xác nhận',
-              style: TextStyle(
-                color: Color(0xFFEF4444),
-                fontFamily: 'Lexend',
-                fontWeight: FontWeight.w700,
-              ),
+            appBar: AppBackHeaderBar(
+        title: 'Xóa lịch nhắc',
+        trailing: TextButton(
+          onPressed: _deleteAndReturn,
+          child: const Text(
+            'Xác nhận',
+            style: TextStyle(
+              color: Color(0xFFEF4444),
+              fontFamily: 'Lexend',
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ],
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -472,5 +454,6 @@ class ReminderItemDelete {
     required this.isActive,
   });
 }
+
 
 

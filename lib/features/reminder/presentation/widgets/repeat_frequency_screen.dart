@@ -1,21 +1,22 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/theme/legacy_app_text_styles.dart';
 import 'package:family_guard/core/theme/app_dimens.dart';
 import 'package:family_guard/core/theme/app_shadows.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
-/// Screen: Tần suất lặp lại (Repeat Frequency)
-/// Cho phép người dùng cấu hình:
-/// - Loại lặp lại: Hàng ngày / Hàng tuần / Tùy chỉnh
-/// - Chọn ngày trong tuần (T2–CN)
-/// - Bật/tắt giới hạn khung giờ
-/// - Chọn khung giờ hoạt động (08:00 – 22:00)
+/// Screen: Táº§n suáº¥t láº·p láº¡i (Repeat Frequency)
+/// Cho phÃ©p ngÆ°á»i dÃ¹ng cáº¥u hÃ¬nh:
+/// - Loáº¡i láº·p láº¡i: HÃ ng ngÃ y / HÃ ng tuáº§n / TÃ¹y chá»‰nh
+/// - Chá»n ngÃ y trong tuáº§n (T2â€“CN)
+/// - Báº­t/táº¯t giá»›i háº¡n khung giá»
+/// - Chá»n khung giá» hoáº¡t Ä‘á»™ng (08:00 â€“ 22:00)
 class RepeatFrequencyScreen extends StatefulWidget {
-  /// Repeat mode ban đầu (index 0=Hàng ngày, 1=Hàng tuần, 2=Tùy chỉnh)
+  /// Repeat mode ban Ä‘áº§u (index 0=HÃ ng ngÃ y, 1=HÃ ng tuáº§n, 2=TÃ¹y chá»‰nh)
   final int initialModeIndex;
 
-  /// Các ngày đã chọn ban đầu (0=T2 … 6=CN)
+  /// CÃ¡c ngÃ y Ä‘Ã£ chá»n ban Ä‘áº§u (0=T2 â€¦ 6=CN)
   final Set<int> initialSelectedDays;
 
   const RepeatFrequencyScreen({
@@ -41,7 +42,8 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
   ];
 
   late int _selectedMode;
-  late Set<int> _selectedDays;  bool _timeLimitEnabled = true;
+  late Set<int> _selectedDays;
+  bool _timeLimitEnabled = true;
   TimeOfDay _startTime = const TimeOfDay(hour: 8, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 22, minute: 0);
 
@@ -102,56 +104,14 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Header ──
-
+  // â”€â”€ Header â”€â”€
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + AppDimens.spacing16,
-        left: AppDimens.spacing16,
-        right: AppDimens.spacing16,
-        bottom: AppDimens.spacing16,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.8),
-        border: const Border(
-          bottom: BorderSide(color: AppColors.tealTint),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                borderRadius: null,
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                size: AppDimens.iconSmall,
-                color: AppColors.textDark,
-              ),
-            ),
-          ),
-          const SizedBox(width: AppDimens.spacing16),
-          Text(
-            'Tần suất lặp lại',
-            style: AppTextStyles.h3.copyWith(
-              color: AppColors.textDark,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
-          ),
-        ],
-      ),
+    return const AppBackHeaderBar(
+      title: 'Tần suất lặp lại',
     );
   }
 
-  // ── Mode tabs (Hàng ngày / Hàng tuần / Tùy chỉnh) ──
+  // â”€â”€ Mode tabs (HÃ ng ngÃ y / HÃ ng tuáº§n / TÃ¹y chá»‰nh) â”€â”€
 
   Widget _buildModeTabs() {
     return SizedBox(
@@ -161,45 +121,42 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
           final isActive = i == _selectedMode;
           return Flexible(
             child: Padding(
-            padding: EdgeInsets.only(
-              right: i < _modes.length - 1 ? AppDimens.spacing8 : 0,
-            ),
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedMode = i;
-                  if (i == 0) {
-                    // Hàng ngày → chọn tất cả
-                    _selectedDays = {0, 1, 2, 3, 4, 5, 6};
-                  } else if (i == 1) {
-                    // Hàng tuần → chọn T2-T6
-                    _selectedDays = {0, 1, 2, 3, 4};
-                  }
-                  // Tùy chỉnh → giữ nguyên selection hiện tại
-                });
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppDimens.spacing16,
-                ),
-                decoration: BoxDecoration(
-                  color: isActive ? AppColors.primary : AppColors.tealTint,
-                  borderRadius: BorderRadius.circular(AppDimens.radiusCircle),
-                  border: isActive
-                      ? null
-                      : Border.all(color: AppColors.borderPrimary),
-                  boxShadow: isActive ? AppShadows.small : null,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  _modes[i],
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: isActive ? Colors.white : AppColors.textDark,
-                    fontWeight: isActive ? FontWeight.w400 : FontWeight.w500,
+              padding: EdgeInsets.only(
+                right: i < _modes.length - 1 ? AppDimens.spacing8 : 0,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedMode = i;
+                    if (i == 0) {
+                      _selectedDays = {0, 1, 2, 3, 4, 5, 6};
+                    } else if (i == 1) {
+                      _selectedDays = {0, 1, 2, 3, 4};
+                    }
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppDimens.spacing16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive ? AppColors.primary : AppColors.tealTint,
+                    borderRadius: BorderRadius.circular(AppDimens.radiusCircle),
+                    border: isActive
+                        ? null
+                        : Border.all(color: AppColors.borderPrimary),
+                    boxShadow: isActive ? AppShadows.small : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    _modes[i],
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: isActive ? Colors.white : AppColors.textDark,
+                      fontWeight: isActive ? FontWeight.w400 : FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
-            ),
             ),
           );
         }),
@@ -207,7 +164,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Day-of-week selector ──
+  // â”€â”€ Day-of-week selector â”€â”€
 
   Widget _buildDaySelector() {
     return Column(
@@ -272,7 +229,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Time Range card ──
+  // â”€â”€ Time Range card â”€â”€
 
   Widget _buildTimeRangeCard() {
     final timeRangeStr =
@@ -366,37 +323,36 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
               behavior: HitTestBehavior.opaque,
               child: Row(
                 children: [
-                // Clock icon
-                Container(
-                  padding: EdgeInsets.all(AppDimens.spacing8),
-                  decoration: BoxDecoration(
-                    color: AppColors.tealTint,
-                    borderRadius: AppDimens.borderRadiusXLarge,
+                  Container(
+                    padding: EdgeInsets.all(AppDimens.spacing8),
+                    decoration: BoxDecoration(
+                      color: AppColors.tealTint,
+                      borderRadius: AppDimens.borderRadiusXLarge,
+                    ),
+                    child: const Icon(
+                      Icons.access_time_rounded,
+                      size: 20,
+                      color: AppColors.primary,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.access_time_rounded,
-                    size: 20,
-                    color: AppColors.primary,
+                  const SizedBox(width: AppDimens.spacing12),
+                  Text(
+                    timeRangeStr,
+                    style: AppTextStyles.h4.copyWith(
+                      color: AppColors.textDark,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                const SizedBox(width: AppDimens.spacing12),
-                Text(
-                  timeRangeStr,
-                  style: AppTextStyles.h4.copyWith(
-                    color: AppColors.textDark,
-                    fontWeight: FontWeight.w700,
+                  const Spacer(),
+                  Padding(
+                    padding: EdgeInsets.all(AppDimens.spacing8),
+                    child: const Icon(
+                      Icons.chevron_right_rounded,
+                      size: AppDimens.iconMedium,
+                      color: AppColors.textMuted,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: EdgeInsets.all(AppDimens.spacing8),
-                  child: const Icon(
-                    Icons.chevron_right_rounded,
-                    size: AppDimens.iconMedium,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
+                ],
               ),
             ),
           ],
@@ -405,7 +361,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Info tip ──
+  // â”€â”€ Info tip â”€â”€
 
   Widget _buildInfoTip() {
     return Container(
@@ -426,7 +382,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
           const SizedBox(width: AppDimens.spacing12),
           Expanded(
             child: Text(
-              'Các lời nhắc sẽ được gửi định kỳ vào các\nngày đã chọn trong khung giờ này.',
+              'Các lời nhắc sẽ được gửi định kỳ vào các ngày đã chọn trong khung giờ này.',
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textDark.withValues(alpha: 0.7),
                 height: 1.63,
@@ -438,7 +394,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Bottom save button ──
+  // â”€â”€ Bottom save button â”€â”€
 
   Widget _buildBottomBar() {
     return Container(
@@ -463,7 +419,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // ── Helpers ──
+  // â”€â”€ Helpers â”€â”€
 
   String _formatTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';

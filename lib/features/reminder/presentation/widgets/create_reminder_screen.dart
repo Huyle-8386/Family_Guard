@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/theme/legacy_app_text_styles.dart';
 import 'package:family_guard/core/theme/app_dimens.dart';
@@ -6,14 +6,15 @@ import 'package:family_guard/core/theme/app_shadows.dart';
 import 'package:family_guard/features/reminder/domain/entities/reminder_type.dart';
 
 import 'package:family_guard/core/routes/app_routes.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
-/// Screen 3: Tạo lịch nhắc mới (Create New Reminder)
-/// Cho phép người dùng tạo lịch nhắc nhở mới với:
-/// - Chọn loại nhắc nhở (Thuốc, Ăn uống, Sức khỏe, Khác)
-/// - Nhập tiêu đề
-/// - Chọn thời gian
-/// - Chọn tần suất lặp lại
-/// - Ghi âm giọng nói
+/// Screen 3: Táº¡o lá»‹ch nháº¯c má»›i (Create New Reminder)
+/// Cho phÃ©p ngÆ°á»i dÃ¹ng táº¡o lá»‹ch nháº¯c nhá»Ÿ má»›i vá»›i:
+/// - Chá»n loáº¡i nháº¯c nhá»Ÿ (Thuá»‘c, Ä‚n uá»‘ng, Sá»©c khá»e, KhÃ¡c)
+/// - Nháº­p tiÃªu Ä‘á»
+/// - Chá»n thá»i gian
+/// - Chá»n táº§n suáº¥t láº·p láº¡i
+/// - Ghi Ã¢m giá»ng nÃ³i
 class CreateReminderScreen extends StatefulWidget {
   const CreateReminderScreen({super.key});
 
@@ -22,7 +23,7 @@ class CreateReminderScreen extends StatefulWidget {
 }
 
 class _CreateReminderScreenState extends State<CreateReminderScreen> {
-  // Danh sách loại nhắc nhở
+  // Danh sÃ¡ch loáº¡i nháº¯c nhá»Ÿ
   static const List<ReminderType> _reminderTypes = [
     ReminderType(
       id: 'medicine',
@@ -133,54 +134,12 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
 
   /// Header: nút quay lại + tiêu đề căn giữa
   Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimens.spacing8,
-        vertical: AppDimens.spacing12,
-      ),
-      child: Row(
-        children: [
-          // Back button
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: AppDimens.borderRadiusLarge,
-                boxShadow: AppShadows.small,
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                size: AppDimens.iconSmall,
-                color: AppColors.textDark,
-              ),
-            ),
-          ),
-
-          // Centered title
-          const Expanded(
-            child: Text(
-              'Tạo lịch nhắc mới',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-                height: 1.44,
-              ),
-            ),
-          ),
-
-          // Invisible spacer (same width as back button for centering)
-          const SizedBox(width: 56),
-        ],
-      ),
+    return const AppBackHeaderBar(
+      title: 'Tạo lịch nhắc mới',
     );
   }
 
-  /// Section: Chọn loại nhắc nhở (2x2 grid)
+  /// Section: Chá»n loáº¡i nháº¯c nhá»Ÿ (2x2 grid)
   Widget _buildReminderTypeSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +168,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  /// Card cho từng loại nhắc nhở
+  /// Card cho tá»«ng loáº¡i nháº¯c nhá»Ÿ
   Widget _buildReminderTypeCard(ReminderType type, bool isSelected) {
     return GestureDetector(
       onTap: () => setState(() => _selectedTypeId = type.id),
@@ -258,7 +217,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  /// Input: Tiêu đề nhắc nhở
+  /// Input: TiÃªu Ä‘á» nháº¯c nhá»Ÿ
   Widget _buildTitleInput() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,7 +259,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  /// Row: Chọn thời gian
+  /// Row: Chá»n thá»i gian
   Widget _buildTimePicker(BuildContext context) {
     final timeStr =
         '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
@@ -355,7 +314,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  /// Row: Chọn tần suất lặp lại
+  /// Row: Chá»n táº§n suáº¥t láº·p láº¡i
   Widget _buildRepeatSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -407,7 +366,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
       ],
     );
   }
-  /// Section: Ghi âm giọng nói
+  /// Section: Ghi Ã¢m giá»ng nÃ³i
   Widget _buildVoiceRecordingSection() {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, AppRoutes.voiceRecording),
@@ -425,7 +384,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.15),
+                color: AppColors.primary.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -449,7 +408,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  /// Button: Tạo lịch nhắc (primary, full-width)
+  /// Button: Táº¡o lá»‹ch nháº¯c (primary, full-width)
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
@@ -461,7 +420,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
     );
   }
 
-  // ── Actions ──
+  // â”€â”€ Actions â”€â”€
   Future<void> _pickTime(BuildContext context) async {
     final picked = await TimePickerBottomSheet.show(
       context,
@@ -497,7 +456,7 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
       return;
     }
 
-    // Hiện thông báo thành công
+    // Hiá»‡n thÃ´ng bÃ¡o thÃ nh cÃ´ng
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Đã tạo lịch nhắc thành công'),
@@ -508,13 +467,13 @@ class _CreateReminderScreenState extends State<CreateReminderScreen> {
         ),
       ),
     );
-    // Điều hướng đến trang Chi tiết lịch nhắc
+    // Äiá»u hÆ°á»›ng Ä‘áº¿n trang Chi tiáº¿t lá»‹ch nháº¯c
     Navigator.of(context).pushReplacementNamed(AppRoutes.reminderDetail);
   }
 }
 
-/// Gradient Background phổ biến trong Figma design
-/// Sử dụng cho toàn bộ screen có gradient teal background
+/// Gradient Background phá»• biáº¿n trong Figma design
+/// Sá»­ dá»¥ng cho toÃ n bá»™ screen cÃ³ gradient teal background
 class GradientBackground extends StatelessWidget {
   final Widget child;
   final List<Color>? colors;
@@ -543,9 +502,9 @@ class GradientBackground extends StatelessWidget {
   }
 }
 
-/// Custom Time Picker Bottom Sheet - Dựa trên Figma frame "Chọn thời gian"
-/// Hiển thị 3 scroll wheels: Giờ, Phút, AM/PM
-/// Trả về TimeOfDay khi người dùng xác nhận
+/// Custom Time Picker Bottom Sheet - Dá»±a trÃªn Figma frame "Chá»n thá»i gian"
+/// Hiá»ƒn thá»‹ 3 scroll wheels: Giá», PhÃºt, AM/PM
+/// Tráº£ vá» TimeOfDay khi ngÆ°á»i dÃ¹ng xÃ¡c nháº­n
 class TimePickerBottomSheet extends StatefulWidget {
   final TimeOfDay initialTime;
 
@@ -554,7 +513,7 @@ class TimePickerBottomSheet extends StatefulWidget {
     required this.initialTime,
   });
 
-  /// Hiển thị bottom sheet và trả về TimeOfDay đã chọn (hoặc null nếu hủy)
+  /// Hiá»ƒn thá»‹ bottom sheet vÃ  tráº£ vá» TimeOfDay Ä‘Ã£ chá»n (hoáº·c null náº¿u há»§y)
   static Future<TimeOfDay?> show(
     BuildContext context, {
     required TimeOfDay initialTime,
@@ -580,13 +539,13 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
   late int _selectedMinute; // 0-59
   late int _selectedPeriod; // 0=AM, 1=PM
 
-  // Kích thước mỗi item trong wheel
+  // KÃ­ch thÆ°á»›c má»—i item trong wheel
   static const double _itemExtent = 44.0;
 
   @override
   void initState() {
     super.initState();
-    // Chuyển từ 24h → 12h AM/PM
+    // Chuyá»ƒn tá»« 24h â†’ 12h AM/PM
     final h24 = widget.initialTime.hour;
     _selectedPeriod = h24 >= 12 ? 1 : 0;
     _selectedHour = h24 % 12 == 0 ? 12 : h24 % 12;
@@ -675,7 +634,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
                     ),
                     child: Row(
                       children: [
-                        // Hour wheel (1–12)
+                        // Hour wheel (1â€“12)
                         Expanded(
                           child: _buildWheel(
                             controller: _hourController,
@@ -688,7 +647,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
                           ),
                         ),
 
-                        // Minute wheel (0–59)
+                        // Minute wheel (0â€“59)
                         Expanded(
                           child: _buildWheel(
                             controller: _minuteController,
@@ -729,7 +688,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
                             end: Alignment.bottomCenter,
                             colors: [
                               AppColors.surface,
-                              AppColors.surface.withValues(alpha: 0),
+                              AppColors.surface.withOpacity(0),
                             ],
                           ),
                         ),
@@ -751,7 +710,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
                             end: Alignment.topCenter,
                             colors: [
                               AppColors.surface,
-                              AppColors.surface.withValues(alpha: 0),
+                              AppColors.surface.withOpacity(0),
                             ],
                           ),
                         ),
@@ -772,7 +731,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
               ),
               child: Column(
                 children: [
-                  // Xác nhận button
+                  // XÃ¡c nháº­n button
                   SizedBox(
                     width: double.infinity,
                     height: AppDimens.buttonHeightXLarge,
@@ -782,7 +741,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
                     ),
                   ),
                   const SizedBox(height: AppDimens.spacing12),
-                  // Hủy bỏ text button
+                  // Há»§y bá» text button
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
@@ -821,7 +780,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
         childCount: itemCount,
         builder: (context, index) {
           final isSelected = index == selectedIndex;
-          // Distance from selected — for opacity gradient
+          // Distance from selected â€” for opacity gradient
           final distance = (index - selectedIndex).abs();
           final isFar = distance >= 2;
 
@@ -844,7 +803,7 @@ class _TimePickerBottomSheetState extends State<TimePickerBottomSheet> {
   }
 
   void _onConfirm() {
-    // Chuyển lại sang 24h
+    // Chuyá»ƒn láº¡i sang 24h
     int hour24 = _selectedHour % 12;
     if (_selectedPeriod == 1) hour24 += 12;
     final result = TimeOfDay(hour: hour24, minute: _selectedMinute);

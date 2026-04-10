@@ -1,16 +1,24 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/features/chat/presentation/screens/chat_conversation_screen.dart';
+import 'package:family_guard/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/screens/checkin_reminder_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/widgets/checkin_reminder_selected_screen.dart';
 import 'package:family_guard/features/emotion/presentation/screens/emotion_pulse_screen.dart';
 import 'package:family_guard/features/emotion/presentation/widgets/emotion_journal_screen.dart';
+import 'package:family_guard/features/home/presentation/screens/kid_chat_conversation_screen.dart';
+import 'package:family_guard/features/home/presentation/screens/kid_chat_list_screen.dart';
+import 'package:family_guard/features/home/presentation/screens/kid_location_screen.dart';
+import 'package:family_guard/features/home/presentation/screens/kid_profile_screen.dart';
+import 'package:family_guard/features/home/presentation/screens/child_homepage.dart';
 import 'package:family_guard/features/home/presentation/screens/homepage.dart';
+import 'package:family_guard/features/home/presentation/screens/senior_homepage.dart';
 import 'package:family_guard/features/login/presentation/screens/forgot_password_screen.dart';
 import 'package:family_guard/features/login/presentation/screens/login_screen.dart';
 import 'package:family_guard/features/medical/presentation/screens/medical_appointment_screen.dart';
-import 'package:family_guard/features/member_management/presentation/screens/member_management_screen.dart';
+import 'package:family_guard/features/member_management/presentation/models/member_management_demo_data.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/add_member_screen.dart';
-import 'package:family_guard/features/member_management/presentation/screens/member_screen_homepage.dart';
-import 'package:family_guard/features/member_management/presentation/widgets/member_list_screen.dart';
+import 'package:family_guard/features/member_management/presentation/widgets/member_detail_figma_screen.dart';
+import 'package:family_guard/features/member_management/presentation/screens/member_list_screen.dart';
 import 'package:family_guard/features/member_management/presentation/widgets/member_selection_screen.dart';
 import 'package:family_guard/features/notification/presentation/screens/notification_screen.dart';
 import 'package:family_guard/features/physical/presentation/screens/physical_activity_screen.dart';
@@ -48,11 +56,16 @@ import 'package:family_guard/features/signup/presentation/screens/signup_persona
 import 'package:family_guard/features/signup/presentation/screens/signup_security_screen.dart';
 import 'package:family_guard/features/signup/presentation/widgets/signup_form_data.dart';
 import 'package:family_guard/features/splash/presentation/screens/splash_screen.dart';
+import 'package:family_guard/features/calling/presentation/screens/in_app_call_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/activity_history_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/adult_member_detail_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/child_member_detail_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/route_playback_screen.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/senior_member_detail_screen.dart';
 import 'package:family_guard/features/tracking/presentation/widgets/activity_report_screen.dart';
 import 'package:family_guard/features/tracking/presentation/widgets/history_statistics_screen.dart';
-import 'package:family_guard/features/tracking/presentation/widgets/kid_management_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {
@@ -63,39 +76,98 @@ class AppRouter {
     AppRoutes.login: (context) => const LoginScreen(),
     AppRoutes.forgotPassword: (context) => const ForgotPasswordScreen(),
     AppRoutes.home: (context) => const HomePage(),
+    AppRoutes.seniorHome: (context) => const SeniorHomePage(),
+    AppRoutes.seniorTracking: (context) => const FamilyMapScreen(
+      homeRouteName: AppRoutes.seniorHome,
+      trackingRouteName: AppRoutes.seniorTracking,
+      notificationsRouteName: AppRoutes.seniorNotifications,
+      settingsRouteName: AppRoutes.seniorSettings,
+    ),
+    AppRoutes.seniorNotifications: (context) => const ChatListScreen(
+      showBottomNav: true,
+      showBackButton: false,
+      homeRouteName: AppRoutes.seniorHome,
+      trackingRouteName: AppRoutes.seniorTracking,
+      thirdTabRouteName: AppRoutes.seniorNotifications,
+      settingsRouteName: AppRoutes.seniorSettings,
+    ),
+    AppRoutes.seniorSettings: (context) => const SettingsScreen(
+      homeRouteName: AppRoutes.seniorHome,
+      trackingRouteName: AppRoutes.seniorTracking,
+      notificationsRouteName: AppRoutes.seniorNotifications,
+      settingsRouteName: AppRoutes.seniorSettings,
+    ),
+    AppRoutes.kidHome: (context) => const ChildHomePage(),
+    AppRoutes.kidLocation: (context) => const KidLocationScreen(),
+    AppRoutes.kidChatList: (context) => const KidChatListScreen(),
+    AppRoutes.kidChatConversation: (context) => KidChatConversationScreen(
+      thread: KidChatConversationScreen.fromRoute(context),
+    ),
+    AppRoutes.kidProfile: (context) => const KidProfileScreen(),
     AppRoutes.tracking: (context) => const FamilyMapScreen(),
     AppRoutes.settings: (context) => const SettingsScreen(),
     AppRoutes.profile: (context) => const PersonalInfoScreen(),
     AppRoutes.passwordSecurity: (context) => const PasswordSecurityScreen(),
     AppRoutes.notifications: (context) => const NotificationScreen(),
-    AppRoutes.memberManagement: (context) => const MemberManagementScreen(),
+    AppRoutes.memberManagement: (context) => const ThanhVienScreen(),
     AppRoutes.memberList: (context) => const ThanhVienScreen(),
-    AppRoutes.memberDetails: (context) => const MemberScreen(),
-    AppRoutes.addMember: (context) => const AddMemberScreen(),
-    AppRoutes.memberSelection: (context) => const MemberSelectionScreen(),
-    AppRoutes.safeZone: (context) => const SafeZoneScreen(),
-    AppRoutes.safeZoneAlert: (context) => _safeZoneRoute(const SafeZoneAlertScreen()),
+    AppRoutes.memberDetails: (context) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final member = args is MemberManagementMember
+          ? args
+          : memberManagementMembers.first;
+      if (member.role == MemberRole.child) {
+        return const ChildMemberDetailScreen();
+      }
+      return MemberDetailFigmaScreen(member: member);
+    },
+    AppRoutes.addMember: (context) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final flowArgs = args is AddMemberFlowArgs
+          ? args
+          : const AddMemberFlowArgs();
+      return AddMemberScreen(args: flowArgs);
+    },
+    AppRoutes.memberSelection: (context) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final selectionArgs = args is MemberSelectionArgs
+          ? args
+          : const MemberSelectionArgs();
+      return MemberSelectionScreen(args: selectionArgs);
+    },
+    AppRoutes.safeZone: (context) => _safeZoneRoute(const SafeZoneScreen()),
+    AppRoutes.safeZoneAlert: (context) =>
+        _safeZoneRoute(const SafeZoneAlertScreen()),
     AppRoutes.safeZoneSelectMember: (context) =>
         _safeZoneRoute(const SafeZoneSelectMemberScreen()),
-    AppRoutes.safeZoneEmpty: (context) => _safeZoneRoute(const SafeZoneEmptyScreen()),
-    AppRoutes.safeZoneAdd: (context) => _safeZoneRoute(const SafeZoneAddScreen()),
-    AppRoutes.safeZoneDetail: (context) => _safeZoneRoute(const SafeZoneDetailScreen()),
+    AppRoutes.safeZoneEmpty: (context) =>
+        _safeZoneRoute(const SafeZoneEmptyScreen()),
+    AppRoutes.safeZoneAdd: (context) =>
+        _safeZoneRoute(const SafeZoneAddScreen()),
+    AppRoutes.safeZoneDetail: (context) =>
+        _safeZoneRoute(const SafeZoneDetailScreen()),
     AppRoutes.safeZoneTimeRules: (context) =>
         _safeZoneRoute(const SafeZoneTimeRulesScreen()),
-    AppRoutes.safeZoneEdit: (context) => _safeZoneRoute(const SafeZoneEditScreen()),
+    AppRoutes.safeZoneEdit: (context) =>
+        _safeZoneRoute(const SafeZoneEditScreen()),
     AppRoutes.safeZoneDeleteConfirm: (context) =>
         _safeZoneRoute(const SafeZoneDeleteConfirmScreen()),
     AppRoutes.safeZoneAlertSettings: (context) =>
         _safeZoneRoute(const SafeZoneAlertSettingsScreen()),
-    AppRoutes.safeZoneInfo: (context) => _safeZoneRoute(const SafeZoneInfoScreen()),
-    AppRoutes.safeZoneConfig: (context) => _safeZoneRoute(const SafeZoneConfigScreen()),
-    AppRoutes.safeZoneActive: (context) => _safeZoneRoute(const SafeZoneMemberScreen()),
+    AppRoutes.safeZoneInfo: (context) =>
+        _safeZoneRoute(const SafeZoneInfoScreen()),
+    AppRoutes.safeZoneConfig: (context) =>
+        _safeZoneRoute(const SafeZoneConfigScreen()),
+    AppRoutes.safeZoneActive: (context) =>
+        _safeZoneRoute(const SafeZoneMemberScreen()),
     AppRoutes.safeZoneEditActive: (context) =>
         _safeZoneRoute(const SafeZoneEditActiveScreen()),
     AppRoutes.priorityContacts: (context) => const PriorityContactsScreen(),
     AppRoutes.addPriorityContact: (context) => const AddPriorityContactScreen(),
     AppRoutes.checkinReminder: (context) => const CheckinReminderScreen(),
-    AppRoutes.checkinReminderSelected: (context) => const CheckinReminderSelectedScreen(),
+    AppRoutes.checkinReminderSelected: (context) =>
+        const CheckinReminderSelectedScreen(),
+    AppRoutes.reminderManagement: (context) => const ReminderListScreen(),
     AppRoutes.reminderList: (context) => const ReminderListScreen(),
     AppRoutes.reminderListEditable: (context) =>
         const ReminderListEditableScreen(),
@@ -108,16 +180,28 @@ class AppRouter {
     AppRoutes.createReminder: (context) => const CreateReminderScreen(),
     AppRoutes.repeatFrequency: (context) => const RepeatFrequencyScreen(),
     AppRoutes.voiceRecording: (context) => const VoiceRecordingScreen(),
-    AppRoutes.historyStatistics: (context) =>
-        const HistoryStatisticsScreen(),
+    AppRoutes.historyStatistics: (context) => const HistoryStatisticsScreen(),
     AppRoutes.activityReport: (context) => const ActivityReportScreen(),
     AppRoutes.activityHistory: (context) => const ActivityHistoryScreen(),
-    AppRoutes.medicalAppointment: (context) =>
-        const MedicalAppointmentScreen(),
+    AppRoutes.medicalAppointment: (context) => const MedicalAppointmentScreen(),
     AppRoutes.physicalActivity: (context) => const PhysicalActivityScreen(),
     AppRoutes.emotionPulse: (context) => const EmotionPulseScreen(),
     AppRoutes.emotionJournal: (context) => const EmotionJournalScreen(),
-    AppRoutes.kidManagement: (context) => const KidManagementScreen(),
+    AppRoutes.kidManagement: (context) => const ChildMemberDetailScreen(),
+    AppRoutes.adultMemberDetail: (context) => AdultMemberDetailScreen(
+      args: AdultMemberDetailScreen.fromRoute(context),
+    ),
+    AppRoutes.seniorMemberDetail: (context) => SeniorMemberDetailScreen(
+      args: SeniorMemberDetailScreen.fromRoute(context),
+    ),
+    AppRoutes.routePlayback: (context) =>
+        RoutePlaybackScreen(args: RoutePlaybackScreen.fromRoute(context)),
+    AppRoutes.inAppCall: (context) =>
+        InAppCallScreen(args: InAppCallScreen.fromRoute(context)),
+    AppRoutes.chatList: (context) => const ChatListScreen(),
+    AppRoutes.chatConversation: (context) => ChatConversationScreen(
+      thread: ChatConversationScreen.fromRoute(context),
+    ),
     AppRoutes.signup: (context) => const SignupPersonalInfoScreen(),
     AppRoutes.signupAccount: (context) {
       final args = ModalRoute.of(context)?.settings.arguments;
@@ -131,5 +215,6 @@ class AppRouter {
     },
   };
 
-  static Widget _safeZoneRoute(Widget child) => LegacySafeZoneScope(child: child);
+  static Widget _safeZoneRoute(Widget child) =>
+      LegacySafeZoneScope(child: child);
 }

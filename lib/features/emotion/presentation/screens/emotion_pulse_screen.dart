@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EmotionPulseScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _EmotionPulseScreenState extends State<EmotionPulseScreen> {
             const _TopDecoration(),
             Positioned.fill(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(25, 54, 25, 24),
+                padding: const EdgeInsets.fromLTRB(25, 8, 25, 24),
                 child: Column(
                   children: [
                     _Header(onBack: () => Navigator.maybePop(context)),
@@ -94,49 +95,10 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 64,
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            top: 16,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.8),
-                shape: BoxShape.circle,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x0D000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                onPressed: onBack,
-                icon: const Icon(Icons.arrow_back, size: 20, color: Color(0xFF1A3C40)),
-                padding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Center(
-              child: Text(
-                'Nhịp cảm xúc',
-                style: GoogleFonts.beVietnamPro(
-                  color: const Color(0xFF00ACB1),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  height: 28 / 20,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return AppBackHeaderBar(
+      title: 'Nhịp cảm xúc',
+      onBack: onBack,
+      backgroundColor: Colors.transparent,
     );
   }
 }
@@ -178,7 +140,7 @@ class _Segment extends StatelessWidget {
                       : null,
                 ),
                 child: Text(
-                  'Theo Tuần',
+                  'Theo tuần',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: weekly ? Colors.white : const Color(0xFF5D7A7D),
@@ -209,7 +171,7 @@ class _Segment extends StatelessWidget {
                       : null,
                 ),
                 child: Text(
-                  'Theo Tháng',
+                  'Theo tháng',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     color: !weekly ? Colors.white : const Color(0xFF5D7A7D),
@@ -246,7 +208,8 @@ class _MemberInfo extends StatelessWidget {
                 child: Image.network(
                   'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.person),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.person),
                 ),
               ),
             ),
@@ -622,3 +585,4 @@ class _StatCard extends StatelessWidget {
     );
   }
 }
+

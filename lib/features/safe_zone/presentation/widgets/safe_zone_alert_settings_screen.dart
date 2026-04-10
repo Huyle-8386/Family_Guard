@@ -1,20 +1,21 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SAFE ZONE ALERT SETTINGS SCREEN - Cài đặt cảnh báo vùng an toàn
-/// Được dịch và sửa lỗi từ Figma Dev Mode export (class CITCNhBO)
+/// SAFE ZONE ALERT SETTINGS SCREEN - CÃ i Ä‘áº·t cáº£nh bÃ¡o vÃ¹ng an toÃ n
+/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export (class CITCNhBO)
 ///
-/// Lỗi Figma đã sửa:
-/// - `Expanded` trong `Stack` → loại bỏ, dùng CustomPainter cho avatar
-/// - `BoxShadow(...)BoxShadow(...)` thiếu dấu `,` → thêm dấu `,`
-/// - `children: [,]` rỗng → thêm `Icon(...)` thực tế
-/// - `child: Stack()` rỗng → loại bỏ, thay bằng Icon
-/// - `class CITCNhBO` xung đột tên → đổi thành SafeZoneAlertSettingsScreen
-/// - `NetworkImage("https://placehold.co/44x44")` → dùng CustomPainter avatar
-/// - `spacing:` property không hợp lệ trong Column/Row (chỉ Flutter 3.7+)
+/// Lá»—i Figma Ä‘Ã£ sá»­a:
+/// - `Expanded` trong `Stack` â†’ loáº¡i bá», dÃ¹ng CustomPainter cho avatar
+/// - `BoxShadow(...)BoxShadow(...)` thiáº¿u dáº¥u `,` â†’ thÃªm dáº¥u `,`
+/// - `children: [,]` rá»—ng â†’ thÃªm `Icon(...)` thá»±c táº¿
+/// - `child: Stack()` rá»—ng â†’ loáº¡i bá», thay báº±ng Icon
+/// - `class CITCNhBO` xung Ä‘á»™t tÃªn â†’ Ä‘á»•i thÃ nh SafeZoneAlertSettingsScreen
+/// - `NetworkImage("https://placehold.co/44x44")` â†’ dÃ¹ng CustomPainter avatar
+/// - `spacing:` property khÃ´ng há»£p lá»‡ trong Column/Row (chá»‰ Flutter 3.7+)
 /// ============================================================
 
 class SafeZoneAlertSettingsScreen extends StatefulWidget {
@@ -27,20 +28,20 @@ class SafeZoneAlertSettingsScreen extends StatefulWidget {
 
 class _SafeZoneAlertSettingsScreenState
     extends State<SafeZoneAlertSettingsScreen> {
-  // ── Trạng thái toggle cảnh báo ───────────────────────────────────
-  bool _leaveZoneEnabled = true;  // Khi rời vùng - bật
-  bool _enterZoneEnabled = false; // Khi vào vùng - tắt
+  // â”€â”€ Tráº¡ng thÃ¡i toggle cáº£nh bÃ¡o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  bool _leaveZoneEnabled = true;  // Khi rá»i vÃ¹ng - báº­t
+  bool _enterZoneEnabled = false; // Khi vÃ o vÃ¹ng - táº¯t
 
-  // ── Hình thức thông báo ──────────────────────────────────────────
+  // â”€â”€ HÃ¬nh thá»©c thÃ´ng bÃ¡o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bool _pushEnabled = true;
   bool _smsEnabled = true;
   bool _callEnabled = false;
 
-  // ── Độ khẩn cấp ─────────────────────────────────────────────────
-  // 0 = Ngay lập tức, 1 = Sau 5 phút
+  // â”€â”€ Äá»™ kháº©n cáº¥p â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // 0 = Ngay láº­p tá»©c, 1 = Sau 5 phÃºt
   int _urgencyLevel = 0;
 
-  // ── Danh sách người nhận ─────────────────────────────────────────
+  // â”€â”€ Danh sÃ¡ch ngÆ°á»i nháº­n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final List<_AlertRecipient> _recipients = [
     _AlertRecipient(name: 'Bà Lan', role: 'Người thân chính', initials: 'BL', color: const Color(0xFF00ACB2)),
     _AlertRecipient(name: 'Ông Hùng', role: 'Người bảo hộ', initials: 'ÔH', color: const Color(0xFF3B82F6)),
@@ -52,7 +53,7 @@ class _SafeZoneAlertSettingsScreenState
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // ── Nội dung cuộn ──────────────────────────────────────────
+          // â”€â”€ Ná»™i dung cuá»™n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           SingleChildScrollView(
             padding: EdgeInsets.only(bottom: 160),
             child: Container(
@@ -66,7 +67,7 @@ class _SafeZoneAlertSettingsScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── AppBar ────────────────────────────────────────
+                  // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   _buildAppBar(context),
 
                   const SizedBox(height: 8),
@@ -76,17 +77,17 @@ class _SafeZoneAlertSettingsScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ── Card: Khi rời vùng ──────────────────────
+                        // â”€â”€ Card: Khi rá»i vÃ¹ng â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         _buildLeaveZoneCard(),
 
                         const SizedBox(height: 16),
 
-                        // ── Card: Khi vào vùng (dimmed) ─────────────
+                        // â”€â”€ Card: Khi vÃ o vÃ¹ng (dimmed) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         _buildEnterZoneCard(),
 
                         const SizedBox(height: 24),
 
-                        // ── Section: Người nhận cảnh báo ────────────
+                        // â”€â”€ Section: NgÆ°á»i nháº­n cáº£nh bÃ¡o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         _buildRecipientsSection(),
 
                         const SizedBox(height: 32),
@@ -98,7 +99,7 @@ class _SafeZoneAlertSettingsScreenState
             ),
           ),
 
-          // ── Bottom action bar cố định ──────────────────────────────
+          // â”€â”€ Bottom action bar cá»‘ Ä‘á»‹nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Positioned(
             left: 0,
             right: 0,
@@ -110,51 +111,18 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── AppBar ────────────────────────────────────────────────────────
+  // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildAppBar(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(top: 52, left: 24, right: 24, bottom: 16),
-      child: Row(
-        children: [
-          // Nút back
-          GestureDetector(
-            onTap: () => Navigator.of(context).maybePop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1, color: Color(0x3300ACB2)),
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: Color(0xFF004D40),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Tiêu đề
-          Text(
-            'Cài đặt cảnh báo',
-            style: TextStyle(
-              color: Color(0xFF004D40),
-              fontSize: ResponsiveHelper.sp(context, 20),
-              fontFamily: 'Lexend',
-              fontWeight: FontWeight.w700,
-              height: 1.40,
-            ),
-          ),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: AppBackHeaderBar(
+        title: 'Cài đặt cảnh báo',
+        onBack: () => Navigator.of(context).maybePop(),
       ),
     );
   }
 
-  // ── Card: Khi rời vùng (active) ───────────────────────────────────
+  // â”€â”€ Card: Khi rá»i vÃ¹ng (active) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildLeaveZoneCard() {
     return Container(
       width: double.infinity,
@@ -187,7 +155,7 @@ class _SafeZoneAlertSettingsScreenState
             onToggle: (v) => setState(() => _leaveZoneEnabled = v),
           ),
 
-          // Nội dung cài đặt (chỉ hiện khi enabled)
+          // Ná»™i dung cÃ i Ä‘áº·t (chá»‰ hiá»‡n khi enabled)
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 250),
             crossFadeState: _leaveZoneEnabled
@@ -200,7 +168,7 @@ class _SafeZoneAlertSettingsScreenState
                 const Divider(color: Color(0xFFF8FAFC), thickness: 1),
                 const SizedBox(height: 16),
 
-                // Hình thức thông báo
+                // HÃ¬nh thá»©c thÃ´ng bÃ¡o
                 _buildSectionLabel('HÌNH THỨC THÔNG BÁO'),
                 const SizedBox(height: 12),
                 _buildCheckOption(
@@ -223,7 +191,7 @@ class _SafeZoneAlertSettingsScreenState
 
                 const SizedBox(height: 20),
 
-                // Độ khẩn cấp
+                // Äá»™ kháº©n cáº¥p
                 _buildSectionLabel('ĐỘ KHẨN CẤP'),
                 const SizedBox(height: 12),
                 Row(
@@ -252,7 +220,7 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Card: Khi vào vùng (dimmed/inactive) ─────────────────────────
+  // â”€â”€ Card: Khi vÃ o vÃ¹ng (dimmed/inactive) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildEnterZoneCard() {
     return Opacity(
       opacity: _enterZoneEnabled ? 1.0 : 0.80,
@@ -280,7 +248,7 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Shared: Alert header với toggle ──────────────────────────────
+  // â”€â”€ Shared: Alert header vá»›i toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildAlertHeader({
     required IconData icon,
     required Color iconBgColor,
@@ -350,7 +318,7 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Label section tiêu đề nhỏ ────────────────────────────────────
+  // â”€â”€ Label section tiÃªu Ä‘á» nhá» â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildSectionLabel(String label) {
     return Text(
       label,
@@ -365,7 +333,7 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Checkbox option ───────────────────────────────────────────────
+  // â”€â”€ Checkbox option â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildCheckOption({
     required String label,
     required bool value,
@@ -416,7 +384,7 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Radio option ─────────────────────────────────────────────────
+  // â”€â”€ Radio option â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildRadioOption({
     required String label,
     required int value,
@@ -465,12 +433,12 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Section: Người nhận cảnh báo ─────────────────────────────────
+  // â”€â”€ Section: NgÆ°á»i nháº­n cáº£nh bÃ¡o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildRecipientsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Tiêu đề section
+        // TiÃªu Ä‘á» section
         Text(
           'Người thân',
           style: TextStyle(
@@ -484,7 +452,7 @@ class _SafeZoneAlertSettingsScreenState
 
         const SizedBox(height: 16),
 
-        // Card danh sách người nhận
+        // Card danh sÃ¡ch ngÆ°á»i nháº­n
         Container(
           width: double.infinity,
           padding: EdgeInsets.all(16),
@@ -505,7 +473,7 @@ class _SafeZoneAlertSettingsScreenState
           ),
           child: Column(
             children: [
-              // Danh sách người nhận
+              // Danh sÃ¡ch ngÆ°á»i nháº­n
               ..._recipients.map((recipient) => Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child: _buildRecipientRow(recipient),
@@ -513,7 +481,7 @@ class _SafeZoneAlertSettingsScreenState
 
               const SizedBox(height: 8),
 
-              // Nút thêm người nhận
+              // NÃºt thÃªm ngÆ°á»i nháº­n
               OutlinedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -537,13 +505,13 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Row người nhận ────────────────────────────────────────────────
+  // â”€â”€ Row ngÆ°á»i nháº­n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildRecipientRow(_AlertRecipient recipient) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       child: Row(
         children: [
-          // Avatar (dùng CustomPainter thay NetworkImage)
+          // Avatar (dÃ¹ng CustomPainter thay NetworkImage)
           Container(
             width: 48,
             height: 48,
@@ -562,7 +530,7 @@ class _SafeZoneAlertSettingsScreenState
           ),
           const SizedBox(width: 12),
 
-          // Tên + vai trò
+          // TÃªn + vai trÃ²
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,7 +559,7 @@ class _SafeZoneAlertSettingsScreenState
             ),
           ),
 
-          // Nút check (đã chọn = teal)
+          // NÃºt check (Ä‘Ã£ chá»n = teal)
           Container(
             width: 26,
             height: 26,
@@ -612,7 +580,7 @@ class _SafeZoneAlertSettingsScreenState
     );
   }
 
-  // ── Bottom bar ────────────────────────────────────────────────────
+  // â”€â”€ Bottom bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildBottomBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
@@ -630,7 +598,7 @@ class _SafeZoneAlertSettingsScreenState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Link "Xem trước thông báo"
+          // Link "Xem trÆ°á»›c thÃ´ng bÃ¡o"
           TextButton(
             onPressed: () => Navigator.of(context).pushNamed(AppRoutes.notificationPreview),
             child: Text(
@@ -648,7 +616,7 @@ class _SafeZoneAlertSettingsScreenState
             ),
           ),
 
-          // Nút "Lưu cài đặt"
+          // NÃºt "LÆ°u cÃ i Ä‘áº·t"
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).maybePop();
@@ -661,7 +629,7 @@ class _SafeZoneAlertSettingsScreenState
   }
 }
 
-// ── Data model ────────────────────────────────────────────────────────
+// â”€â”€ Data model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _AlertRecipient {
   final String name;
   final String role;
@@ -675,7 +643,7 @@ class _AlertRecipient {
   });
 }
 
-// ── CustomPainter vẽ avatar với initials ──────────────────────────────
+// â”€â”€ CustomPainter váº½ avatar vá»›i initials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _AvatarPainter extends CustomPainter {
   final String initials;
   final Color color;

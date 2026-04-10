@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -6,12 +6,13 @@ import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/features/safe_zone/domain/entities/safe_zone.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
 /// UNIFIED SAFE ZONE ADD SCREEN
-/// Gộp 3 màn hình (Add + Info + Config) vào 1 screen dạng step
-/// Architecture: Scaffold → Stack → [Map, DraggableScrollableSheet]
-/// 3 bước: Vị trí & Bán kính → Thông tin vùng → Cấu hình cảnh báo
+/// Gá»™p 3 mÃ n hÃ¬nh (Add + Info + Config) vÃ o 1 screen dáº¡ng step
+/// Architecture: Scaffold â†’ Stack â†’ [Map, DraggableScrollableSheet]
+/// 3 bÆ°á»›c: Vá»‹ trÃ­ & BÃ¡n kÃ­nh â†’ ThÃ´ng tin vÃ¹ng â†’ Cáº¥u hÃ¬nh cáº£nh bÃ¡o
 /// ============================================================
 class SafeZoneAddScreen extends StatefulWidget {
   const SafeZoneAddScreen({super.key});
@@ -147,7 +148,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
             _buildAppBar(topPadding),
             if (_currentStep == 0)
               Positioned(
-                top: topPadding + 64,
+                top: topPadding + 72,
                 left: 16,
                 right: 16,
                 child: _buildSearchBar(),
@@ -221,63 +222,30 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
       'Cấu hình cảnh báo',
     ];
     return Positioned(
-      top: 0, left: 0, right: 0,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: topPadding + 8, left: 16, right: 16, bottom: 8,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.80),
-          border: const Border(
-            bottom: BorderSide(width: 1, color: Color(0x1900ACB2)),
-          ),
-        ),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: _prevStep,
-              child: Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(width: 1, color: const Color(0x3300ACB2)),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 16, color: Color(0xFF0C1D1A),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                titles[_currentStep],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: const Color(0xFF0C1D1A),
-                  fontSize: ResponsiveHelper.sp(context, 18),
-                  fontFamily: 'Lexend',
-                  fontWeight: FontWeight.w700,
-                  height: 1.25,
-                  letterSpacing: -0.45,
-                ),
-              ),
-            ),
-            if (_currentStep > 0)
-              TextButton(
-                onPressed: () => Navigator.of(context).maybePop(),
-                child: Text(
-                  'Hủy',
-                  style: TextStyle(
-                    color: const Color(0xFF00ACB2),
-                    fontSize: ResponsiveHelper.sp(context, 16),
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w500,
+      top: 0,
+      left: 0,
+      right: 0,
+      child: SafeArea(
+        bottom: false,
+        child: AppBackHeaderBar(
+          title: titles[_currentStep],
+          backgroundColor: Colors.transparent,
+          onBack: _prevStep,
+          trailingAreaWidth: 72,
+          trailing: _currentStep > 0
+              ? TextButton(
+                  onPressed: () => Navigator.of(context).maybePop(),
+                  child: Text(
+                    'Hủy',
+                    style: TextStyle(
+                      color: const Color(0xFF00ACB2),
+                      fontSize: ResponsiveHelper.sp(context, 16),
+                      fontFamily: 'Lexend',
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              )
-            else
-              const SizedBox(width: 40),
-          ],
+                )
+              : null,
         ),
       ),
     );

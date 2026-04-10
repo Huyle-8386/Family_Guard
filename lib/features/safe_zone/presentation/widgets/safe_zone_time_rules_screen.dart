@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SAFE ZONE TIME RULES SCREEN - Lịch hoạt động vùng an toàn
-/// Được dịch và sửa lỗi từ Figma Dev Mode export
+/// SAFE ZONE TIME RULES SCREEN - Lá»‹ch hoáº¡t Ä‘á»™ng vÃ¹ng an toÃ n
+/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
 /// ============================================================
 class SafeZoneTimeRulesScreen extends StatefulWidget {
   const SafeZoneTimeRulesScreen({super.key});
@@ -17,7 +18,7 @@ class SafeZoneTimeRulesScreen extends StatefulWidget {
 class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
   bool _scheduleEnabled = true;
 
-  // Ngày trong tuần: true = được chọn
+  // NgÃ y trong tuáº§n: true = Ä‘Æ°á»£c chá»n
   final Map<String, bool> _days = {
     'T2': true,
     'T3': true,
@@ -28,10 +29,10 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     'CN': false,
   };
 
-  // Danh sách khung giờ
+  // Danh sÃ¡ch khung giá»
   final List<String> _timeSlots = ['08:00 - 17:00'];
 
-  // Mẫu đang chọn
+  // Máº«u Ä‘ang chá»n
   String _selectedPreset = 'Giờ học (08:00 - 17:00)';
 
   final List<String> _presets = [
@@ -90,10 +91,10 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
         ),
         child: Column(
           children: [
-            // ── AppBar ─────────────────────────────────────────
+            // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             _buildAppBar(context),
 
-            // ── Nội dung cuộn ──────────────────────────────────
+            // â”€â”€ Ná»™i dung cuá»™n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(bottom: 24),
@@ -107,25 +108,25 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
                     ),
 
                     if (_scheduleEnabled) ...[
-                      // Chọn ngày
+                      // Chá»n ngÃ y
                       Padding(
                         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: _buildDayPicker(),
                       ),
 
-                      // Khung giờ hoạt động
+                      // Khung giá» hoáº¡t Ä‘á»™ng
                       Padding(
                         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: _buildTimeSlotsSection(),
                       ),
 
-                      // Mẫu thiết lập sẵn
+                      // Máº«u thiáº¿t láº­p sáºµn
                       Padding(
                         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: _buildPresetsSection(),
                       ),
 
-                      // Xem trước lịch trình
+                      // Xem trÆ°á»›c lá»‹ch trÃ¬nh
                       Padding(
                         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: _buildSchedulePreview(),
@@ -138,7 +139,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
               ),
             ),
 
-            // ── Bottom bar nút lưu ──────────────────────────────
+            // â”€â”€ Bottom bar nÃºt lÆ°u â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             _buildBottomBar(),
           ],
         ),
@@ -146,61 +147,18 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  // ── AppBar tuỳ chỉnh ──────────────────────────────────────────────
+  // â”€â”€ AppBar tuá»³ chá»‰nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildAppBar(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 16),
-      decoration: const BoxDecoration(
-        color: Color(0xCCFFFFFF),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Nút back
-          GestureDetector(
-            onTap: () => Navigator.of(context).maybePop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.7),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: Color(0xFF0C4A40),
-              ),
-            ),
-          ),
-          // Tiêu đề căn giữa (bù padding trái của nút back)
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: 40),
-              child: Center(
-                child: Text(
-                  'Lịch hoạt động vùng an toàn',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF0C4A40),
-                    fontSize: ResponsiveHelper.sp(context, 18),
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w700,
-                    height: 1.25,
-                    letterSpacing: -0.45,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: AppBackHeaderBar(
+        title: 'Lịch hoạt động vùng an toàn',
+        onBack: () => Navigator.of(context).maybePop(),
       ),
     );
   }
 
-  // ── Toggle "Chỉ hoạt động trong khoảng thời gian" ─────────────────
+  // â”€â”€ Toggle "Chá»‰ hoáº¡t Ä‘á»™ng trong khoáº£ng thá»i gian" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildToggleCard() {
     return Container(
       width: double.infinity,
@@ -223,7 +181,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Text bên trái
+          // Text bÃªn trÃ¡i
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +251,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  // ── Chọn ngày trong tuần ──────────────────────────────────────────
+  // â”€â”€ Chá»n ngÃ y trong tuáº§n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildDayPicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,12 +320,12 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  // ── Khung giờ hoạt động ───────────────────────────────────────────
+  // â”€â”€ Khung giá» hoáº¡t Ä‘á»™ng â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildTimeSlotsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header + nút thêm
+        // Header + nÃºt thÃªm
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -404,7 +362,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
         ),
         const SizedBox(height: 12),
 
-        // Danh sách khung giờ
+        // Danh sÃ¡ch khung giá»
         ..._timeSlots.asMap().entries.map((e) => _buildTimeSlotCard(e.key, e.value)),
       ],
     );
@@ -434,7 +392,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Giờ + icon clock
+          // Giá» + icon clock
           Row(
             children: [
               Container(
@@ -463,7 +421,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
               ),
             ],
           ),
-          // Nút edit + delete
+          // NÃºt edit + delete
           Row(
             children: [
               // Edit
@@ -514,7 +472,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  // ── Mẫu thiết lập sẵn ─────────────────────────────────────────────
+  // â”€â”€ Máº«u thiáº¿t láº­p sáºµn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildPresetsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,7 +544,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  // ── Xem trước lịch trình (bar chart) ──────────────────────────────
+  // â”€â”€ Xem trÆ°á»›c lá»‹ch trÃ¬nh (bar chart) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildSchedulePreview() {
     final dayLabels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
     return Column(
@@ -623,7 +581,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
           ),
           child: Column(
             children: [
-              // Biểu đồ cột
+              // Biá»ƒu Ä‘á»“ cá»™t
               SizedBox(
                 height: 128,
                 child: Row(
@@ -680,7 +638,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Nhãn ngày bên dưới
+              // NhÃ£n ngÃ y bÃªn dÆ°á»›i
               Row(
                 children: List.generate(7, (i) {
                   return Expanded(
@@ -705,7 +663,7 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  // ── Bottom bar nút lưu ────────────────────────────────────────────
+  // â”€â”€ Bottom bar nÃºt lÆ°u â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildBottomBar() {
     return Container(
       width: double.infinity,
@@ -724,9 +682,9 @@ class _SafeZoneTimeRulesScreenState extends State<SafeZoneTimeRulesScreen> {
     );
   }
 
-  /// Lưu và trả kết quả về parent screen (Fix #1: dead-end)
+  /// LÆ°u vÃ  tráº£ káº¿t quáº£ vá» parent screen (Fix #1: dead-end)
   void _saveAndReturn() {
-    // Đóng gói kết quả để trả về parent (SafeZoneAdd / SafeZoneDetail)
+    // ÄÃ³ng gÃ³i káº¿t quáº£ Ä‘á»ƒ tráº£ vá» parent (SafeZoneAdd / SafeZoneDetail)
     final result = {
       'enabled': _scheduleEnabled,
       'days': Map<String, bool>.from(_days),

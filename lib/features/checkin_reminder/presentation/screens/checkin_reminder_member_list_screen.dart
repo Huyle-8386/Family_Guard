@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
-import 'package:family_guard/features/member/domain/entities/family_member.dart';
+import 'package:family_guard/features/member_management/domain/entities/family_member.dart';
+import 'package:flutter/material.dart';
 
 class CheckinReminderMemberListScreen extends StatelessWidget {
   const CheckinReminderMemberListScreen({super.key});
@@ -122,7 +122,8 @@ class CheckinReminderMemberListScreen extends StatelessWidget {
                     vertical: 8,
                   ),
                   itemCount: _members.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final member = _members[index];
                     return GestureDetector(
@@ -363,7 +364,7 @@ class _FeatureCard extends StatelessWidget {
           border: Border.all(color: const Color(0xFFEEF2F6), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

@@ -1,3 +1,4 @@
+﻿import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,7 +8,7 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Đăng ký')),
+      appBar: const AppBackHeaderBar(title: 'Đăng ký'),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -24,3 +25,4 @@ class SignupScreen extends StatelessWidget {
     );
   }
 }
+

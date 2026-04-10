@@ -1,9 +1,16 @@
+import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
+import 'package:family_guard/features/member_management/presentation/models/member_management_demo_data.dart';
 import 'package:flutter/material.dart';
-import 'package:family_guard/core/widgets/buttons/app_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MemberSelectionScreen extends StatefulWidget {
-  const MemberSelectionScreen({super.key});
+  const MemberSelectionScreen({
+    super.key,
+    this.args = const MemberSelectionArgs(),
+  });
+
+  final MemberSelectionArgs args;
 
   @override
   State<MemberSelectionScreen> createState() => _MemberSelectionScreenState();
@@ -12,35 +19,19 @@ class MemberSelectionScreen extends StatefulWidget {
 class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
   int selectedIndex = 0;
 
-  final members = const [
-    _MemberData(
-      name: 'Mẹ',
-      statusText: 'Trực tuyến',
-      statusColor: Color(0xFF22C55E),
-      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-    ),
-    _MemberData(
-      name: 'Bố',
-      statusText: 'Hoạt động 5p trước',
-      statusColor: Color(0xFF22C55E),
-      avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80',
-    ),
-    _MemberData(
-      name: 'Ông Nội',
-      statusText: 'Ngoại tuyến 2h',
-      statusColor: Color(0xFF94A3B8),
-      avatarUrl: 'https://images.unsplash.com/photo-1504593811423-6dd665756598?w=200&q=80',
-    ),
-    _MemberData(
-      name: 'Bé Chíp',
-      statusText: 'Trực tuyến',
-      statusColor: Color(0xFF22C55E),
-      avatarUrl: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=200&q=80',
-    ),
-  ];
+  List<MemberManagementMember> get _members =>
+      filterMemberManagementMembers(widget.args.query);
 
   @override
   Widget build(BuildContext context) {
+    final members = _members;
+    final safeSelectedIndex = selectedIndex >= members.length ? 0 : selectedIndex;
+    final selectedMember = members[safeSelectedIndex];
+    final queryLabel = widget.args.query.trim();
+    final description = queryLabel.isEmpty
+        ? 'Vui lòng chọn thành viên bạn muốn thao tác.'
+        : 'Kết quả phù hợp với "${widget.args.query}". Chọn một thành viên để tiếp tục.';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0F8F7),
       body: SafeArea(
@@ -56,7 +47,7 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Vui lòng chọn thành viên bạn muốn tạo hỏi thăm',
+                          description,
                           style: GoogleFonts.beVietnamPro(
                             color: const Color(0xFF64748B),
                             fontSize: 16,
@@ -78,7 +69,7 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
                           itemBuilder: (context, index) {
                             final member = members[index];
                             return _MemberCard(
-                              data: member,
+                              member: member,
                               isSelected: index == selectedIndex,
                               onTap: () => setState(() => selectedIndex = index),
                             );
@@ -110,17 +101,26 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
                 ),
                 child: SizedBox(
                   width: double.infinity,
-                  child: AppPrimaryButton(
-                    label: 'Xác nhận',
-                    onPressed: () {},
-                    borderRadius: 999,
-                    height: 56,
-                    backgroundColor: const Color(0xFF00ADB2),
-                    textStyle: GoogleFonts.beVietnamPro(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      height: 28 / 18,
-                      color: Colors.white,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      AppRoutes.memberDetails,
+                      arguments: selectedMember,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: const Color(0xFF00ADB2),
+                      foregroundColor: Colors.white,
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: Text(
+                      'Xác nhận',
+                      style: GoogleFonts.beVietnamPro(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        height: 28 / 18,
+                      ),
                     ),
                   ),
                 ),
@@ -135,76 +135,35 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
 
 class _Header extends StatelessWidget {
   const _Header({required this.onClose});
-
   final VoidCallback onClose;
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 73,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xE6F5F8F8),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0D000000),
-            blurRadius: 12,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Chọn thành viên',
-            style: GoogleFonts.publicSans(
-              color: const Color(0xFF00ADB2),
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.6,
-              height: 32 / 24,
-            ),
-          ),
-          InkWell(
-            onTap: onClose,
-            borderRadius: BorderRadius.circular(999),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x0D000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.close, size: 20, color: Color(0xFF64748B)),
-            ),
-          ),
-        ],
-      ),
+    return AppBackHeaderBar(
+      title: 'Chọn thành viên',
+      onBack: onClose,
+      titleFontSize: 24,
+      leadingSize: 32,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
     );
   }
 }
-
 class _MemberCard extends StatelessWidget {
   const _MemberCard({
-    required this.data,
+    required this.member,
     required this.isSelected,
     required this.onTap,
   });
 
-  final _MemberData data;
+  final MemberManagementMember member;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final statusColor = member.invitationPending
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF22C55E);
+
     return GestureDetector(
       onTap: onTap,
       child: Stack(
@@ -247,9 +206,9 @@ class _MemberCard extends StatelessWidget {
                         ),
                         child: ClipOval(
                           child: Image.network(
-                            data.avatarUrl,
+                            member.avatarUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (context, error, stackTrace) => Container(
                               color: const Color(0xFFE2E8F0),
                               alignment: Alignment.center,
                               child: const Icon(Icons.person, color: Color(0xFF64748B)),
@@ -264,7 +223,7 @@ class _MemberCard extends StatelessWidget {
                           width: 16,
                           height: 16,
                           decoration: BoxDecoration(
-                            color: data.statusColor,
+                            color: statusColor,
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
@@ -274,7 +233,7 @@ class _MemberCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    data.name,
+                    member.name,
                     style: GoogleFonts.publicSans(
                       color: const Color(0xFF0F172A),
                       fontSize: 18,
@@ -290,18 +249,18 @@ class _MemberCard extends StatelessWidget {
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: data.statusColor,
+                          color: statusColor,
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
-                          data.statusText,
+                          member.presenceLabel,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.beVietnamPro(
-                            color: data.statusColor == const Color(0xFF94A3B8)
+                            color: member.invitationPending
                                 ? const Color(0xFF94A3B8)
                                 : const Color(0xFF64748B),
                             fontSize: 12,
@@ -339,16 +298,4 @@ class _MemberCard extends StatelessWidget {
   }
 }
 
-class _MemberData {
-  const _MemberData({
-    required this.name,
-    required this.statusText,
-    required this.statusColor,
-    required this.avatarUrl,
-  });
 
-  final String name;
-  final String statusText;
-  final Color statusColor;
-  final String avatarUrl;
-}

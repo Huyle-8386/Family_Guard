@@ -7,19 +7,20 @@ import 'package:family_guard/features/safe_zone/domain/entities/safe_zone.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_dialog.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// SAFE ZONE MEMBER SCREEN â€“ Redesigned
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
+// SAFE ZONE MEMBER SCREEN – Redesigned
+// ═══════════════════════════════════════════════════════════════════
 class SafeZoneMemberScreen extends StatefulWidget {
   final Map<String, dynamic> member;
   final VoidCallback? onBackToHome;
   const SafeZoneMemberScreen({
-    Key? key,
-    this.member = const {'name': 'BÃ  Lan', 'role': 'NgÆ°á»i cao tuá»•i', 'avatar': 'B', 'id': '1'},
+    super.key,
+    this.member = const {'name': 'Bà Lan', 'role': 'Người cao tuổi', 'avatar': 'B', 'id': '1'},
     this.onBackToHome,
-  }) : super(key: key);
+  });
 
   @override
   State<SafeZoneMemberScreen> createState() => _SafeZoneMemberScreenState();
@@ -27,9 +28,8 @@ class SafeZoneMemberScreen extends StatefulWidget {
 
 class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
   List<SafeZone> get _zones => SafeZoneProvider.of(context).getZonesForMember(widget.member['id']);
-  int get _activeCount => _zones.where((z) => z.isActive).length;
 
-  // â”€â”€ toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── toast ──────────────────────────────────────────────────────
   void _toast(String msg) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -43,23 +43,23 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
       ));
   }
 
-  // â”€â”€ delete confirm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── delete confirm ─────────────────────────────────────────────
   void _confirmDelete(SafeZone zone) {
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'XÃ³a vÃ¹ng an toÃ n',
-      content: 'Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a "${zone.name}"?',
-      confirmText: 'XÃ³a',
+      title: 'Xóa vùng an toàn',
+      content: 'Bạn có chắc muốn xóa "${zone.name}"?',
+      confirmText: 'Xóa',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
         SafeZoneProvider.read(context).removeZone(zone.id);
-        _toast('ÄÃ£ xÃ³a "${zone.name}"');
+        _toast('Đã xóa "${zone.name}"');
       },
     );
   }
 
-  // â”€â”€ add zone bottom sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── add zone bottom sheet ──────────────────────────────────────
   void _showAddZoneSheet() {
     showModalBottomSheet(
       context: context,
@@ -77,13 +77,13 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
             isActive: true,
             recipientIds: [widget.member['id']],
           ));
-          _toast('ÄÃ£ thÃªm "$name"');
+          _toast('Đã thêm "$name"');
         },
       ),
     );
   }
 
-  // â”€â”€ edit zone bottom sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── edit zone bottom sheet ─────────────────────────────────────
   void _showEditSheet(SafeZone zone) {
     showModalBottomSheet(
       context: context,
@@ -99,33 +99,34 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
             radius: radius,
             address: address,
           ));
-          _toast('ÄÃ£ cáº­p nháº­t "$name"');
+          _toast('Đã cập nhật "$name"');
         },
       ),
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   // BUILD
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   @override
   Widget build(BuildContext context) {
     final bottomPad = MediaQuery.of(context).padding.bottom;
+    final topInset = MediaQuery.of(context).padding.top;
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('VÃ¹ng an toÃ n'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            if (Navigator.of(context, rootNavigator: true).canPop()) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
-          },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(72 + topInset),
+        child: SafeArea(
+          bottom: false,
+          child: AppBackHeaderBar(
+            title: 'Vùng an toàn',
+            onBack: () {
+              if (Navigator.of(context, rootNavigator: true).canPop()) {
+                Navigator.of(context, rootNavigator: true).pop();
+              }
+            },
+          ),
         ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomPad),
@@ -138,29 +139,41 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
                 Navigator.of(context, rootNavigator: true).pop();
               }
             },
-            child: const Text('Quay vá»'),
+            child: const Text('Quay về'),
           ),
         ),
       ),
       body: SafeArea(
-        bottom: false,
         child: Column(children: [
           _buildMemberCard(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('VÃ¹ng an toÃ n Ä‘ang hoáº¡t Ä‘á»™ng',
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600)),
-                Row(children: const [
-                  Icon(Icons.swipe, size: 16, color: Color(0xFF00ACB2)),
-                  SizedBox(width: 4),
-                  Text('Vuá»‘t Ä‘á»ƒ sá»­a/xÃ³a',
-                      style: TextStyle(
-                          fontSize: 13, color: Color(0xFF00ACB2))),
-                ]),
+                const Expanded(
+                  child: Text(
+                    'Vùng an toàn đang hoạt động',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Wrap(
+                      spacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.end,
+                      children: const [
+                        Icon(Icons.swipe, size: 16, color: Color(0xFF00ACB2)),
+                        Text(
+                          'Vuốt để sửa/xóa',
+                          style: TextStyle(fontSize: 13, color: Color(0xFF00ACB2)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -168,7 +181,7 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
             child: Stack(children: [
               ListView.builder(
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 100 + bottomPad),
-                itemCount: _zones.length, // KhÃ´ng cÃ²n card thÃ nh viÃªn á»Ÿ Ä‘áº§u
+                itemCount: _zones.length,
                 itemBuilder: (_, i) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -189,71 +202,8 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
     );
   }
 
-  // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        ResponsiveHelper.horizontalPadding(context),
-        12,
-        ResponsiveHelper.horizontalPadding(context),
-        12,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.kPrimaryLight, AppColors.background],
-        ),
-      ),
-      child: Row(children: [
-        // Back button
-        GestureDetector(
-            onTap: () {
-              if (Navigator.of(context, rootNavigator: true).canPop()) {
-                Navigator.of(context, rootNavigator: true).pop();
-              }
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(9999)),
-                ),
-                shadows: [
-                  BoxShadow(
-                      color: Color(0x0C000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1)),
-                ],
-              ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  size: 18, color: Color(0xFF00ACB2)),
-            ),
-          ),
 
-        // Title centered
-        Expanded(
-          child: Text(
-            'VÃ¹ng an toÃ n',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Lexend',
-              fontSize: ResponsiveHelper.sp(context, 20),
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF006D5B),
-            ),
-          ),
-        ),
-
-        // Spacer to balance the back button
-        const SizedBox(width: 40),
-      ]),
-    );
-  }
-
-  // â”€â”€ Member Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Member Card ───────────────────────────────────────────────
   Widget _buildMemberCard() {
     final member = widget.member;
     return Padding(
@@ -320,7 +270,7 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
                   const Icon(Icons.shield_rounded,
                       size: 15, color: Color(0xFF45A191)),
                   const SizedBox(width: 5),
-                  Text('${member['activeZones'] ?? 0} vÃ¹ng an toÃ n Ä‘ang báº­t',
+                  Text('${member['activeZones'] ?? 0} vùng an toàn đang bật',
                       style: TextStyle(
                         fontFamily: 'Lexend',
                         fontSize: ResponsiveHelper.sp(context, 13),
@@ -344,7 +294,7 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
     );
   }
 
-  // â”€â”€ Swipeable Zone Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Swipeable Zone Card ───────────────────────────────────────
   Widget _buildSwipeableZoneCard(SafeZone zone) {
     return _SwipeableZoneItem(
       zone: zone,
@@ -477,7 +427,7 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
     );
   }
 
-  // â”€â”€ Map thumbnail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Map thumbnail ─────────────────────────────────────────────
   Widget _buildMapThumb(SafeZone zone) {
     final center = LatLng(zone.latitude, zone.longitude);
     return Container(
@@ -516,7 +466,7 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
     );
   }
 
-  // â”€â”€ FAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── FAB ────────────────────────────────────────────────────────
   Widget _buildFAB() {
     return GestureDetector(
       onTap: _showAddZoneSheet,
@@ -545,9 +495,9 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// SWIPEABLE ZONE ITEM â€“ reveals Edit/Delete on swipe left
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
+// SWIPEABLE ZONE ITEM – reveals Edit/Delete on swipe left
+// ═══════════════════════════════════════════════════════════════════
 class _SwipeableZoneItem extends StatefulWidget {
   final SafeZone zone;
   final VoidCallback onEdit;
@@ -570,7 +520,7 @@ class _SwipeableZoneItemState extends State<_SwipeableZoneItem>
   late final AnimationController _ctrl;
   late Animation<Offset> _slideAnim;
   double _dragExtent = 0;
-  static const double _actionWidth = 120; // 2 buttons Ã— 60
+  static const double _actionWidth = 120; // 2 buttons x 60
 
   @override
   void initState() {
@@ -639,7 +589,7 @@ class _SwipeableZoneItemState extends State<_SwipeableZoneItem>
                           Icon(Icons.edit_rounded,
                               color: Colors.white, size: 22),
                           SizedBox(height: 4),
-                          Text('Sá»­a',
+                          Text('Sửa',
                               style: TextStyle(
                                   fontFamily: 'Lexend',
                                   fontSize: 11,
@@ -664,7 +614,7 @@ class _SwipeableZoneItemState extends State<_SwipeableZoneItem>
                           Icon(Icons.delete_rounded,
                               color: Colors.white, size: 22),
                           SizedBox(height: 4),
-                          Text('XÃ³a',
+                          Text('Xóa',
                               style: TextStyle(
                                   fontFamily: 'Lexend',
                                   fontSize: 11,
@@ -680,7 +630,7 @@ class _SwipeableZoneItemState extends State<_SwipeableZoneItem>
           // Foreground card
           AnimatedBuilder(
             animation: _ctrl,
-            builder: (_, __) => Transform.translate(
+            builder: (context, child) => Transform.translate(
               offset: _slideAnim.value,
               child: GestureDetector(
                 onHorizontalDragUpdate: _onHorizontalDragUpdate,
@@ -695,9 +645,9 @@ class _SwipeableZoneItemState extends State<_SwipeableZoneItem>
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
 // ADD ZONE BOTTOM SHEET
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
 class _AddZoneSheet extends StatefulWidget {
   final void Function(
       String name, double lat, double lng, double radius, String address)
@@ -773,7 +723,7 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
                   color: Color(0xFF00ACB2), size: 20),
             ),
             const SizedBox(width: 10),
-            const Text('ThÃªm vÃ¹ng má»›i',
+            const Text('Thêm vùng mới',
                 style: TextStyle(
                   fontFamily: 'Lexend',
                   fontSize: 18,
@@ -792,12 +742,12 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Name input
-                _label('TÃªn vÃ¹ng'),
-                _textField(_nameCtrl, 'Nháº­p tÃªn vÃ¹ng an toÃ n...'),
+                _label('Tên vùng'),
+                _textField(_nameCtrl, 'Nhập tên vùng an toàn...'),
                 const SizedBox(height: 14),
 
                 // Map
-                _label('Chá»n vá»‹ trÃ­ trÃªn báº£n Ä‘á»“'),
+                _label('Chọn vị trí trên bản đồ'),
                 const SizedBox(height: 6),
                 Container(
                   height: 220,
@@ -852,7 +802,7 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
                 if (_selectedPoint == null)
                   const Padding(
                     padding: EdgeInsets.only(top: 6),
-                    child: Text('Nháº¥n vÃ o báº£n Ä‘á»“ Ä‘á»ƒ chá»n vá»‹ trÃ­',
+                    child: Text('Nhấn vào bản đồ để chọn vị trí',
                         style: TextStyle(
                             fontFamily: 'Lexend',
                             fontSize: 11,
@@ -861,7 +811,7 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
                 const SizedBox(height: 14),
 
                 // Radius slider
-                _label('BÃ¡n kÃ­nh: ${_radius >= 1000 ? '${(_radius / 1000).toStringAsFixed(1)}km' : '${_radius.round()}m'}'),
+                _label('Bán kính: ${_radius >= 1000 ? '${(_radius / 1000).toStringAsFixed(1)}km' : '${_radius.round()}m'}'),
                 SliderTheme(
                   data: SliderThemeData(
                     activeTrackColor: const Color(0xFF00ACB2),
@@ -900,8 +850,8 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
                 const SizedBox(height: 14),
 
                 // Address
-                _label('Äá»‹a chá»‰'),
-                _textField(_addressCtrl, 'Tá»± Ä‘iá»n khi chá»n vá»‹ trÃ­...',
+                _label('Địa chỉ'),
+                _textField(_addressCtrl, 'Tự điền khi chọn vị trí...',
                     readOnly: true),
                 const SizedBox(height: 20),
               ],
@@ -909,7 +859,7 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
           ),
         ),
 
-        // Buttons â€” always visible
+        // Buttons — always visible
         Padding(
           padding: EdgeInsets.fromLTRB(24, 4, 24, 20 + keyboardInset),
           child: Row(children: [
@@ -923,7 +873,7 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: const Text('Há»§y',
+                  child: const Text('Hủy',
                       style: TextStyle(
                           fontFamily: 'Lexend',
                           fontWeight: FontWeight.w600,
@@ -943,7 +893,7 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('LÆ°u',
+                  child: const Text('Lưu',
                       style: TextStyle(
                           fontFamily: 'Lexend',
                           fontWeight: FontWeight.w700,
@@ -964,11 +914,11 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
 
   void _save() {
     if (_nameCtrl.text.trim().isEmpty) {
-      _toast('Vui lÃ²ng nháº­p tÃªn vÃ¹ng');
+      _toast('Vui lòng nhập tên vùng');
       return;
     }
     if (_selectedPoint == null) {
-      _toast('Vui lÃ²ng chá»n vá»‹ trÃ­ trÃªn báº£n Ä‘á»“');
+      _toast('Vui lòng chọn vị trí trên bản đồ');
       return;
     }
     widget.onSave(
@@ -1023,9 +973,9 @@ class _AddZoneSheetState extends State<_AddZoneSheet> {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
 // EDIT ZONE BOTTOM SHEET
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
 class _EditZoneSheet extends StatefulWidget {
   final SafeZone zone;
   final void Function(
@@ -1112,7 +1062,7 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
                   color: Color(0xFFF59E0B), size: 20),
             ),
             const SizedBox(width: 10),
-            const Text('Chá»‰nh sá»­a vÃ¹ng',
+            const Text('Chỉnh sửa vùng',
                 style: TextStyle(
                   fontFamily: 'Lexend',
                   fontSize: 18,
@@ -1129,11 +1079,11 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _label('TÃªn vÃ¹ng'),
-                _textField(_nameCtrl, 'Nháº­p tÃªn vÃ¹ng an toÃ n...'),
+                _label('Tên vùng'),
+                _textField(_nameCtrl, 'Nhập tên vùng an toàn...'),
                 const SizedBox(height: 14),
 
-                _label('Chá»n vá»‹ trÃ­ trÃªn báº£n Ä‘á»“'),
+                _label('Chọn vị trí trên bản đồ'),
                 const SizedBox(height: 6),
                 Container(
                   height: 220,
@@ -1183,7 +1133,7 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
                 ),
                 const SizedBox(height: 14),
 
-                _label('BÃ¡n kÃ­nh: ${_radius >= 1000 ? '${(_radius / 1000).toStringAsFixed(1)}km' : '${_radius.round()}m'}'),
+                _label('Bán kính: ${_radius >= 1000 ? '${(_radius / 1000).toStringAsFixed(1)}km' : '${_radius.round()}m'}'),
                 SliderTheme(
                   data: SliderThemeData(
                     activeTrackColor: const Color(0xFF00ACB2),
@@ -1218,8 +1168,8 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
                 ),
                 const SizedBox(height: 14),
 
-                _label('Äá»‹a chá»‰'),
-                _textField(_addressCtrl, 'Tá»± Ä‘iá»n khi chá»n vá»‹ trÃ­...',
+                _label('Địa chỉ'),
+                _textField(_addressCtrl, 'Tự điền khi chọn vị trí...',
                     readOnly: true),
                 const SizedBox(height: 20),
               ],
@@ -1235,7 +1185,7 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
                 height: 48,
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Há»§y'),
+                  child: const Text('Hủy'),
                 ),
               ),
             ),
@@ -1245,7 +1195,7 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: _save,
-                  child: const Text('LÆ°u'),
+                  child: const Text('Lưu'),
                 ),
               ),
             ),
@@ -1259,7 +1209,7 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
 
   void _save() {
     if (_nameCtrl.text.trim().isEmpty) {
-      _toast('Vui lÃ²ng nháº­p tÃªn vÃ¹ng');
+      _toast('Vui lòng nhập tên vùng');
       return;
     }
     widget.onSave(
@@ -1314,9 +1264,9 @@ class _EditZoneSheetState extends State<_EditZoneSheet> {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// SAFE ZONE DETAIL SCREEN (redesigned) â€“ inline in same file
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
+// SAFE ZONE DETAIL SCREEN (redesigned) – inline in same file
+// ═══════════════════════════════════════════════════════════════════
 class SafeZoneDetailRedesigned extends StatefulWidget {
   final String zoneId;
   const SafeZoneDetailRedesigned({super.key, required this.zoneId});
@@ -1335,9 +1285,9 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'XÃ³a vÃ¹ng an toÃ n',
-      content: 'Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a "${zone.name}"?',
-      confirmText: 'XÃ³a',
+      title: 'Xóa vùng an toàn',
+      content: 'Bạn có chắc muốn xóa "${zone.name}"?',
+      confirmText: 'Xóa',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
         SafeZoneProvider.read(context).removeZone(zone.id);
@@ -1353,7 +1303,7 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
       return const Scaffold(
         backgroundColor: AppColors.background,
         body: Center(
-            child: Text('VÃ¹ng khÃ´ng tá»“n táº¡i',
+            child: Text('Vùng không tồn tại',
                 style: TextStyle(fontFamily: 'Lexend'))),
       );
     }
@@ -1366,77 +1316,37 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
     final appliedMembers = members
         .where((m) => zone.recipientIds.contains(m.id))
         .toList();
+    final topInset = MediaQuery.of(context).padding.top;
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(children: [
-        // Header
-        SafeArea(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(72 + topInset),
+        child: SafeArea(
           bottom: false,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppColors.kPrimaryLight, AppColors.background],
+          child: AppBackHeaderBar(
+            title: zone.name,
+            trailing: GestureDetector(
+              onTap: () => Navigator.of(context)
+                  .pushNamed(AppRoutes.safeZoneEdit, arguments: zone.id),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: AppColors.kPrimaryLight,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.edit_rounded,
+                    size: 18, color: Color(0xFF00ACB2)),
               ),
             ),
-            child: Row(children: [
-              GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(9999)),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                          color: Color(0x0C000000),
-                          blurRadius: 2,
-                          offset: Offset(0, 1)),
-                    ],
-                  ),
-                  child: const Icon(Icons.arrow_back_ios_new_rounded,
-                      size: 18, color: Color(0xFF00ACB2)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(zone.name,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Lexend',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF006D5B),
-                    )),
-              ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: () => Navigator.of(context)
-                    .pushNamed(AppRoutes.safeZoneEdit, arguments: zone.id),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: AppColors.kPrimaryLight,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.edit_rounded,
-                      size: 18, color: Color(0xFF00ACB2)),
-                ),
-              ),
-            ]),
+            trailingAreaWidth: 44,
           ),
         ),
+      ),
+      body: Column(children: [
 
-        // Map â€” 50% of remaining height
+        // Map — 50% of remaining height
         Expanded(
           flex: 5,
           child: FlutterMap(
@@ -1487,7 +1397,7 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
           ),
         ),
 
-        // Info panel â€” 50% of remaining height
+        // Info panel — 50% of remaining height
         Expanded(
           flex: 5,
           child: Container(
@@ -1521,13 +1431,12 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
                     ),
 
                     // Address
-                    _infoRow(Icons.location_on_rounded, 'Äá»‹a chá»‰',
+                    _infoRow(Icons.location_on_rounded, 'Địa chỉ',
                         zone.address),
                     const SizedBox(height: 14),
 
                     // Radius
-                    _infoRow(
-                        Icons.radar_rounded, 'BÃ¡n kÃ­nh', radiusLabel),
+                    _infoRow(Icons.radar_rounded, 'Bán kính', radiusLabel),
                     const SizedBox(height: 14),
 
                     // Status
@@ -1535,13 +1444,13 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
                       zone.isActive
                           ? Icons.check_circle_rounded
                           : Icons.pause_circle_rounded,
-                      'Tráº¡ng thÃ¡i',
-                      zone.isActive ? 'Äang hoáº¡t Ä‘á»™ng' : 'ÄÃ£ táº¯t',
+                      'Trạng thái',
+                      zone.isActive ? 'Đang hoạt động' : 'Đã tắt',
                     ),
                     const SizedBox(height: 14),
 
                     // Members
-                    const Text('ThÃ nh viÃªn Ä‘Æ°á»£c Ã¡p dá»¥ng',
+                    const Text('Thành viên được áp dụng',
                         style: TextStyle(
                           fontFamily: 'Lexend',
                           fontSize: 13,
@@ -1580,7 +1489,7 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
                         onPressed: _confirmDelete,
                         icon: const Icon(Icons.delete_outline_rounded,
                             color: Color(0xFFEF4444), size: 20),
-                        label: const Text('XÃ³a vÃ¹ng'),
+                        label: const Text('Xóa vùng'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFFEF4444),
                           side:
@@ -1630,42 +1539,13 @@ class _SafeZoneDetailRedesignedState extends State<SafeZoneDetailRedesigned> {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
 // AVATAR PAINTER
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-class _AvatarPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFB2EFE7), Color(0xFF80DDD1)],
-        ).createShader(rect),
-    );
-    final tp = TextPainter(
-      text: const TextSpan(
-        text: 'A',
-        style: TextStyle(
-          color: Color(0xFF00796B),
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(
-      canvas,
-      Offset((size.width - tp.width) / 2, (size.height - tp.height) / 2),
-    );
-  }
+// ═══════════════════════════════════════════════════════════════════
 
-  @override
-  bool shouldRepaint(covariant CustomPainter old) => false;
-}
+
+
+
 
 
 

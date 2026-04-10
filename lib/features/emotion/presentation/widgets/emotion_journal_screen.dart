@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EmotionJournalScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class EmotionJournalScreen extends StatelessWidget {
             const _TopDecoration(),
             Positioned.fill(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(12, 44, 12, 120),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 120),
                 child: Column(
                   children: [
                     const _Header(),
@@ -162,64 +163,18 @@ class _TopDecoration extends StatelessWidget {
     );
   }
 }
-
 class _Header extends StatelessWidget {
   const _Header();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 64,
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            top: 12,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.8),
-                shape: BoxShape.circle,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x0D000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                onPressed: () => Navigator.maybePop(context),
-                icon: const Icon(Icons.arrow_back, color: Color(0xFF1A3C40), size: 20),
-                padding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 56),
-                child: Text(
-                  'Nhật ký cảm xúc',
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.beVietnamPro(
-                    color: const Color(0xFF00ACB1),
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    height: 28 / 20,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return const AppBackHeaderBar(
+      title: 'Nhật ký cảm xúc',
+      backgroundColor: Colors.transparent,
     );
   }
 }
+
 
 class _MemberMoodCard extends StatelessWidget {
   const _MemberMoodCard({

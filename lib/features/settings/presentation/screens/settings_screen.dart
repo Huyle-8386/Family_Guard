@@ -1,17 +1,31 @@
-// ignore_for_file: unused_element
-
-import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/widgets/app_bottom_menu.dart';
+import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/widgets/password_security_screen.dart';
+import 'package:family_guard/features/settings/presentation/screens/settings_app_theme_screen.dart';
+import 'package:family_guard/features/settings/presentation/screens/settings_notification_preferences_screen.dart';
+import 'package:family_guard/features/settings/presentation/screens/settings_safety_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({
+    super.key,
+    this.homeRouteName = AppRoutes.home,
+    this.trackingRouteName = AppRoutes.tracking,
+    this.notificationsRouteName = AppRoutes.notifications,
+    this.settingsRouteName = AppRoutes.settings,
+  });
+
+  final String homeRouteName;
+  final String trackingRouteName;
+  final String notificationsRouteName;
+  final String settingsRouteName;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFCCEFF0),
+      backgroundColor: const Color(0xFFF0F8F7),
       body: SafeArea(
         child: Stack(
           children: [
@@ -23,94 +37,244 @@ class SettingsScreen extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 96),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        _ProfileCard(),
-                        SizedBox(height: 24),
+                      children: [
+                        _ProfileCard(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => PersonalInfoScreen(
+                                homeRouteName: homeRouteName,
+                                trackingRouteName: trackingRouteName,
+                                settingsRouteName: settingsRouteName,
+                                thirdTabRouteName: notificationsRouteName,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
                         _SectionBlock(
                           title: 'Tài khoản',
                           items: [
                             _MenuItemData(
                               icon: Icons.person_outline,
-                              iconBg: Color(0xFFEFF6FF),
-                              iconColor: Color(0xFF2563EB),
+                              iconBg: const Color(0xFFEFF6FF),
+                              iconColor: const Color(0xFF2563EB),
                               label: 'Thông tin cá nhân',
-                              routeName: AppRoutes.profile,
+                              onTap: (ctx) => Navigator.of(ctx).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => PersonalInfoScreen(
+                                    homeRouteName: homeRouteName,
+                                    trackingRouteName: trackingRouteName,
+                                    settingsRouteName: settingsRouteName,
+                                    thirdTabRouteName: notificationsRouteName,
+                                  ),
+                                ),
+                              ),
                             ),
                             _MenuItemData(
                               icon: Icons.lock_outline,
-                              iconBg: Color(0xFFEEF2FF),
-                              iconColor: Color(0xFF4F46E5),
+                              iconBg: const Color(0xFFEEF2FF),
+                              iconColor: const Color(0xFF4F46E5),
                               label: 'Mật khẩu & Bảo mật',
-                              routeName: AppRoutes.passwordSecurity,
+                              onTap: (ctx) => Navigator.of(ctx).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => PasswordSecurityScreen(
+                                    homeRouteName: homeRouteName,
+                                    trackingRouteName: trackingRouteName,
+                                    notificationsRouteName:
+                                        notificationsRouteName,
+                                    settingsRouteName: settingsRouteName,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 24),
+                        const SizedBox(height: 24),
                         _SectionBlock(
                           title: 'Gia đình',
                           items: [
                             _MenuItemData(
                               icon: Icons.groups_2_outlined,
-                              iconBg: Color(0x3317E8E8),
-                              iconColor: Color(0xFF00ACB1),
+                              iconBg: const Color(0x3317E8E8),
+                              iconColor: const Color(0xFF00ACB1),
                               label: 'Quản Lí Thành Viên',
-                              routeName: AppRoutes.memberList,
+                              onTap: (ctx) => Navigator.pushNamed(
+                                ctx,
+                                AppRoutes.memberList,
+                              ),
                             ),
                             _MenuItemData(
                               icon: Icons.location_on_outlined,
-                              iconBg: Color(0xFFECFDF5),
-                              iconColor: Color(0xFF16A34A),
+                              iconBg: const Color(0xFFECFDF5),
+                              iconColor: const Color(0xFF16A34A),
                               label: 'Vùng An Toàn',
-                              routeName: AppRoutes.safeZone,
+                              onTap: (ctx) =>
+                                  Navigator.pushNamed(ctx, AppRoutes.safeZone),
                             ),
                           ],
                         ),
-                        SizedBox(height: 24),
+                        const SizedBox(height: 24),
                         _SectionBlock(
                           title: 'Tùy chọn',
                           items: [
                             _MenuItemData(
                               icon: Icons.notifications_none,
-                              iconBg: Color(0xFFFFF7ED),
-                              iconColor: Color(0xFFEA580C),
+                              iconBg: const Color(0xFFFFF7ED),
+                              iconColor: const Color(0xFFEA580C),
                               label: 'Thông Báo',
-                              routeName: AppRoutes.notifications,
+                              onTap: (ctx) => Navigator.of(ctx).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) =>
+                                      SettingsNotificationPreferencesScreen(
+                                        homeRouteName: homeRouteName,
+                                        trackingRouteName: trackingRouteName,
+                                        settingsRouteName: settingsRouteName,
+                                        notificationsRouteName:
+                                            notificationsRouteName,
+                                      ),
+                                ),
+                              ),
                             ),
                             _MenuItemData(
                               icon: Icons.palette_outlined,
-                              iconBg: Color(0xFFFAF5FF),
-                              iconColor: Color(0xFF9333EA),
+                              iconBg: const Color(0xFFFAF5FF),
+                              iconColor: const Color(0xFF9333EA),
                               label: 'Màu Sắc Ứng Dụng',
-                              routeName: AppRoutes.settings,
+                              onTap: (ctx) => Navigator.of(ctx).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => SettingsAppThemeScreen(
+                                    homeRouteName: homeRouteName,
+                                    trackingRouteName: trackingRouteName,
+                                    settingsRouteName: settingsRouteName,
+                                    notificationsRouteName:
+                                        notificationsRouteName,
+                                  ),
+                                ),
+                              ),
                             ),
                             _MenuItemData(
                               icon: Icons.shield_outlined,
-                              iconBg: Color(0xFFF3F4F6),
-                              iconColor: Color(0xFF6B7280),
+                              iconBg: const Color(0xFFF3F4F6),
+                              iconColor: const Color(0xFF6B7280),
                               label: 'An Toàn',
-                              routeName: AppRoutes.priorityContacts,
+                              onTap: (ctx) => Navigator.of(ctx).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => SettingsSafetyScreen(
+                                    homeRouteName: homeRouteName,
+                                    trackingRouteName: trackingRouteName,
+                                    settingsRouteName: settingsRouteName,
+                                    notificationsRouteName:
+                                        notificationsRouteName,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
-                        _LogoutButton(),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 16),
+                        _LogoutButton(onTap: () => _showLogoutDialog(context)),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-            const Positioned(
+            Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              child: AppBottomMenu(current: AppNavTab.settings),
+              child: AppFlowBottomNav(
+                current: AppNavTab.settings,
+                homeRouteName: homeRouteName,
+                trackingRouteName: trackingRouteName,
+                settingsRouteName: settingsRouteName,
+                thirdTabRouteName: notificationsRouteName,
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _showLogoutDialog(BuildContext context) async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.logout_rounded,
+                  color: Color(0xFFEF4444),
+                  size: 32,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Đăng xuất?',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF111818),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Nhấn OK để quay về màn hình đăng nhập, hoặc Hủy để ở lại.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF638888),
+                    fontSize: 14,
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF334155),
+                          side: const BorderSide(color: Color(0xFFE2E8F0)),
+                          shape: const StadiumBorder(),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: const Text('Hủy'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFEF4444),
+                          shape: const StadiumBorder(),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: const Text('OK'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (shouldLogout == true && context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (_) => false);
+    }
   }
 }
 
@@ -121,7 +285,7 @@ class _SettingsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: const Color(0xFFCCEFF0),
+      color: const Color(0xFFF0F8F7),
       padding: const EdgeInsets.fromLTRB(20, 48, 20, 16),
       child: Text(
         'Cài đặt',
@@ -138,93 +302,103 @@ class _SettingsHeader extends StatelessWidget {
 }
 
 class _ProfileCard extends StatelessWidget {
-  const _ProfileCard();
+  const _ProfileCard({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0D000000),
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Stack(
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                  image: const DecorationImage(
-                    image: NetworkImage(
-                      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&q=80',
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 1,
-                bottom: 1,
-                child: Container(
-                  width: 20,
-                  height: 20,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(32),
+      child: Container(
+        padding: const EdgeInsets.all(17),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: const Color(0xFFF3F4F6)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0D000000),
+              blurRadius: 2,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF22C55E),
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
+                    image: const DecorationImage(
+                      image: NetworkImage(
+                        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Là Khôn',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF111818),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    height: 1.2,
-                  ),
-                ),
-                Text(
-                  'lakhon.vcl@email.com',
-                  style: GoogleFonts.inter(
-                    color: const Color(0xFF638888),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.4,
+                Positioned(
+                  right: 1,
+                  bottom: 1,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF22C55E),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          Container(
-            width: 32,
-            height: 32,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF9FAFB),
-              shape: BoxShape.circle,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Mẹ Xôi',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF111818),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                  ),
+                  Text(
+                    'lakhon.vcl@email.com',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF638888),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF9CA3AF)),
-          ),
-        ],
+            Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF9FAFB),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.edit_outlined,
+                size: 16,
+                color: Color(0xFF9CA3AF),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -297,7 +471,7 @@ class _SectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, item.routeName),
+      onTap: () => item.onTap(context),
       borderRadius: BorderRadius.circular(24),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -324,7 +498,11 @@ class _SectionItem extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF), size: 20),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Color(0xFF9CA3AF),
+              size: 20,
+            ),
           ],
         ),
       ),
@@ -338,112 +516,51 @@ class _MenuItemData {
     required this.iconBg,
     required this.iconColor,
     required this.label,
-    required this.routeName,
+    required this.onTap,
   });
 
   final IconData icon;
   final Color iconBg;
   final Color iconColor;
   final String label;
-  final String routeName;
+  final void Function(BuildContext context) onTap;
 }
 
 class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
+  const _LogoutButton({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0D000000),
-            blurRadius: 2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Text(
-        'Đăng Xuất',
-        textAlign: TextAlign.center,
-        style: GoogleFonts.inter(
-          color: const Color(0xFFEF4444),
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          height: 1.5,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(32),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: const Color(0xFFF3F4F6)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0D000000),
+              blurRadius: 2,
+              offset: Offset(0, 1),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _SettingsBottomNav extends StatelessWidget {
-  const _SettingsBottomNav();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 78,
-      padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x3300ADB2),
-            blurRadius: 30,
-            offset: Offset(0, 8),
+        child: Text(
+          'Đăng Xuất',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.inter(
+            color: const Color(0xFFEF4444),
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            height: 1.5,
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          _NavItem(icon: Icons.groups_outlined),
-          _NavItem(icon: Icons.map_outlined),
-          _NavItem(icon: Icons.notifications_none),
-          _NavItem(icon: Icons.person, selected: true),
-        ],
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  const _NavItem({required this.icon, this.selected = false});
-
-  final IconData icon;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        color: selected ? const Color(0xFF00ACB1) : Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: selected
-            ? const [
-                BoxShadow(
-                  color: Color(0x6600ADB2),
-                  blurRadius: 15,
-                  offset: Offset(0, 6),
-                ),
-              ]
-            : null,
-      ),
-      alignment: Alignment.center,
-      child: Icon(
-        icon,
-        size: 24,
-        color: selected ? const Color(0xFF002244) : const Color(0xFF9CA3AF),
+        ),
       ),
     );
   }

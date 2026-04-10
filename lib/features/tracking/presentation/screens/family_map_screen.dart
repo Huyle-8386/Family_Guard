@@ -2,25 +2,55 @@
 
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/widgets/app_bottom_menu.dart';
-import 'package:family_guard/core/widgets/buttons/app_button.dart';
+import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
+import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
+import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
+import 'package:family_guard/features/calling/presentation/widgets/call_bottom_sheets.dart';
+import 'package:family_guard/features/chat/presentation/screens/chat_models.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 
 class FamilyMapScreen extends StatefulWidget {
-  const FamilyMapScreen({super.key});
+  const FamilyMapScreen({
+    super.key,
+    this.homeRouteName = AppRoutes.home,
+    this.trackingRouteName = AppRoutes.tracking,
+    this.notificationsRouteName = AppRoutes.notifications,
+    this.settingsRouteName = AppRoutes.settings,
+  });
+
+  final String homeRouteName;
+  final String trackingRouteName;
+  final String notificationsRouteName;
+  final String settingsRouteName;
 
   @override
   State<FamilyMapScreen> createState() => _FamilyMapScreenState();
 }
 
-class _FamilyMapScreenState extends State<FamilyMapScreen> {
+class _FamilyMapScreenState extends State<FamilyMapScreen>
+    with SingleTickerProviderStateMixin {
+  static const LatLng _initialCenter = LatLng(16.0544, 108.2022);
+  static const double _initialZoom = 15;
+  static const LatLng _safeZoneCenter = LatLng(16.0544, 108.2022);
+  static const double _safeZoneRadius = 200;
+
+  final MapController _mapController = MapController();
+  late final AnimationController _mapAnimationController;
+
+  _LatLngTween? _centerTween;
+  Tween<double>? _zoomTween;
+  bool _isMapReady = false;
+
   _MemberFilter _selectedFilter = _MemberFilter.all;
   String? _selectedMemberName;
 
+  // Fake tracking data for now.
+  // TODO: replace with repository/use case calling GET /tracking/locations/current.
   static const List<_MapMember> _members = [
     _MapMember(
+      id: '1',
       name: 'Xôi',
       role: _MemberFilter.children,
       battery: 82,
@@ -28,21 +58,39 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
       distanceLabel: '0.5 km',
       activityIcon: Icons.directions_walk,
       markerBorderColor: Color(0xFF60A5FA),
-      location: LatLng(40.7212, -73.9950),
-      avatarUrl: 'https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?q=80&w=300&auto=format&fit=crop',
+      location: LatLng(16.0544, 108.2022),
+      routeHistory: [
+        LatLng(16.0528, 108.1988),
+        LatLng(16.0533, 108.1998),
+        LatLng(16.0539, 108.2007),
+        LatLng(16.0544, 108.2015),
+        LatLng(16.0544, 108.2022),
+      ],
+      avatarUrl:
+          'https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?q=80&w=300&auto=format&fit=crop',
     ),
     _MapMember(
-      name: 'Bố xôi',
+      id: '2',
+      name: 'Bố Xôi',
       role: _MemberFilter.adults,
       battery: 82,
       subtitle: 'Đang lái xe',
       distanceLabel: '3 km',
       activityIcon: Icons.pedal_bike_rounded,
       markerBorderColor: Color(0xFF17E8E8),
-      location: LatLng(40.7342, -74.0195),
-      avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop',
+      location: LatLng(16.0560, 108.2040),
+      routeHistory: [
+        LatLng(16.0581, 108.2062),
+        LatLng(16.0574, 108.2056),
+        LatLng(16.0569, 108.2050),
+        LatLng(16.0564, 108.2044),
+        LatLng(16.0560, 108.2040),
+      ],
+      avatarUrl:
+          'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop',
     ),
     _MapMember(
+      id: '3',
       name: 'Bà nội',
       role: _MemberFilter.seniors,
       battery: 82,
@@ -50,8 +98,16 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
       distanceLabel: '5 km',
       activityIcon: Icons.directions_walk,
       markerBorderColor: Color(0xFF4ADE80),
-      location: LatLng(40.7539, -73.9880),
-      avatarUrl: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=300&auto=format&fit=crop',
+      location: LatLng(16.0529, 108.2058),
+      routeHistory: [
+        LatLng(16.0518, 108.2074),
+        LatLng(16.0521, 108.2069),
+        LatLng(16.0524, 108.2064),
+        LatLng(16.0527, 108.2060),
+        LatLng(16.0529, 108.2058),
+      ],
+      avatarUrl:
+          'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=300&auto=format&fit=crop',
     ),
   ];
 
@@ -63,11 +119,27 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _mapAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..addListener(_handleMapAnimation);
+  }
+
+  @override
+  void dispose() {
+    _mapAnimationController
+      ..removeListener(_handleMapAnimation)
+      ..dispose();
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final visibleMembers = _filteredMembers;
-    final selectedMember = _resolveSelectedMember(visibleMembers);
-    final mapCenter = _resolveMapCenter(visibleMembers, selectedMember);
-    final mapZoom = _resolveMapZoom(selectedMember);
+    final selectedMember = _resolveSelectedMemberForUi(visibleMembers);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -80,12 +152,14 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
                 Positioned.fill(
                   child: _MapLayer(
                     members: visibleMembers,
-                    mapCenter: mapCenter,
-                    initialZoom: mapZoom,
-                    mapKey: ValueKey('${_selectedFilter.name}-${selectedMember?.name ?? 'all'}'),
-                    showDetails: selectedMember != null,
+                    selectedMember: selectedMember,
+                    mapCenter: _initialCenter,
+                    mapController: _mapController,
+                    safeZoneCenter: _safeZoneCenter,
+                    safeZoneRadius: _safeZoneRadius,
+                    onMapReady: _handleMapReady,
                     onSelectMember: (memberName) {
-                      setState(() => _selectedMemberName = memberName);
+                      _selectMember(memberName);
                     },
                   ),
                 ),
@@ -94,15 +168,40 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
                     children: [
                       _TopControls(
                         selected: _selectedFilter,
+                        onChatTap: () =>
+                            Navigator.pushNamed(context, AppRoutes.chatList),
                         onChanged: (filter) {
                           setState(() {
                             _selectedFilter = filter;
                             _selectedMemberName = null;
                           });
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (!mounted) {
+                              return;
+                            }
+                            moveToLocation(
+                              _focusTargetForMembers(_filteredMembers),
+                            );
+                          });
                         },
                       ),
                       const Spacer(),
-                      _BottomSheetAndNav(selectedMember: selectedMember),
+                      _BottomSheetAndNav(
+                        homeRouteName: widget.homeRouteName,
+                        trackingRouteName: widget.trackingRouteName,
+                        notificationsRouteName: widget.notificationsRouteName,
+                        settingsRouteName: widget.settingsRouteName,
+                        selectedMember: selectedMember,
+                        onViewDetails: selectedMember == null
+                            ? null
+                            : () => _openMemberDetails(selectedMember),
+                        onCallTap: selectedMember == null
+                            ? null
+                            : () => _openCallOptions(selectedMember),
+                        onChatTap: selectedMember == null
+                            ? null
+                            : () => _openMemberChat(selectedMember),
+                      ),
                     ],
                   ),
                 ),
@@ -114,59 +213,226 @@ class _FamilyMapScreenState extends State<FamilyMapScreen> {
     );
   }
 
-  _MapMember? _resolveSelectedMember(List<_MapMember> visibleMembers) {
+  _MapMember _resolveSelectedMember(List<_MapMember> visibleMembers) {
+    if (visibleMembers.isEmpty) {
+      return _members.first;
+    }
     if (_selectedMemberName == null) {
-      return null;
+      return visibleMembers.first;
     }
     for (final member in visibleMembers) {
       if (member.name == _selectedMemberName) {
         return member;
       }
     }
+    return visibleMembers.first;
+  }
+
+  _MapMember? _resolveSelectedMemberForUi(List<_MapMember> visibleMembers) {
+    if (visibleMembers.isEmpty || _selectedMemberName == null) {
+      return null;
+    }
+
+    for (final member in visibleMembers) {
+      if (member.name == _selectedMemberName) {
+        return member;
+      }
+    }
+
     return null;
   }
 
-  LatLng _resolveMapCenter(List<_MapMember> visibleMembers, _MapMember? selectedMember) {
+  void _selectMember(String memberName) {
+    final member = _members.firstWhere((item) => item.name == memberName);
+    setState(() => _selectedMemberName = memberName);
+    moveToLocation(member.location);
+  }
+
+  void _handleMapReady() {
+    _isMapReady = true;
+    final selectedMember = _resolveSelectedMemberForUi(_filteredMembers);
     if (selectedMember != null) {
-      return selectedMember.location;
+      moveToLocation(selectedMember.location);
+    }
+  }
+
+  void moveToLocation(LatLng target) {
+    if (!_isMapReady) {
+      return;
     }
 
-    final members = visibleMembers.isEmpty ? _members : visibleMembers;
-    final totalLatitude = members.fold<double>(0, (sum, member) => sum + member.location.latitude);
-    final totalLongitude = members.fold<double>(0, (sum, member) => sum + member.location.longitude);
+    _mapAnimationController.stop();
+    _centerTween = _LatLngTween(
+      begin: _mapController.camera.center,
+      end: target,
+    );
+    _zoomTween = Tween<double>(
+      begin: _mapController.camera.zoom,
+      end: _mapController.camera.zoom < _initialZoom
+          ? _initialZoom
+          : _mapController.camera.zoom,
+    );
+    _mapAnimationController.forward(from: 0);
+  }
 
-    return LatLng(
-      totalLatitude / members.length,
-      totalLongitude / members.length,
+  LatLng _focusTargetForMembers(List<_MapMember> members) {
+    if (members.isEmpty) {
+      return _initialCenter;
+    }
+    if (members.length == 1) {
+      return members.first.location;
+    }
+
+    var latitude = 0.0;
+    var longitude = 0.0;
+    for (final member in members) {
+      latitude += member.location.latitude;
+      longitude += member.location.longitude;
+    }
+
+    return LatLng(latitude / members.length, longitude / members.length);
+  }
+
+  void _handleMapAnimation() {
+    if (!_isMapReady || _centerTween == null || _zoomTween == null) {
+      return;
+    }
+
+    final animationValue = Curves.easeInOutCubic.transform(
+      _mapAnimationController.value,
+    );
+
+    _mapController.move(
+      _centerTween!.transform(animationValue),
+      _zoomTween!.transform(animationValue),
+      id: 'family-member-focus',
     );
   }
 
-  double _resolveMapZoom(_MapMember? selectedMember) {
-    if (selectedMember != null) {
-      return 12.7;
+  void _openMemberDetails(_MapMember member) {
+    if (member.role == _MemberFilter.children) {
+      Navigator.pushNamed(context, AppRoutes.kidManagement);
+      return;
     }
-    if (_selectedFilter == _MemberFilter.all) {
-      return 11.9;
+
+    if (member.role == _MemberFilter.adults) {
+      Navigator.pushNamed(
+        context,
+        AppRoutes.adultMemberDetail,
+        arguments: _buildMemberTrackingArgs(member),
+      );
+      return;
     }
-    return 12.3;
+
+    Navigator.pushNamed(
+      context,
+      AppRoutes.seniorMemberDetail,
+      arguments: _buildMemberTrackingArgs(member),
+    );
+  }
+
+  void _openCallOptions(_MapMember member) {
+    showRoleCallOptionsSheet(
+      context,
+      target: CallTargetArgs(
+        name: member.name,
+        avatarUrl: member.avatarUrl,
+        role: switch (member.role) {
+          _MemberFilter.children => MemberRole.child,
+          _MemberFilter.adults => MemberRole.adult,
+          _MemberFilter.seniors => MemberRole.senior,
+          _MemberFilter.all => MemberRole.child,
+        },
+      ),
+    );
+  }
+
+  void _openMemberChat(_MapMember member) {
+    final normalizedName = member.name.toLowerCase();
+    final thread = ChatThreadArgs.demoThreads.firstWhere(
+      (item) => item.memberName.toLowerCase() == normalizedName,
+      orElse: () => ChatThreadArgs.fallback,
+    );
+    Navigator.pushNamed(context, AppRoutes.chatConversation, arguments: thread);
+  }
+
+  MemberTrackingArgs _buildMemberTrackingArgs(_MapMember member) {
+    final isAdult = member.role == _MemberFilter.adults;
+    return MemberTrackingArgs(
+      role: isAdult ? MemberRole.adult : MemberRole.senior,
+      name: member.name,
+      status: member.subtitle,
+      avatarUrl: member.avatarUrl,
+      phoneNumber: '+1 (555) 0123',
+      relationship: isAdult ? 'Chồng' : 'Mẹ',
+      battery: member.battery,
+      connectionStatus: 'Trực tuyến',
+      deviceName: 'iPhone 13',
+      lastActive: '2 phút trước',
+      timeLabel: '08:42 AM',
+      mapCenter: member.location,
+      routeHistory: member.routeHistory,
+      playbackStartLabel: '08:00 AM',
+      playbackEndLabel: '04:30 PM',
+      totalDistanceLabel: isAdult ? '3.2 km' : '2.4 km',
+      totalDurationLabel: isAdult ? '2h 15m' : '1h 40m',
+      stopCount: isAdult ? 1 : 2,
+      averageSpeedLabel: isAdult ? '2.8 km/h' : '1.9 km/h',
+      timelineItems: isAdult
+          ? const [
+              TrackingTimelineItem(timeLabel: '08:00 AM', title: 'Nhà'),
+              TrackingTimelineItem(timeLabel: '08:30 AM', title: 'Đến trường'),
+              TrackingTimelineItem(
+                timeLabel: '08:35 AM',
+                title: 'Rời khỏi trường',
+              ),
+              TrackingTimelineItem(
+                timeLabel: '12:35 PM',
+                title: 'Ở văn phòng',
+                highlighted: true,
+              ),
+              TrackingTimelineItem(timeLabel: '01:00 PM', title: 'Lái xe'),
+            ]
+          : const [
+              TrackingTimelineItem(timeLabel: '08:00 AM', title: 'Nhà'),
+              TrackingTimelineItem(
+                timeLabel: '09:15 AM',
+                title: 'Công viên gần nhà',
+              ),
+              TrackingTimelineItem(
+                timeLabel: '10:00 AM',
+                title: 'Quán tạp hóa',
+              ),
+              TrackingTimelineItem(
+                timeLabel: '12:35 PM',
+                title: 'Ở nhà',
+                highlighted: true,
+              ),
+              TrackingTimelineItem(timeLabel: '01:00 PM', title: 'Nghỉ ngơi'),
+            ],
+    );
   }
 }
 
 class _MapLayer extends StatelessWidget {
   const _MapLayer({
     required this.members,
+    required this.selectedMember,
     required this.mapCenter,
-    required this.initialZoom,
-    required this.mapKey,
-    required this.showDetails,
+    required this.mapController,
+    required this.safeZoneCenter,
+    required this.safeZoneRadius,
+    required this.onMapReady,
     required this.onSelectMember,
   });
 
   final List<_MapMember> members;
+  final _MapMember? selectedMember;
   final LatLng mapCenter;
-  final double initialZoom;
-  final Key mapKey;
-  final bool showDetails;
+  final MapController mapController;
+  final LatLng safeZoneCenter;
+  final double safeZoneRadius;
+  final VoidCallback onMapReady;
   final ValueChanged<String> onSelectMember;
 
   @override
@@ -175,12 +441,14 @@ class _MapLayer extends StatelessWidget {
       children: [
         Positioned.fill(
           child: FlutterMap(
-            key: mapKey,
+            mapController: mapController,
             options: MapOptions(
               initialCenter: mapCenter,
-              initialZoom: initialZoom,
+              initialZoom: _FamilyMapScreenState._initialZoom,
               minZoom: 3,
               maxZoom: 18,
+              onMapReady: onMapReady,
+              onTap: (_, point) {},
             ),
             children: [
               TileLayer(
@@ -188,11 +456,35 @@ class _MapLayer extends StatelessWidget {
                 userAgentPackageName: 'com.familyguard.app',
               ),
               CircleLayer(
+                circles: [
+                  CircleMarker(
+                    point: safeZoneCenter,
+                    radius: safeZoneRadius,
+                    useRadiusInMeter: true,
+                    color: const Color(0x333B82F6),
+                    borderColor: const Color(0xFF3B82F6),
+                    borderStrokeWidth: 2,
+                  ),
+                ],
+              ),
+              if (selectedMember != null)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: selectedMember!.routeHistory,
+                      color: const Color(0xFF01ADB2),
+                      strokeWidth: 4,
+                      borderColor: Colors.white.withValues(alpha: 0.85),
+                      borderStrokeWidth: 1.5,
+                    ),
+                  ],
+                ),
+              CircleLayer(
                 circles: members
                     .map(
                       (member) => CircleMarker(
                         point: member.location,
-                        radius: 52,
+                        radius: member.name == selectedMember?.name ? 62 : 52,
                         color: const Color(0x4417E8E8),
                         borderColor: const Color(0x6617E8E8),
                         borderStrokeWidth: 1,
@@ -206,8 +498,8 @@ class _MapLayer extends StatelessWidget {
                     .map(
                       (member) => Marker(
                         point: member.location,
-                        width: 92,
-                        height: 92,
+                        width: 112,
+                        height: 110,
                         alignment: Alignment.center,
                         child: GestureDetector(
                           onTap: () => onSelectMember(member.name),
@@ -224,7 +516,7 @@ class _MapLayer extends StatelessWidget {
               const MarkerLayer(
                 markers: [
                   Marker(
-                    point: LatLng(40.7218, -74.0020),
+                    point: _FamilyMapScreenState._safeZoneCenter,
                     width: 16,
                     height: 16,
                     alignment: Alignment.center,
@@ -237,18 +529,12 @@ class _MapLayer extends StatelessWidget {
         ),
         Positioned(
           right: 14,
-          bottom: showDetails ? 286 : 104,
+          bottom: selectedMember != null ? 286 : 112,
           child: Column(
             children: [
-              _MapActionButton(
-                icon: Icons.gps_fixed,
-                onTap: () {},
-              ),
+              _MapActionButton(icon: Icons.gps_fixed, onTap: () {}),
               const SizedBox(height: 10),
-              _MapActionButton(
-                icon: Icons.layers_outlined,
-                onTap: () {},
-              ),
+              _MapActionButton(icon: Icons.layers_outlined, onTap: () {}),
             ],
           ),
         ),
@@ -257,18 +543,18 @@ class _MapLayer extends StatelessWidget {
   }
 }
 
-enum _MemberFilter {
-  all,
-  children,
-  adults,
-  seniors,
-}
+enum _MemberFilter { all, children, adults, seniors }
 
 class _TopControls extends StatelessWidget {
-  const _TopControls({required this.selected, required this.onChanged});
+  const _TopControls({
+    required this.selected,
+    required this.onChanged,
+    required this.onChatTap,
+  });
 
   final _MemberFilter selected;
   final ValueChanged<_MemberFilter> onChanged;
+  final VoidCallback onChatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -332,8 +618,12 @@ class _TopControls extends StatelessWidget {
               ],
             ),
             child: IconButton(
-              onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
-              icon: const Icon(Icons.settings, size: 21, color: Color(0xFF334155)),
+              onPressed: onChatTap,
+              icon: const Icon(
+                Icons.chat_bubble_outline_rounded,
+                size: 21,
+                color: Color(0xFF334155),
+              ),
             ),
           ),
         ],
@@ -370,7 +660,9 @@ class _FilterPill extends StatelessWidget {
           child: Text(
             label,
             style: GoogleFonts.inter(
-              color: selected ? const Color(0xFF0F172A) : const Color(0xFF64748B),
+              color: selected
+                  ? const Color(0xFF0F172A)
+                  : const Color(0xFF64748B),
               fontSize: 14,
               fontWeight: FontWeight.w500,
               height: 1,
@@ -396,47 +688,54 @@ class _MemberMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 92,
-      height: 92,
+      width: 112,
+      height: 110,
       child: Stack(
         clipBehavior: Clip.none,
-        alignment: Alignment.center,
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: borderColor, width: 3),
-              image: DecorationImage(
-                image: NetworkImage(avatarUrl),
-                fit: BoxFit.cover,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x22000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
+          Positioned(
+            left: 28,
+            top: 27,
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: borderColor, width: 3),
+                image: DecorationImage(
+                  image: NetworkImage(avatarUrl),
+                  fit: BoxFit.cover,
                 ),
-              ],
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x22000000),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(
-            bottom: -14,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.94),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                name,
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF0F172A),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  height: 1,
+            left: 0,
+            right: 0,
+            top: 84,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.94),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  name,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF0F172A),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1,
+                  ),
                 ),
               ),
             ),
@@ -497,6 +796,7 @@ class _CenterMapDot extends StatelessWidget {
 
 class _MapMember {
   const _MapMember({
+    required this.id,
     required this.name,
     required this.role,
     required this.battery,
@@ -505,9 +805,11 @@ class _MapMember {
     required this.activityIcon,
     required this.markerBorderColor,
     required this.location,
+    required this.routeHistory,
     required this.avatarUrl,
   });
 
+  final String id;
   final String name;
   final _MemberFilter role;
   final int battery;
@@ -516,13 +818,30 @@ class _MapMember {
   final IconData activityIcon;
   final Color markerBorderColor;
   final LatLng location;
+  final List<LatLng> routeHistory;
   final String avatarUrl;
 }
 
 class _BottomSheetAndNav extends StatelessWidget {
-  const _BottomSheetAndNav({required this.selectedMember});
+  const _BottomSheetAndNav({
+    required this.homeRouteName,
+    required this.trackingRouteName,
+    required this.notificationsRouteName,
+    required this.settingsRouteName,
+    required this.selectedMember,
+    required this.onViewDetails,
+    required this.onCallTap,
+    required this.onChatTap,
+  });
 
+  final String homeRouteName;
+  final String trackingRouteName;
+  final String notificationsRouteName;
+  final String settingsRouteName;
   final _MapMember? selectedMember;
+  final VoidCallback? onViewDetails;
+  final VoidCallback? onCallTap;
+  final VoidCallback? onChatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -539,8 +858,26 @@ class _BottomSheetAndNav extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (selectedMember != null) _BottomSheetContent(selectedMember: selectedMember!),
-          const AppBottomMenu(current: AppNavTab.tracking),
+          if (selectedMember != null)
+            _BottomSheetContent(
+              selectedMember: selectedMember!,
+              onViewDetails: onViewDetails!,
+              onCallTap: onCallTap!,
+              onChatTap: onChatTap!,
+            ),
+          Container(
+            width: double.infinity,
+            color: selectedMember != null
+                ? const Color(0xFFF0F8F7)
+                : Colors.transparent,
+            child: AppFlowBottomNav(
+              current: AppNavTab.tracking,
+              homeRouteName: homeRouteName,
+              trackingRouteName: trackingRouteName,
+              settingsRouteName: settingsRouteName,
+              thirdTabRouteName: notificationsRouteName,
+            ),
+          ),
         ],
       ),
     );
@@ -548,9 +885,17 @@ class _BottomSheetAndNav extends StatelessWidget {
 }
 
 class _BottomSheetContent extends StatelessWidget {
-  const _BottomSheetContent({required this.selectedMember});
+  const _BottomSheetContent({
+    required this.selectedMember,
+    required this.onViewDetails,
+    required this.onCallTap,
+    required this.onChatTap,
+  });
 
   final _MapMember selectedMember;
+  final VoidCallback onViewDetails;
+  final VoidCallback onCallTap;
+  final VoidCallback onChatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -587,7 +932,10 @@ class _BottomSheetContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                _selectedAvatar(selectedMember.avatarUrl, selectedMember.activityIcon),
+                _selectedAvatar(
+                  selectedMember.avatarUrl,
+                  selectedMember.activityIcon,
+                ),
                 const SizedBox(width: 18),
                 Expanded(
                   child: Column(
@@ -623,14 +971,21 @@ class _BottomSheetContent extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF1F5F9),
                               borderRadius: BorderRadius.circular(32),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.battery_charging_full, size: 14, color: Color(0xFF64748B)),
+                                const Icon(
+                                  Icons.battery_charging_full,
+                                  size: 14,
+                                  color: Color(0xFF64748B),
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   '${selectedMember.battery}%',
@@ -650,24 +1005,34 @@ class _BottomSheetContent extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: AppPrimaryButton(
-                              label: 'Xem chi tiết',
-                              onPressed: () => Navigator.pushNamed(context, AppRoutes.kidManagement),
+                            child: SizedBox(
                               height: 40,
-                              borderRadius: 999,
-                              backgroundColor: const Color(0xFF01ADB2),
-                              elevation: 1,
-                              textStyle: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                              child: ElevatedButton(
+                                onPressed: onViewDetails,
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 1,
+                                  backgroundColor: const Color(0xFF01ADB2),
+                                  foregroundColor: Colors.white,
+                                  shape: const StadiumBorder(),
+                                  textStyle: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                child: const Text('Xem chi tiết'),
                               ),
                             ),
                           ),
                           const SizedBox(width: 12),
-                          _circleIconButton(Icons.call_outlined),
+                          _circleIconButton(
+                            Icons.call_outlined,
+                            onTap: onCallTap,
+                          ),
                           const SizedBox(width: 8),
-                          _circleIconButton(Icons.chat_bubble_outline),
+                          _circleIconButton(
+                            Icons.chat_bubble_outline,
+                            onTap: onChatTap,
+                          ),
                         ],
                       ),
                     ],
@@ -726,14 +1091,15 @@ class _BottomSheetContent extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF17E8E8), width: 2, style: BorderStyle.solid),
+            border: Border.all(
+              color: const Color(0xFF17E8E8),
+              width: 2,
+              style: BorderStyle.solid,
+            ),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(999),
-            child: Image.network(
-              avatarUrl,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(avatarUrl, fit: BoxFit.cover),
           ),
         ),
         Positioned(
@@ -754,15 +1120,19 @@ class _BottomSheetContent extends StatelessWidget {
     );
   }
 
-  Widget _circleIconButton(IconData icon) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF1F5F9),
-        shape: BoxShape.circle,
+  Widget _circleIconButton(IconData icon, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: const BoxDecoration(
+          color: Color(0xFFF1F5F9),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 20, color: const Color(0xFF475569)),
       ),
-      child: Icon(icon, size: 20, color: const Color(0xFF475569)),
     );
   }
 }
@@ -878,6 +1248,21 @@ class _NavItem extends StatelessWidget {
         size: 24,
         color: selected ? const Color(0xFF002244) : const Color(0xFF9CA3AF),
       ),
+    );
+  }
+}
+
+class _LatLngTween extends Tween<LatLng> {
+  _LatLngTween({required super.begin, required super.end});
+
+  @override
+  LatLng lerp(double t) {
+    final begin = this.begin!;
+    final end = this.end!;
+
+    return LatLng(
+      begin.latitude + (end.latitude - begin.latitude) * t,
+      begin.longitude + (end.longitude - begin.longitude) * t,
     );
   }
 }

@@ -2,11 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
 
 enum AppNavTab { home, tracking, notifications, settings }
+enum AppBottomMenuThirdTab { notifications, chat }
 
 class AppBottomMenu extends StatelessWidget {
-	const AppBottomMenu({super.key, required this.current});
+	const AppBottomMenu({
+		super.key,
+		required this.current,
+		this.homeRouteName = AppRoutes.home,
+		this.trackingRouteName = AppRoutes.tracking,
+		this.settingsRouteName = AppRoutes.settings,
+		this.thirdTab = AppBottomMenuThirdTab.notifications,
+		this.thirdTabRouteName,
+	});
 
 	final AppNavTab current;
+	final String homeRouteName;
+	final String trackingRouteName;
+	final String settingsRouteName;
+	final AppBottomMenuThirdTab thirdTab;
+	final String? thirdTabRouteName;
 
 	@override
 	Widget build(BuildContext context) {
@@ -37,10 +51,14 @@ class AppBottomMenu extends StatelessWidget {
 					),
 					Expanded(
 						child: _MenuItem(
-							icon: Icons.notifications_none_rounded,
-							activeIcon: Icons.notifications_rounded,
+							icon: thirdTab == AppBottomMenuThirdTab.chat
+									? Icons.chat_bubble_outline_rounded
+									: Icons.notifications_none_rounded,
+							activeIcon: thirdTab == AppBottomMenuThirdTab.chat
+									? Icons.chat_bubble_rounded
+									: Icons.notifications_rounded,
 							active: current == AppNavTab.notifications,
-							onTap: () => _goTo(context, AppNavTab.notifications),
+							onTap: () => _goToThirdTab(context),
 						),
 					),
 					Expanded(
@@ -62,19 +80,29 @@ class AppBottomMenu extends StatelessWidget {
 		final String routeName;
 		switch (tab) {
 			case AppNavTab.home:
-				routeName = AppRoutes.home;
+				routeName = homeRouteName;
 				break;
 			case AppNavTab.tracking:
-				routeName = AppRoutes.tracking;
+				routeName = trackingRouteName;
 				break;
 			case AppNavTab.notifications:
 				routeName = AppRoutes.notifications;
 				break;
 			case AppNavTab.settings:
-				routeName = AppRoutes.settings;
+				routeName = settingsRouteName;
 				break;
 		}
 
+		Navigator.pushNamed(context, routeName);
+	}
+
+	void _goToThirdTab(BuildContext context) {
+		if (current == AppNavTab.notifications) return;
+
+		final routeName = thirdTabRouteName ??
+				(thirdTab == AppBottomMenuThirdTab.chat
+						? AppRoutes.chatList
+						: AppRoutes.notifications);
 		Navigator.pushNamed(context, routeName);
 	}
 }

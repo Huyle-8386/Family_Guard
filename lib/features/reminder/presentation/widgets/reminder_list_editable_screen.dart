@@ -1,15 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:family_guard/core/utils/responsive/responsive.dart';
-import 'package:family_guard/core/widgets/app_dialog.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/utils/responsive/responsive.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
+import 'package:family_guard/core/widgets/app_dialog.dart';
+import 'package:flutter/material.dart';
 
-
-/// ============================================================
-/// MÀN HÌNH: Lịch nhắc đã tạo (Có chỉnh sửa)
-/// Swipe để hiện nút Edit/Delete
-/// Chuyển đổi từ Figma Dev Mode → Flutter Clean Code
-/// ============================================================
 class ReminderListEditableScreen extends StatefulWidget {
   const ReminderListEditableScreen({super.key});
 
@@ -18,30 +13,28 @@ class ReminderListEditableScreen extends StatefulWidget {
       _ReminderListEditableScreenState();
 }
 
-class _ReminderListEditableScreenState
-    extends State<ReminderListEditableScreen> {
-  // Sample reminders data
+class _ReminderListEditableScreenState extends State<ReminderListEditableScreen> {
   final List<ReminderItemEditable> _reminders = [
     ReminderItemEditable(
       id: '1',
-      title: 'Uống thuốc huyết áp',
-      time: '08:00 - Mỗi ngày',
+      title: 'U\u1ED1ng thu\u1ED1c huy\u1EBFt \u00E1p',
+      time: '08:00 - M\u1ED7i ng\u00E0y',
       iconColor: const Color(0x33FF85A1),
       icon: Icons.medication,
       isActive: true,
     ),
     ReminderItemEditable(
       id: '2',
-      title: 'Ăn sáng',
-      time: '07:00 - Mỗi ngày',
+      title: '\u0102n s\u00E1ng',
+      time: '07:00 - M\u1ED7i ng\u00E0y',
       iconColor: const Color(0x33FFD166),
       icon: Icons.restaurant,
       isActive: true,
     ),
     ReminderItemEditable(
       id: '3',
-      title: 'Đo huyết áp',
-      time: '09:00, 16:00 - Mỗi ngày',
+      title: '\u0110o huy\u1EBFt \u00E1p',
+      time: '09:00, 16:00 - M\u1ED7i ng\u00E0y',
       iconColor: const Color(0x33118AB2),
       icon: Icons.favorite,
       isActive: true,
@@ -50,246 +43,53 @@ class _ReminderListEditableScreenState
 
   @override
   Widget build(BuildContext context) {
+    final hPad = ResponsiveHelper.horizontalPadding(context);
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF0FFF8),
-              Colors.white,
-            ],
+            colors: [Color(0xFFF0FFF8), Colors.white],
           ),
         ),
-        child: Column(
-          children: [
-            // Back button
-            _buildBackButton(),
-
-            // Member profile card
-            _buildMemberCard(),
-
-            // Content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Title
-                    _buildTitle(),
-
-                    // Reminders list with swipe actions
-                    _buildRemindersList(),
-                  ],
-                ),
-              ),
-            ),
-
-            // Bottom navigation (hidden in original but included for completeness)
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Back button
-  Widget _buildBackButton() {
-    return SafeArea(
-      bottom: false,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, left: 20),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(9999)),
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x0C000000),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: Color(0xFF00ACB2),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Member profile card
-  Widget _buildMemberCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.only(
-        top: 32,
-        left: 24,
-        right: 24,
-        bottom: 24,
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: 1,
-                color: Color(0x2600ACB2),
-              ),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            shadows: const [
-              BoxShadow(
-                color: Color(0x1400ACB2),
-                blurRadius: 20,
-                offset: Offset(0, 4),
-                spreadRadius: -2,
-              ),
-            ],
-          ),
-          child: Row(
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Avatar with online indicator
-              Stack(
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: ShapeDecoration(
-                      image: const DecorationImage(
-                        image: NetworkImage("https://i.pravatar.cc/150?img=47"),
-                        fit: BoxFit.cover,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          width: 2,
-                          color: Color(0x3300ACB2),
-                        ),
-                        borderRadius: BorderRadius.circular(9999),
-                      ),
-                    ),
+              const AppBackHeaderBar(title: 'L\u1ECBch nh\u1EAFc \u0111\u00E3 t\u1EA1o'),
+              _buildMemberCard(hPad),
+              Padding(
+                padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 0),
+                child: Text(
+                  'L\u1ECBch nh\u1EAFc \u0111\u00E3 t\u1EA1o',
+                  style: TextStyle(
+                    color: const Color(0xFF0C1D1A),
+                    fontSize: ResponsiveHelper.sp(context, 24),
+                    fontFamily: 'Lexend',
+                    fontWeight: FontWeight.w700,
+                    height: 1.33,
+                    letterSpacing: -0.6,
                   ),
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFF22C55E),
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(width: 2, color: Colors.white),
-                          borderRadius: BorderRadius.circular(9999),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(width: 16),
-
-              // Name and status
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Bà Lan',
-                      style: TextStyle(
-                        color: const Color(0xFF0F172A),
-                        fontSize: ResponsiveHelper.sp(context, 18),
-                        fontFamily: 'Lexend',
-                        fontWeight: FontWeight.w700,
-                        height: 1.56,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.home,
-                          size: 14,
-                          color: Color(0xFF00ACB2),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Đang ở nhà',
-                          style: TextStyle(
-                            color: const Color(0xFF00ACB2),
-                            fontSize: ResponsiveHelper.sp(context, 14),
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.w500,
-                            height: 1.43,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
-
-              // Location and battery info
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 24),
+                  child: Column(
                     children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 12,
-                        color: Color(0xFF94A3B8),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '123 ABC St',
-                        style: TextStyle(
-                          color: const Color(0xFF94A3B8),
-                          fontSize: ResponsiveHelper.sp(context, 12),
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w400,
-                          height: 1.33,
+                      ..._reminders.map(
+                        (reminder) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildSwipeableReminderCard(reminder),
                         ),
                       ),
+                      _buildAddButton(),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.battery_charging_full,
-                        size: 12,
-                        color: Color(0xFF64748B),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '85%',
-                        style: TextStyle(
-                          color: const Color(0xFF64748B),
-                          fontSize: ResponsiveHelper.sp(context, 12),
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w700,
-                          height: 1.33,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ],
           ),
@@ -298,163 +98,15 @@ class _ReminderListEditableScreenState
     );
   }
 
-  /// Title section
-  Widget _buildTitle() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Text(
-        'Lịch nhắc đã tạo',
-        style: TextStyle(
-          color: const Color(0xFF0C1D1A),
-          fontSize: ResponsiveHelper.sp(context, 24),
-          fontFamily: 'Lexend',
-          fontWeight: FontWeight.w700,
-          height: 1.33,
-          letterSpacing: -0.60,
-        ),
-      ),
-    );
-  }
-
-  /// Reminders list with swipe actions
-  Widget _buildRemindersList() {
-    return Container(
-      padding: const EdgeInsets.only(
-        top: 16,
-        left: 24,
-        right: 24,
-        bottom: 24,
-      ),
-      child: Column(
-        children: [
-          // Reminder cards with swipe
-          ..._reminders.map((reminder) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: _buildSwipeableReminderCard(reminder),
-          )),
-
-          // Add new reminder button
-          _buildAddButton(),
-        ],
-      ),
-    );
-  }
-
-  /// Swipeable reminder card with edit/delete actions
-  Widget _buildSwipeableReminderCard(ReminderItemEditable reminder) {
-    return Dismissible(
-      key: Key(reminder.id),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        // Don't actually dismiss, just show the actions
-        return false;
-      },
-      background: _buildSwipeBackground(),
-      child: _buildReminderCard(reminder),
-    );
-  }
-
-  /// Background shown when swiping (edit/delete buttons)
-  Widget _buildSwipeBackground() {
-    return Container(
-      padding: const EdgeInsets.only(right: 16),
-      decoration: ShapeDecoration(
-        color: const Color(0xFFF8FAFC),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          // Edit button
-          GestureDetector(
-            onTap: _handleEdit,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: ShapeDecoration(
-                color: const Color(0xFF3B82F6),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-                shadows: const [
-                  BoxShadow(
-                    color: Color(0x19000000),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: -4,
-                  ),
-                  BoxShadow(
-                    color: Color(0x19000000),
-                    blurRadius: 15,
-                    offset: Offset(0, 10),
-                    spreadRadius: -3,
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Delete button
-          GestureDetector(
-            onTap: _handleDelete,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: ShapeDecoration(
-                color: const Color(0xFFEF4444),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(9999),
-                ),
-                shadows: const [
-                  BoxShadow(
-                    color: Color(0x19000000),
-                    blurRadius: 6,
-                    offset: Offset(0, 4),
-                    spreadRadius: -4,
-                  ),
-                  BoxShadow(
-                    color: Color(0x19000000),
-                    blurRadius: 15,
-                    offset: Offset(0, 10),
-                    spreadRadius: -3,
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.delete,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Individual reminder card
-  Widget _buildReminderCard(ReminderItemEditable reminder) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, AppRoutes.reminderDetail);
-      },
+  Widget _buildMemberCard(double hPad) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(hPad, 12, hPad, 0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            side: const BorderSide(
-              width: 1,
-              color: Color(0x2600ACB2),
-            ),
+            side: const BorderSide(width: 1, color: Color(0x2600ACB2)),
             borderRadius: BorderRadius.circular(24),
           ),
           shadows: const [
@@ -468,7 +120,208 @@ class _ReminderListEditableScreenState
         ),
         child: Row(
           children: [
-            // Icon
+            Stack(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    image: const DecorationImage(
+                      image: NetworkImage('https://i.pravatar.cc/150?img=47'),
+                      fit: BoxFit.cover,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(width: 2, color: Color(0x3300ACB2)),
+                      borderRadius: BorderRadius.circular(9999),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFF22C55E),
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(width: 2, color: Colors.white),
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'B\u00E0 Lan',
+                    style: TextStyle(
+                      color: const Color(0xFF0F172A),
+                      fontSize: ResponsiveHelper.sp(context, 18),
+                      fontFamily: 'Lexend',
+                      fontWeight: FontWeight.w700,
+                      height: 1.56,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.home_rounded,
+                        size: 14,
+                        color: Color(0xFF00ACB2),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '\u0110ang \u1EDF nh\u00E0',
+                        style: TextStyle(
+                          color: const Color(0xFF00ACB2),
+                          fontSize: ResponsiveHelper.sp(context, 14),
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w500,
+                          height: 1.43,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on_rounded,
+                      size: 12,
+                      color: Color(0xFF94A3B8),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Qu\u1EADn 7',
+                      style: TextStyle(
+                        color: const Color(0xFF94A3B8),
+                        fontSize: ResponsiveHelper.sp(context, 12),
+                        fontFamily: 'Lexend',
+                        fontWeight: FontWeight.w400,
+                        height: 1.33,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.battery_charging_full_rounded,
+                      size: 12,
+                      color: Color(0xFF64748B),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '85%',
+                      style: TextStyle(
+                        color: const Color(0xFF64748B),
+                        fontSize: ResponsiveHelper.sp(context, 12),
+                        fontFamily: 'Lexend',
+                        fontWeight: FontWeight.w700,
+                        height: 1.33,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSwipeableReminderCard(ReminderItemEditable reminder) {
+    return Dismissible(
+      key: Key(reminder.id),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (_) async => false,
+      background: _buildSwipeBackground(reminder),
+      child: _buildReminderCard(reminder),
+    );
+  }
+
+  Widget _buildSwipeBackground(ReminderItemEditable reminder) {
+    return Container(
+      padding: const EdgeInsets.only(right: 16),
+      decoration: ShapeDecoration(
+        color: const Color(0xFFF8FAFC),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          GestureDetector(
+            onTap: () => _handleEdit(reminder),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: ShapeDecoration(
+                color: const Color(0xFF3B82F6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9999),
+                ),
+              ),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => _handleDelete(reminder),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: ShapeDecoration(
+                color: const Color(0xFFEF4444),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9999),
+                ),
+              ),
+              child: const Icon(Icons.delete, color: Colors.white, size: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReminderCard(ReminderItemEditable reminder) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, AppRoutes.reminderDetail),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(width: 1, color: Color(0x2600ACB2)),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          shadows: const [
+            BoxShadow(
+              color: Color(0x1400ACB2),
+              blurRadius: 20,
+              offset: Offset(0, 4),
+              spreadRadius: -2,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
             Container(
               width: 48,
               height: 48,
@@ -484,10 +337,7 @@ class _ReminderListEditableScreenState
                 size: 24,
               ),
             ),
-
             const SizedBox(width: 16),
-
-            // Text info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,7 +349,7 @@ class _ReminderListEditableScreenState
                       fontSize: ResponsiveHelper.sp(context, 16),
                       fontFamily: 'Lexend',
                       fontWeight: FontWeight.w700,
-                      height: 1.50,
+                      height: 1.5,
                     ),
                   ),
                   Text(
@@ -515,8 +365,6 @@ class _ReminderListEditableScreenState
                 ],
               ),
             ),
-
-            // Toggle switch
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -531,7 +379,6 @@ class _ReminderListEditableScreenState
     );
   }
 
-  /// Toggle switch
   Widget _buildToggleSwitch(bool isActive) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -562,7 +409,6 @@ class _ReminderListEditableScreenState
               color: Color(0x0C000000),
               blurRadius: 2,
               offset: Offset(0, 1),
-              spreadRadius: 0,
             ),
           ],
         ),
@@ -570,51 +416,45 @@ class _ReminderListEditableScreenState
     );
   }
 
-  /// Add new reminder button
   Widget _buildAddButton() {
     return OutlinedButton.icon(
-      onPressed: () {
-        Navigator.pushNamed(context, AppRoutes.createReminder);
-      },
+      onPressed: () => Navigator.pushNamed(context, AppRoutes.createReminder),
       style: OutlinedButton.styleFrom(
         foregroundColor: const Color(0xFF00ACB2),
         side: const BorderSide(width: 2, color: Color(0x4C00ACB2)),
       ),
       icon: const Icon(Icons.add_circle_outline, size: 24),
-      label: const Text('Thêm nhắc nhở mới'),
+      label: const Text('Th\u00EAm nh\u1EAFc nh\u1EDF m\u1EDBi'),
     );
   }
 
-  /// Get icon foreground color based on background
   Color _getIconColor(Color bgColor) {
-    if (bgColor == const Color(0x33FF85A1)) {
-      return const Color(0xFFFF85A1);
-    } else if (bgColor == const Color(0x33FFD166)) {
-      return const Color(0xFFFFD166);
-    } else if (bgColor == const Color(0x33118AB2)) {
-      return const Color(0xFF118AB2);
-    }
+    if (bgColor == const Color(0x33FF85A1)) return const Color(0xFFFF85A1);
+    if (bgColor == const Color(0x33FFD166)) return const Color(0xFFFFD166);
+    if (bgColor == const Color(0x33118AB2)) return const Color(0xFF118AB2);
     return AppColors.primary;
   }
 
-  // === ACTIONS ===
-
-  void _handleEdit() {
+  void _handleEdit(ReminderItemEditable reminder) {
     Navigator.pushNamed(context, AppRoutes.reminderDetail);
   }
 
-  void _handleDelete() {
+  void _handleDelete(ReminderItemEditable reminder) {
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'Xác nhận xóa',
-      content: 'Bạn có chắc chắn muốn xóa lịch nhắc này?',
-      confirmText: 'Xóa',
+      title: 'X\u00E1c nh\u1EADn x\u00F3a',
+      content:
+          'B\u1EA1n c\u00F3 ch\u1EAFc ch\u1EAFn mu\u1ED1n x\u00F3a l\u1ECBch nh\u1EAFc n\u00E0y?',
+      confirmText: 'X\u00F3a',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
+        setState(() {
+          _reminders.removeWhere((item) => item.id == reminder.id);
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Đã xóa lịch nhắc'),
+            content: Text('\u0110\u00E3 x\u00F3a l\u1ECBch nh\u1EAFc'),
             backgroundColor: Color(0xFFEF4444),
           ),
         );
@@ -623,15 +463,7 @@ class _ReminderListEditableScreenState
   }
 }
 
-/// Reminder item model
 class ReminderItemEditable {
-  final String id;
-  final String title;
-  final String time;
-  final Color iconColor;
-  final IconData icon;
-  bool isActive;
-
   ReminderItemEditable({
     required this.id,
     required this.title,
@@ -640,4 +472,11 @@ class ReminderItemEditable {
     required this.icon,
     required this.isActive,
   });
+
+  final String id;
+  final String title;
+  final String time;
+  final Color iconColor;
+  final IconData icon;
+  bool isActive;
 }

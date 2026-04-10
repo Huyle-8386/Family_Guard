@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
 /// SAFE ZONE CONFIG SCREEN - Cáº¥u hÃ¬nh vÃ¹ng an toÃ n
@@ -41,8 +42,8 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
 
   // â”€â”€ NgÆ°á»i nháº­n (checked=true) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   final List<_Contact> _contacts = [
-    const _Contact(name: 'Bá»‘', initials: 'B', color: Color(0xFF3B82F6), checked: true),
-    const _Contact(name: 'Máº¹', initials: 'M', color: Color(0xFFEC4899), checked: true),
+    const _Contact(name: 'Bố', initials: 'B', color: Color(0xFF3B82F6), checked: true),
+    const _Contact(name: 'Mẹ', initials: 'M', color: Color(0xFFEC4899), checked: true),
     const _Contact(name: 'Anh trai', initials: 'AT', color: Color(0xFF8B5CF6), checked: false),
   ];
 
@@ -64,14 +65,12 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
                 _buildZoneInfoCard(),
                 const SizedBox(height: 24),
 
-                // â”€â”€ BÃ¡n kÃ­nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                _buildSectionTitle('BÃ¡n kÃ­nh vÃ¹ng an toÃ n'),
+                _buildSectionTitle('Bán kính vùng an toàn'),
                 const SizedBox(height: 12),
                 _buildRadiusChips(),
                 const SizedBox(height: 24),
 
-                // â”€â”€ ThÃ´ng bÃ¡o thÃ´ng minh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                _buildSectionTitle('ThÃ´ng bÃ¡o thÃ´ng minh'),
+                _buildSectionTitle('Thông báo thông minh'),
                 const SizedBox(height: 12),
                 _buildSmartAlertsCard(),
                 const SizedBox(height: 24),
@@ -98,66 +97,19 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
 
   // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(64),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xCCF0F8F7),
-          border: Border(
-            bottom: BorderSide(width: 1, color: Color(0x1900ACB2)),
-          ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                // NÃºt back trÃ²n
-                GestureDetector(
-                  onTap: () => Navigator.of(context).maybePop(),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 18,
-                      color: Color(0xFF0C1D1A),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                // TiÃªu Ä‘á»
-                Expanded(
-                  child: Text(
-                    'Cáº¥u hÃ¬nh vÃ¹ng an toÃ n',
-                    style: TextStyle(
-                      color: const Color(0xFF0C1D1A),
-                      fontSize: ResponsiveHelper.sp(context, 20),
-                      fontFamily: 'Lexend',
-                      fontWeight: FontWeight.w700,
-                      height: 1.40,
-                      letterSpacing: -0.50,
-                    ),
-                  ),
-                ),
-                // NÃºt Há»§y
-                TextButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  child: Text(
-                    'Há»§y',
-                    style: TextStyle(
-                      color: const Color(0xFF00ACB2),
-                      fontSize: ResponsiveHelper.sp(context, 16),
-                      fontFamily: 'Lexend',
-                      fontWeight: FontWeight.w500,
-                      height: 1.50,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+    return AppBackHeaderBar(
+      title: 'Cấu hình vùng an toàn',
+      onBack: () => Navigator.of(context).maybePop(),
+      trailing: TextButton(
+        onPressed: () => Navigator.of(context).maybePop(),
+        child: Text(
+          'Hủy',
+          style: TextStyle(
+            color: const Color(0xFF00ACB2),
+            fontSize: ResponsiveHelper.sp(context, 16),
+            fontFamily: 'Lexend',
+            fontWeight: FontWeight.w500,
+            height: 1.50,
           ),
         ),
       ),
@@ -238,7 +190,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'NhÃ  riÃªng',
+                  'Nhà riêng',
                   style: TextStyle(
                     color: const Color(0xFF00ACB2),
                     fontSize: ResponsiveHelper.sp(context, 18),
@@ -249,7 +201,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '123 ÄÆ°á»ng ABC, Quáº­n 1, TP.\nHCM',
+                  '123 Đường ABC, Quận 1, TP.\nHCM',
                   style: TextStyle(
                     color: const Color(0xFF6B7280),
                     fontSize: ResponsiveHelper.sp(context, 14),
@@ -363,7 +315,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             icon: Icons.logout_rounded,
             iconBg: const Color(0xFFFEF2F2),
             iconColor: const Color(0xFFEF4444),
-            label: 'Rá»i vÃ¹ng',
+            label: 'Rời vùng',
             value: _leaveAlert,
             onToggle: (v) => setState(() => _leaveAlert = v),
             showDivider: false,
@@ -372,7 +324,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             icon: Icons.login_rounded,
             iconBg: const Color(0xFFEFF6FF),
             iconColor: const Color(0xFF3B82F6),
-            label: 'VÃ o vÃ¹ng',
+            label: 'Vào vùng',
             value: _enterAlert,
             onToggle: (v) => setState(() => _enterAlert = v),
             showDivider: true,
@@ -381,7 +333,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             icon: Icons.timer_rounded,
             iconBg: const Color(0xFFFFFBEB),
             iconColor: const Color(0xFFD97706),
-            label: 'á»ž láº¡i quÃ¡ lÃ¢u',
+            label: 'Ở lại quá lâu',
             value: _stayLongAlert,
             onToggle: (v) => setState(() => _stayLongAlert = v),
             showDivider: true,
@@ -482,7 +434,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'ThÃ nh viÃªn',
+            'Thành viên',
             style: TextStyle(
               color: const Color(0xFF0C1D1A),
               fontSize: ResponsiveHelper.sp(context, 16),
@@ -494,7 +446,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneSelectMember),
             child: Text(
-              '+ ThÃªm má»›i',
+              '+ Thêm mới',
               style: TextStyle(
                 color: const Color(0xFF00ACB2),
                 fontSize: ResponsiveHelper.sp(context, 14),
@@ -624,7 +576,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
       ),
       child: ElevatedButton(
         onPressed: () => Navigator.of(context).maybePop(),
-        child: const Text('LÆ°u cáº¥u hÃ¬nh'),
+        child: const Text('Lưu cấu hình'),
       ),
     );
   }

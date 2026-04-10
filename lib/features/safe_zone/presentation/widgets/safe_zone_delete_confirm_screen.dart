@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 
 /// ============================================================
-/// SAFE ZONE DELETE CONFIRM SCREEN - Xác nhận xóa vùng an toàn
-/// Được dịch và sửa lỗi từ Figma Dev Mode export
-/// Hiển thị map nền + modal bottom sheet xác nhận xóa
+/// SAFE ZONE DELETE CONFIRM SCREEN - XÃ¡c nháº­n xÃ³a vÃ¹ng an toÃ n
+/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
+/// Hiá»ƒn thá»‹ map ná»n + modal bottom sheet xÃ¡c nháº­n xÃ³a
 /// ============================================================
 class SafeZoneDeleteConfirmScreen extends StatefulWidget {
   const SafeZoneDeleteConfirmScreen({super.key});
@@ -37,7 +38,7 @@ class _SafeZoneDeleteConfirmScreenState
     _fadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeIn),
     );
-    // Tự động mở modal khi vào màn hình
+    // Tá»± Ä‘á»™ng má»Ÿ modal khi vÃ o mÃ n hÃ¬nh
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animController.forward();
     });
@@ -94,10 +95,10 @@ class _SafeZoneDeleteConfirmScreenState
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // ── Nền: map + zone circle + AppBar + search bar ──────
+          // â”€â”€ Ná»n: map + zone circle + AppBar + search bar â”€â”€â”€â”€â”€â”€
           _buildMapBackground(context),
 
-          // ── Lớp mờ overlay ─────────────────────────────────────
+          // â”€â”€ Lá»›p má» overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           AnimatedBuilder(
             animation: _fadeAnim,
             builder: (_, __) => Opacity(
@@ -106,7 +107,7 @@ class _SafeZoneDeleteConfirmScreenState
             ),
           ),
 
-          // ── Modal bottom sheet xác nhận ─────────────────────────
+          // â”€â”€ Modal bottom sheet xÃ¡c nháº­n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           AnimatedBuilder(
             animation: _slideAnim,
             builder: (_, child) => FractionalTranslation(
@@ -120,7 +121,7 @@ class _SafeZoneDeleteConfirmScreenState
     );
   }
 
-  // ── Nền bản đồ (tái sử dụng từ edit screen) ───────────────────────
+  // â”€â”€ Ná»n báº£n Ä‘á»“ (tÃ¡i sá»­ dá»¥ng tá»« edit screen) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildMapBackground(BuildContext context) {
     final service = SafeZoneProvider.of(context);
     final zones = service.zones;
@@ -162,12 +163,12 @@ class _SafeZoneDeleteConfirmScreenState
                 ),
               ),
 
-              // Zone circle + pin ở giữa
+              // Zone circle + pin á»Ÿ giá»¯a
               Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Vòng tròn zone
+                    // VÃ²ng trÃ²n zone
                     Container(
                       width: 256,
                       height: 256,
@@ -200,7 +201,7 @@ class _SafeZoneDeleteConfirmScreenState
                         Container(width: 4, height: 8, color: const Color(0xFF00ACB2)),
                       ],
                     ),
-                    // Badge bán kính
+                    // Badge bÃ¡n kÃ­nh
                     Positioned(
                       bottom: 36,
                       child: Container(
@@ -269,7 +270,7 @@ class _SafeZoneDeleteConfirmScreenState
                 ),
               ),
 
-              // Nút GPS
+              // NÃºt GPS
               Positioned(
                 right: 16,
                 bottom: 80,
@@ -353,82 +354,16 @@ class _SafeZoneDeleteConfirmScreenState
                 left: 0,
                 right: 0,
                 top: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.10),
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.white.withValues(alpha: 0.20),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: _dismiss,
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x0C000000),
-                                    blurRadius: 2,
-                                    offset: Offset(0, 1),
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.arrow_back_ios_new_rounded,
-                                size: 18,
-                                color: Color(0xFF111827),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'Vùng an toàn',
-                            style: TextStyle(
-                              color: Color(0xFF111827),
-                              fontSize: 18,
-                              fontFamily: 'Lexend',
-                              fontWeight: FontWeight.w700,
-                              height: 1.56,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: const Text(
-                          'Lưu',
-                          style: TextStyle(
-                            color: Color(0xFF00ACB2),
-                            fontSize: 16,
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                child: AppBackHeaderBar(
+                  title: 'Vùng an toàn',
+                  onBack: _dismiss,
                 ),
               ),
             ],
           ),
         ),
 
-        // Bottom panel phía sau (mờ do overlay)
+        // Bottom panel phÃ­a sau (má» do overlay)
         Expanded(
           child: Container(
             decoration: const BoxDecoration(
@@ -444,7 +379,7 @@ class _SafeZoneDeleteConfirmScreenState
     );
   }
 
-  // ── Modal xác nhận xóa ────────────────────────────────────────────
+  // â”€â”€ Modal xÃ¡c nháº­n xÃ³a â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Widget _buildConfirmSheet(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -481,7 +416,7 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // Icon cảnh báo
+            // Icon cáº£nh bÃ¡o
             Container(
               width: 72,
               height: 72,
@@ -505,7 +440,7 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // Tiêu đề
+            // TiÃªu Ä‘á»
             const Text(
               'Xóa vùng an toàn?',
               textAlign: TextAlign.center,
@@ -520,7 +455,7 @@ class _SafeZoneDeleteConfirmScreenState
 
             const SizedBox(height: 12),
 
-            // Tên + địa chỉ vùng
+            // TÃªn + Ä‘á»‹a chá»‰ vÃ¹ng
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -580,7 +515,7 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // Thông báo cảnh báo
+            // ThÃ´ng bÃ¡o cáº£nh bÃ¡o
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -620,10 +555,10 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // Nút hành động
+            // NÃºt hÃ nh Ä‘á»™ng
             Row(
               children: [
-                // Nút Hủy
+                // NÃºt Há»§y
                 Expanded(
                   child: SizedBox(
                     height: 56,
@@ -636,7 +571,7 @@ class _SafeZoneDeleteConfirmScreenState
 
                 const SizedBox(width: 12),
 
-                // Nút Xóa
+                // NÃºt XÃ³a
                 Expanded(
                   child: SizedBox(
                     height: 56,

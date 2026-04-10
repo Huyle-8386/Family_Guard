@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/widgets/app_dialog.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
 
 
 /// ============================================================
-/// MÀN HÌNH: Chi tiết nhắc nhở
-/// View chi tiết reminder với audio đang phát
-/// Chuyển đổi từ Figma Dev Mode → Flutter Clean Code
+/// MÃ€N HÃŒNH: Chi tiáº¿t nháº¯c nhá»Ÿ
+/// View chi tiáº¿t reminder vá»›i audio Ä‘ang phÃ¡t
+/// Chuyá»ƒn Ä‘á»•i tá»« Figma Dev Mode â†’ Flutter Clean Code
 /// ============================================================
 class ReminderDetailsViewScreen extends StatefulWidget {
   const ReminderDetailsViewScreen({super.key});
@@ -41,11 +42,13 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                 bottom: 128,
               ),
               child: Column(
-                spacing: 16,
                 children: [
                   _buildReminderCard(),
+                  const SizedBox(height: 16),
                   _buildVoiceRecordingSection(),
+                  const SizedBox(height: 16),
                   _buildRecipientSection(),
+                  const SizedBox(height: 16),
                   _buildActivationSection(),
                 ],
               ),
@@ -59,68 +62,13 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
     );
   }
 
-  /// Header with back button
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16),
-      decoration: ShapeDecoration(
-        color: const Color(0xCCF0F9F7),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: const Color(0x1900ACB2),
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(9999),
-                  ),
-                ),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFF0C1D1A),
-                  size: 24,
-                ),
-              ),
-            ),
-
-            // Title
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(right: 40),
-                child: Text(
-                  'Chi tiết nhắc nhở',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: const Color(0xFF0C1D1A),
-                    fontSize: ResponsiveHelper.sp(context, 18),
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w700,
-                    height: 1.25,
-                    letterSpacing: -0.45,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return const AppBackHeaderBar(
+      title: 'Chi tiết nhắc nhở',
     );
   }
 
-  /// Main reminder card với icon và thông tin
+  /// Main reminder card vá»›i icon vÃ  thÃ´ng tin
   Widget _buildReminderCard() {
     return Container(
       width: double.infinity,
@@ -144,7 +92,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
         ],
       ),
       child: Column(
-        spacing: 16,
         children: [
           // Icon
           Container(
@@ -165,7 +112,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
 
           // Title and time
           Column(
-            spacing: 4,
             children: [
               Text(
                 'Uống thuốc huyết áp',
@@ -178,15 +124,16 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                   height: 1.33,
                 ),
               ),
+              const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 8,
                 children: [
                   Icon(
                     Icons.access_time,
                     size: 16,
                     color: const Color(0xFF00ACB2),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '08:00 - Hàng ngày',
                     textAlign: TextAlign.center,
@@ -207,17 +154,16 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
     );
   }
 
-  /// Voice recording section với waveform đang phát
+  /// Voice recording section vá»›i waveform Ä‘ang phÃ¡t
   Widget _buildVoiceRecordingSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
       children: [
         // Label
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'GHI ÂM GIỌNG NÓI',
+            'GHI \u00C2M GI\u1ECCNG N\u00D3I',
             style: TextStyle(
               color: const Color(0xFF45A191),
               fontSize: ResponsiveHelper.sp(context, 14),
@@ -229,6 +175,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
           ),
         ),
 
+        const SizedBox(height: 8),
         // Audio player
         Container(
           width: double.infinity,
@@ -252,7 +199,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
             ],
           ),
           child: Row(
-            spacing: 16,
             children: [
               // Play button
               GestureDetector(
@@ -288,15 +234,16 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                 ),
               ),
 
+              const SizedBox(width: 16),
               // Waveform and progress
               Expanded(
                 child: Column(
-                  spacing: 8,
                   children: [
                     // Waveform
                     _buildWaveform(),
 
                     // Time labels
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -342,12 +289,15 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
-        spacing: 4,
-        children: List.generate(heights.length, (index) {
-          final isPlayed = index < progressIndex;
+        children: List.generate(heights.length * 2 - 1, (index) {
+          if (index.isOdd) {
+            return const SizedBox(width: 4);
+          }
+          final barIndex = index ~/ 2;
+          final isPlayed = barIndex < progressIndex;
           return Container(
             width: 4,
-            height: heights[index],
+            height: heights[barIndex],
             decoration: ShapeDecoration(
               color: isPlayed
                   ? const Color(0xFF00ACB2)
@@ -366,7 +316,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
   Widget _buildRecipientSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
       children: [
         // Label
         Padding(
@@ -384,6 +333,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
           ),
         ),
 
+        const SizedBox(height: 8),
         // Recipient card
         Container(
           width: double.infinity,
@@ -410,7 +360,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                spacing: 12,
                 children: [
                   // Avatar
                   Container(
@@ -432,6 +381,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                     ),
                   ),
 
+                  const SizedBox(width: 12),
                   // Name and role
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,7 +428,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
   Widget _buildActivationSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8,
       children: [
         // Label
         Padding(
@@ -496,6 +445,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
           ),
         ),
 
+        const SizedBox(height: 8),
         // Toggle card
         Container(
           width: double.infinity,
@@ -522,7 +472,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                spacing: 12,
                 children: [
                   // Icon
                   Container(
@@ -541,6 +490,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                     ),
                   ),
 
+                  const SizedBox(width: 12),
                   // Text
                   Text(
                     'Đang bật nhắc nhở',
@@ -600,7 +550,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                 ),
                 shadows: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   ),
@@ -634,7 +584,6 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
       child: SafeArea(
         top: false,
         child: Row(
-          spacing: 16,
           children: [
             // Delete button
             Expanded(
@@ -655,6 +604,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
               ),
             ),
 
+            const SizedBox(width: 16),
             // Save button
             Expanded(
               child: SizedBox(
