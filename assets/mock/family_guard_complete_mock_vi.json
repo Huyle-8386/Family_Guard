@@ -1,0 +1,2230 @@
+﻿{
+  "metadata": {
+    "datasetVersion": "1.0.0",
+    "datasetName": "family_guard_complete_mock_vi",
+    "locale": "vi-VN",
+    "timezone": "Asia/Bangkok",
+    "generatedAt": "2026-04-09T17:45:00+07:00",
+    "familyId": "family_nguyen_001",
+    "notes": "Bo du lieu mock dong bo cho toan bo ung dung FamilyGuard."
+  },
+  "family": {
+    "familyId": "family_nguyen_001",
+    "familyName": "Gia Ä‘Ã¬nh Minh - Lan",
+    "createdByUserId": "user_ba_minh",
+    "createdAt": "2025-11-18T20:15:00+07:00",
+    "coManagerUserIds": [
+      "user_me_lan"
+    ],
+    "language": "vi-VN",
+    "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+    "memberUserIds": [
+      "user_ba_minh",
+      "user_me_lan",
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "displayOrder": [
+      "user_ba_minh",
+      "user_me_lan",
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "priorityWatchlistUserIds": [
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "onlineUserIds": [
+      "user_ba_minh",
+      "user_me_lan",
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "movingUserIds": [
+      "user_me_lan"
+    ],
+    "atHomeUserIds": [
+      "user_ba_noi_hoa"
+    ],
+    "recentAlertUserIds": [
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "familyStatusLabel": "Cáº§n chÃº Ã½ An vÃ  BÃ  ná»™i trong hÃ´m nay"
+  },
+  "accounts": [
+    {
+      "userId": "user_ba_minh",
+      "familyId": "family_nguyen_001",
+      "email": "ba@gmail.com",
+      "password": "123456",
+      "displayName": "Nguyá»…n VÄƒn Minh",
+      "role": "ba",
+      "roleLabel": "Ba",
+      "relationshipMap": {
+        "user_me_lan": "Vá»£",
+        "user_con_an": "Con",
+        "user_ba_noi_hoa": "Máº¹"
+      },
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenVanMinh",
+      "accountStatus": "active",
+      "lastLoginAt": "2026-04-09T17:31:22+07:00",
+      "activeDeviceId": "device_ba_minh_phone",
+      "onlineStatus": "online",
+      "isFamilyCreator": true,
+      "isCoManager": true,
+      "visibleUserIds": [
+        "user_ba_minh",
+        "user_me_lan",
+        "user_con_an",
+        "user_ba_noi_hoa"
+      ],
+      "visibleModules": [
+        "dashboard",
+        "member_list",
+        "profiles",
+        "family_map",
+        "location_history",
+        "safe_zones",
+        "alerts",
+        "fall_detection",
+        "sos",
+        "reports",
+        "notifications",
+        "settings",
+        "devices"
+      ],
+      "permissions": [
+        "view_all_members",
+        "receive_all_critical_alerts",
+        "manage_safe_zones",
+        "view_all_location_history",
+        "view_all_reports",
+        "manage_devices",
+        "trigger_sos"
+      ]
+    },
+    {
+      "userId": "user_me_lan",
+      "familyId": "family_nguyen_001",
+      "email": "me@gmail.com",
+      "password": "123456",
+      "displayName": "Tráº§n Thá»‹ Lan",
+      "role": "me",
+      "roleLabel": "Máº¹",
+      "relationshipMap": {
+        "user_ba_minh": "Chá»“ng",
+        "user_con_an": "Con",
+        "user_ba_noi_hoa": "Máº¹ chá»“ng"
+      },
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=TranThiLan",
+      "accountStatus": "active",
+      "lastLoginAt": "2026-04-09T17:20:04+07:00",
+      "activeDeviceId": "device_me_lan_phone",
+      "onlineStatus": "online",
+      "isFamilyCreator": false,
+      "isCoManager": true,
+      "visibleUserIds": [
+        "user_me_lan",
+        "user_con_an",
+        "user_ba_noi_hoa",
+        "user_ba_minh"
+      ],
+      "visibleModules": [
+        "dashboard",
+        "member_list",
+        "profiles",
+        "family_map",
+        "alerts",
+        "safe_zones_limited",
+        "notifications",
+        "chat",
+        "settings",
+        "devices"
+      ],
+      "permissions": [
+        "view_child_live_location",
+        "view_senior_live_location",
+        "receive_child_and_senior_alerts",
+        "view_spouse_basic_status",
+        "send_internal_alerts",
+        "trigger_sos"
+      ]
+    },
+    {
+      "userId": "user_con_an",
+      "familyId": "family_nguyen_001",
+      "email": "con@gmail.com",
+      "password": "123456",
+      "displayName": "Nguyá»…n Minh An",
+      "role": "con",
+      "roleLabel": "Con",
+      "relationshipMap": {
+        "user_ba_minh": "Ba",
+        "user_me_lan": "Máº¹",
+        "user_ba_noi_hoa": "BÃ  ná»™i"
+      },
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenMinhAn",
+      "accountStatus": "active",
+      "lastLoginAt": "2026-04-09T16:58:40+07:00",
+      "activeDeviceId": "device_con_an_phone",
+      "onlineStatus": "online",
+      "isFamilyCreator": false,
+      "isCoManager": false,
+      "visibleUserIds": [
+        "user_con_an",
+        "user_ba_minh",
+        "user_me_lan",
+        "user_ba_noi_hoa"
+      ],
+      "visibleModules": [
+        "dashboard_simple",
+        "self_profile",
+        "self_location",
+        "sos",
+        "emergency_contacts",
+        "self_notifications",
+        "self_safe_zones",
+        "settings_basic"
+      ],
+      "permissions": [
+        "view_self_basic_profile",
+        "view_own_safe_zones",
+        "view_emergency_contacts",
+        "trigger_sos"
+      ]
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "familyId": "family_nguyen_001",
+      "email": "noi@gmail.com",
+      "password": "123456",
+      "displayName": "LÃª Thá»‹ Hoa",
+      "role": "ba_noi",
+      "roleLabel": "BÃ  ná»™i",
+      "relationshipMap": {
+        "user_ba_minh": "Con trai",
+        "user_me_lan": "Con dÃ¢u",
+        "user_con_an": "ChÃ¡u ná»™i"
+      },
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=LeThiHoa",
+      "accountStatus": "active",
+      "lastLoginAt": "2026-04-09T14:12:05+07:00",
+      "activeDeviceId": "device_ba_noi_phone",
+      "onlineStatus": "online",
+      "isFamilyCreator": false,
+      "isCoManager": false,
+      "visibleUserIds": [
+        "user_ba_noi_hoa",
+        "user_ba_minh",
+        "user_me_lan",
+        "user_con_an"
+      ],
+      "visibleModules": [
+        "dashboard_senior",
+        "self_profile",
+        "sos",
+        "emergency_contacts",
+        "simple_notifications",
+        "settings_accessibility"
+      ],
+      "permissions": [
+        "view_self_basic_profile",
+        "view_emergency_contacts",
+        "trigger_sos"
+      ]
+    }
+  ],
+  "members": [
+    {
+      "userId": "user_ba_minh",
+      "familyId": "family_nguyen_001",
+      "fullName": "Nguyá»…n VÄƒn Minh",
+      "nickname": "Ba Minh",
+      "roleInFamily": "Ba",
+      "age": 42,
+      "dateOfBirth": "1983-07-18",
+      "gender": "Nam",
+      "occupation": "Ká»¹ sÆ° xÃ¢y dá»±ng",
+      "phoneNumber": "+84 903 118 286",
+      "email": "ba@gmail.com",
+      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenVanMinh",
+      "healthNotes": "KhÃ´ng cÃ³ bá»‡nh ná»n nghiÃªm trá»ng, Ä‘Ã´i lÃºc Ä‘au lÆ°ng khi Ä‘á»©ng cÃ´ng trÆ°á»ng lÃ¢u.",
+      "bloodType": "O+",
+      "emergencyContactIds": [
+        "contact_ba_1"
+      ],
+      "lifeContext": "NgÆ°á»i quáº£n lÃ½ chÃ­nh cá»§a gia Ä‘Ã¬nh, thÆ°á»ng xem báº£n Ä‘á»“ gia Ä‘Ã¬nh vÃ  bÃ¡o cÃ¡o cuá»‘i ngÃ y.",
+      "medicalTags": [
+        "Äau lÆ°ng nháº¹",
+        "KhÃ´ng dá»‹ á»©ng thuá»‘c"
+      ]
+    },
+    {
+      "userId": "user_me_lan",
+      "familyId": "family_nguyen_001",
+      "fullName": "Tráº§n Thá»‹ Lan",
+      "nickname": "Máº¹ Lan",
+      "roleInFamily": "Máº¹",
+      "age": 39,
+      "dateOfBirth": "1986-11-03",
+      "gender": "Ná»¯",
+      "occupation": "NhÃ¢n viÃªn vÄƒn phÃ²ng",
+      "phoneNumber": "+84 907 226 541",
+      "email": "me@gmail.com",
+      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=TranThiLan",
+      "healthNotes": "ViÃªm xoang nháº¹, dá»… Ä‘au Ä‘áº§u khi lÃ m viá»‡c quÃ¡ lÃ¢u trÆ°á»›c mÃ n hÃ¬nh.",
+      "bloodType": "A+",
+      "emergencyContactIds": [
+        "contact_me_1"
+      ],
+      "lifeContext": "Theo dÃµi Con vÃ  BÃ  ná»™i thÆ°á»ng xuyÃªn, Æ°u tiÃªn gá»i nhanh khi cÃ³ sá»± cá»‘.",
+      "medicalTags": [
+        "ViÃªm xoang nháº¹"
+      ]
+    },
+    {
+      "userId": "user_con_an",
+      "familyId": "family_nguyen_001",
+      "fullName": "Nguyá»…n Minh An",
+      "nickname": "An",
+      "roleInFamily": "Con",
+      "age": 12,
+      "dateOfBirth": "2013-08-21",
+      "gender": "Nam",
+      "occupation": "Há»c sinh",
+      "phoneNumber": "+84 933 440 115",
+      "email": "con@gmail.com",
+      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenMinhAn",
+      "healthNotes": "Cáº­n thá»‹ 1.5 Ä‘á»™, dá»‹ á»©ng nháº¹ vá»›i tÃ´m cua.",
+      "bloodType": "B+",
+      "emergencyContactIds": [
+        "contact_con_1",
+        "contact_con_2"
+      ],
+      "lifeContext": "Di chuyá»ƒn giá»¯a nhÃ , trÆ°á»ng vÃ  lá»›p há»c thÃªm; cÃ³ lá»‹ch sinh hoáº¡t khÃ¡ Ä‘á»u nhÆ°ng Ä‘Ã´i lÃºc ra khá»i vÃ¹ng an toÃ n sá»›m.",
+      "medicalTags": [
+        "Cáº­n thá»‹",
+        "Dá»‹ á»©ng háº£i sáº£n nháº¹"
+      ]
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "familyId": "family_nguyen_001",
+      "fullName": "LÃª Thá»‹ Hoa",
+      "nickname": "BÃ  ná»™i",
+      "roleInFamily": "BÃ  ná»™i",
+      "age": 72,
+      "dateOfBirth": "1953-02-14",
+      "gender": "Ná»¯",
+      "occupation": "Nghá»‰ hÆ°u",
+      "phoneNumber": "+84 908 775 662",
+      "email": "noi@gmail.com",
+      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=LeThiHoa",
+      "healthNotes": "TÄƒng huyáº¿t Ã¡p, thoÃ¡i hÃ³a khá»›p gá»‘i, cáº§n theo dÃµi tÃ© ngÃ£ vÃ  thá»i gian ra ngoÃ i má»™t mÃ¬nh.",
+      "bloodType": "O-",
+      "emergencyContactIds": [
+        "contact_noi_1",
+        "contact_noi_2"
+      ],
+      "lifeContext": "ThÆ°á»ng á»Ÿ nhÃ , thá»‰nh thoáº£ng Ä‘i chá»£ gáº§n nhÃ ; Æ°u tiÃªn giao diá»‡n chá»¯ to vÃ  nÃºt SOS lá»›n.",
+      "medicalTags": [
+        "TÄƒng huyáº¿t Ã¡p",
+        "ThoÃ¡i hÃ³a khá»›p gá»‘i",
+        "Nguy cÆ¡ tÃ© ngÃ£ trung bÃ¬nh"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipId": "rel_ba_me_spouse",
+      "fromUserId": "user_ba_minh",
+      "toUserId": "user_me_lan",
+      "type": "spouse",
+      "label": "Chá»“ng"
+    },
+    {
+      "relationshipId": "rel_me_ba_spouse",
+      "fromUserId": "user_me_lan",
+      "toUserId": "user_ba_minh",
+      "type": "spouse",
+      "label": "Vá»£"
+    },
+    {
+      "relationshipId": "rel_ba_con_parent",
+      "fromUserId": "user_ba_minh",
+      "toUserId": "user_con_an",
+      "type": "parent",
+      "label": "Ba"
+    },
+    {
+      "relationshipId": "rel_me_con_parent",
+      "fromUserId": "user_me_lan",
+      "toUserId": "user_con_an",
+      "type": "parent",
+      "label": "Máº¹"
+    },
+    {
+      "relationshipId": "rel_con_ba_child",
+      "fromUserId": "user_con_an",
+      "toUserId": "user_ba_minh",
+      "type": "child",
+      "label": "Con"
+    },
+    {
+      "relationshipId": "rel_con_me_child",
+      "fromUserId": "user_con_an",
+      "toUserId": "user_me_lan",
+      "type": "child",
+      "label": "Con"
+    },
+    {
+      "relationshipId": "rel_noi_ba_parent",
+      "fromUserId": "user_ba_noi_hoa",
+      "toUserId": "user_ba_minh",
+      "type": "parent",
+      "label": "Máº¹"
+    },
+    {
+      "relationshipId": "rel_ba_noi_child",
+      "fromUserId": "user_ba_minh",
+      "toUserId": "user_ba_noi_hoa",
+      "type": "child",
+      "label": "Con trai"
+    },
+    {
+      "relationshipId": "rel_noi_me_inlaw",
+      "fromUserId": "user_ba_noi_hoa",
+      "toUserId": "user_me_lan",
+      "type": "in_law",
+      "label": "Máº¹ chá»“ng"
+    },
+    {
+      "relationshipId": "rel_me_noi_inlaw",
+      "fromUserId": "user_me_lan",
+      "toUserId": "user_ba_noi_hoa",
+      "type": "in_law",
+      "label": "Con dÃ¢u"
+    },
+    {
+      "relationshipId": "rel_noi_con_grandparent",
+      "fromUserId": "user_ba_noi_hoa",
+      "toUserId": "user_con_an",
+      "type": "grandparent",
+      "label": "BÃ  ná»™i"
+    },
+    {
+      "relationshipId": "rel_con_noi_grandchild",
+      "fromUserId": "user_con_an",
+      "toUserId": "user_ba_noi_hoa",
+      "type": "grandchild",
+      "label": "ChÃ¡u ná»™i"
+    }
+  ],
+  "accessControl": {
+    "familyCreatorUserId": "user_ba_minh",
+    "coManagerUserIds": [
+      "user_me_lan"
+    ],
+    "trackedPriorityUserIds": [
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "guardianAssignments": [
+      {
+        "guardianUserId": "user_ba_minh",
+        "trackedUserIds": [
+          "user_me_lan",
+          "user_con_an",
+          "user_ba_noi_hoa"
+        ],
+        "scope": "full"
+      },
+      {
+        "guardianUserId": "user_me_lan",
+        "trackedUserIds": [
+          "user_con_an",
+          "user_ba_noi_hoa"
+        ],
+        "scope": "full"
+      },
+      {
+        "guardianUserId": "user_me_lan",
+        "trackedUserIds": [
+          "user_ba_minh"
+        ],
+        "scope": "basic_live_status"
+      },
+      {
+        "guardianUserId": "user_con_an",
+        "trackedUserIds": [
+          "user_con_an"
+        ],
+        "scope": "self_only"
+      },
+      {
+        "guardianUserId": "user_ba_noi_hoa",
+        "trackedUserIds": [
+          "user_ba_noi_hoa"
+        ],
+        "scope": "self_only"
+      }
+    ],
+    "visibilityMatrix": [
+      {
+        "viewerUserId": "user_ba_minh",
+        "targetUserId": "user_me_lan",
+        "scope": "full"
+      },
+      {
+        "viewerUserId": "user_ba_minh",
+        "targetUserId": "user_con_an",
+        "scope": "full"
+      },
+      {
+        "viewerUserId": "user_ba_minh",
+        "targetUserId": "user_ba_noi_hoa",
+        "scope": "full"
+      },
+      {
+        "viewerUserId": "user_me_lan",
+        "targetUserId": "user_con_an",
+        "scope": "full"
+      },
+      {
+        "viewerUserId": "user_me_lan",
+        "targetUserId": "user_ba_noi_hoa",
+        "scope": "full"
+      },
+      {
+        "viewerUserId": "user_me_lan",
+        "targetUserId": "user_ba_minh",
+        "scope": "basic_live_status"
+      },
+      {
+        "viewerUserId": "user_con_an",
+        "targetUserId": "user_ba_minh",
+        "scope": "contact_only"
+      },
+      {
+        "viewerUserId": "user_con_an",
+        "targetUserId": "user_me_lan",
+        "scope": "contact_only"
+      },
+      {
+        "viewerUserId": "user_ba_noi_hoa",
+        "targetUserId": "user_ba_minh",
+        "scope": "contact_only"
+      },
+      {
+        "viewerUserId": "user_ba_noi_hoa",
+        "targetUserId": "user_me_lan",
+        "scope": "contact_only"
+      }
+    ]
+  },
+  "memberList": {
+    "displayOrder": [
+      "user_ba_minh",
+      "user_me_lan",
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "onlineUserIds": [
+      "user_ba_minh",
+      "user_me_lan",
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "movingUserIds": [
+      "user_me_lan"
+    ],
+    "atHomeUserIds": [
+      "user_ba_noi_hoa"
+    ],
+    "recentAlertUserIds": [
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "priorityWatchUserIds": [
+      "user_con_an",
+      "user_ba_noi_hoa"
+    ],
+    "items": [
+      {
+        "userId": "user_ba_minh",
+        "displayOrder": 1,
+        "displayName": "Ba Minh",
+        "roleLabel": "Ba",
+        "isOnline": true,
+        "isMoving": false,
+        "isAtHome": false,
+        "hasRecentAlert": false,
+        "requiresPriorityWatch": false,
+        "currentStatus": "Äang á»Ÿ cÃ´ng trÃ¬nh",
+        "locationText": "Midtown M8, PhÃº Má»¹ HÆ°ng",
+        "batteryPercent": 58
+      },
+      {
+        "userId": "user_me_lan",
+        "displayOrder": 2,
+        "displayName": "Máº¹ Lan",
+        "roleLabel": "Máº¹",
+        "isOnline": true,
+        "isMoving": true,
+        "isAtHome": false,
+        "hasRecentAlert": false,
+        "requiresPriorityWatch": false,
+        "currentStatus": "Äang Ä‘i xe vá» nhÃ ",
+        "locationText": "Nguyá»…n Há»¯u Thá», Quáº­n 7",
+        "batteryPercent": 41
+      },
+      {
+        "userId": "user_con_an",
+        "displayOrder": 3,
+        "displayName": "Nguyá»…n Minh An",
+        "roleLabel": "Con",
+        "isOnline": true,
+        "isMoving": false,
+        "isAtHome": false,
+        "hasRecentAlert": true,
+        "requiresPriorityWatch": true,
+        "currentStatus": "Äang há»c thÃªm",
+        "locationText": "Trung tÃ¢m Anh ngá»¯ Sao Viá»‡t",
+        "batteryPercent": 18
+      },
+      {
+        "userId": "user_ba_noi_hoa",
+        "displayOrder": 4,
+        "displayName": "BÃ  ná»™i",
+        "roleLabel": "BÃ  ná»™i",
+        "isOnline": true,
+        "isMoving": false,
+        "isAtHome": true,
+        "hasRecentAlert": true,
+        "requiresPriorityWatch": true,
+        "currentStatus": "Äang á»Ÿ nhÃ ",
+        "locationText": "Riverside Residence, Quáº­n 7",
+        "batteryPercent": 76
+      }
+    ]
+  },
+  "devices": [
+    {
+      "deviceId": "device_ba_minh_phone",
+      "userId": "user_ba_minh",
+      "deviceName": "Samsung Galaxy S24 Ultra",
+      "deviceType": "phone",
+      "operatingSystem": "Android",
+      "osVersion": "15",
+      "appVersion": "1.0.0+1",
+      "batteryPercent": 58,
+      "networkType": "5g",
+      "connectionStatus": "online",
+      "lastSyncAt": "2026-04-09T17:41:03+07:00",
+      "isPrimary": true,
+      "permissions": {
+        "location": true,
+        "notifications": true,
+        "motionActivity": true,
+        "backgroundTracking": true
+      },
+      "backgroundTrackingStatus": "allowed"
+    },
+    {
+      "deviceId": "device_me_lan_phone",
+      "userId": "user_me_lan",
+      "deviceName": "iPhone 14",
+      "deviceType": "phone",
+      "operatingSystem": "iOS",
+      "osVersion": "18.1",
+      "appVersion": "1.0.0+1",
+      "batteryPercent": 41,
+      "networkType": "4g",
+      "connectionStatus": "online",
+      "lastSyncAt": "2026-04-09T17:38:24+07:00",
+      "isPrimary": true,
+      "permissions": {
+        "location": true,
+        "notifications": true,
+        "motionActivity": true,
+        "backgroundTracking": true
+      },
+      "backgroundTrackingStatus": "allowed"
+    },
+    {
+      "deviceId": "device_con_an_phone",
+      "userId": "user_con_an",
+      "deviceName": "Samsung Galaxy A15",
+      "deviceType": "phone",
+      "operatingSystem": "Android",
+      "osVersion": "14",
+      "appVersion": "1.0.0+1",
+      "batteryPercent": 18,
+      "networkType": "wifi",
+      "connectionStatus": "online",
+      "lastSyncAt": "2026-04-09T17:40:18+07:00",
+      "isPrimary": true,
+      "permissions": {
+        "location": true,
+        "notifications": true,
+        "motionActivity": true,
+        "backgroundTracking": true
+      },
+      "backgroundTrackingStatus": "allowed"
+    },
+    {
+      "deviceId": "device_ba_noi_phone",
+      "userId": "user_ba_noi_hoa",
+      "deviceName": "OPPO A58",
+      "deviceType": "phone",
+      "operatingSystem": "Android",
+      "osVersion": "14",
+      "appVersion": "1.0.0+1",
+      "batteryPercent": 76,
+      "networkType": "wifi",
+      "connectionStatus": "online",
+      "lastSyncAt": "2026-04-09T17:39:42+07:00",
+      "isPrimary": true,
+      "permissions": {
+        "location": true,
+        "notifications": true,
+        "motionActivity": true,
+        "backgroundTracking": true
+      },
+      "backgroundTrackingStatus": "allowed"
+    },
+    {
+      "deviceId": "device_ba_noi_band",
+      "userId": "user_ba_noi_hoa",
+      "deviceName": "FamilyGuard Care Band",
+      "deviceType": "wearable",
+      "operatingSystem": "Embedded",
+      "osVersion": "2.3.1",
+      "appVersion": "2.3.1",
+      "batteryPercent": 12,
+      "networkType": "bluetooth",
+      "connectionStatus": "offline",
+      "lastSyncAt": "2026-04-09T14:02:11+07:00",
+      "isPrimary": false,
+      "permissions": {
+        "location": false,
+        "notifications": false,
+        "motionActivity": true,
+        "backgroundTracking": false
+      },
+      "backgroundTrackingStatus": "not_applicable"
+    }
+  ],
+  "zones": [
+    {
+      "zoneId": "zone_home_001",
+      "familyId": "family_nguyen_001",
+      "name": "Nhà",
+      "zoneType": "home",
+      "addressText": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
+      "centerLatitude": 10.737463,
+      "centerLongitude": 106.704642,
+      "radiusMeters": 120,
+      "appliesToUserIds": [
+        "user_ba_minh",
+        "user_me_lan",
+        "user_con_an",
+        "user_ba_noi_hoa"
+      ],
+      "activeSchedule": {
+        "timezone": "Asia/Bangkok",
+        "rules": [
+          {
+            "daysOfWeek": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+            "startTime": "00:00",
+            "endTime": "23:59"
+          }
+        ]
+      },
+      "alertOnEnter": true,
+      "alertOnExit": true,
+      "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "managedByUserId": "user_ba_minh"
+    },
+    {
+      "zoneId": "zone_school_001",
+      "familyId": "family_nguyen_001",
+      "name": "Trường THCS Tân Hưng",
+      "zoneType": "school",
+      "addressText": "12 Đường số 3, P. Tân Hưng, Quận 7, TP.HCM",
+      "centerLatitude": 10.741985,
+      "centerLongitude": 106.709824,
+      "radiusMeters": 180,
+      "appliesToUserIds": ["user_con_an"],
+      "activeSchedule": {
+        "timezone": "Asia/Bangkok",
+        "rules": [
+          {
+            "daysOfWeek": ["mon", "tue", "wed", "thu", "fri"],
+            "startTime": "06:30",
+            "endTime": "16:30"
+          }
+        ]
+      },
+      "alertOnEnter": true,
+      "alertOnExit": true,
+      "specialRules": [
+        {
+          "condition": "exit_before_16:30",
+          "description": "Báo nếu An rời trường sớm hơn giờ tan học.",
+          "notifyUserIds": ["user_ba_minh", "user_me_lan"]
+        }
+      ],
+      "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "managedByUserId": "user_ba_minh"
+    },
+    {
+      "zoneId": "zone_office_me_001",
+      "familyId": "family_nguyen_001",
+      "name": "Văn phòng Mẹ",
+      "zoneType": "office",
+      "addressText": "Tòa nhà Sunrise City North, 27 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
+      "centerLatitude": 10.739612,
+      "centerLongitude": 106.705599,
+      "radiusMeters": 140,
+      "appliesToUserIds": ["user_me_lan"],
+      "activeSchedule": {
+        "timezone": "Asia/Bangkok",
+        "rules": [
+          {
+            "daysOfWeek": ["mon", "tue", "wed", "thu", "fri"],
+            "startTime": "07:30",
+            "endTime": "18:30"
+          }
+        ]
+      },
+      "alertOnEnter": true,
+      "alertOnExit": false,
+      "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "managedByUserId": "user_ba_minh"
+    },
+    {
+      "zoneId": "zone_site_ba_001",
+      "familyId": "family_nguyen_001",
+      "name": "Công trình Midtown M8",
+      "zoneType": "worksite",
+      "addressText": "Đường số 16, Khu đô thị Phú Mỹ Hưng, P. Tân Phú, Quận 7, TP.HCM",
+      "centerLatitude": 10.730284,
+      "centerLongitude": 106.71985,
+      "radiusMeters": 200,
+      "appliesToUserIds": ["user_ba_minh"],
+      "activeSchedule": {
+        "timezone": "Asia/Bangkok",
+        "rules": [
+          {
+            "daysOfWeek": ["mon", "tue", "wed", "thu", "fri", "sat"],
+            "startTime": "07:00",
+            "endTime": "19:00"
+          }
+        ]
+      },
+      "alertOnEnter": false,
+      "alertOnExit": false,
+      "alertRecipientUserIds": ["user_ba_minh"],
+      "managedByUserId": "user_ba_minh"
+    },
+    {
+      "zoneId": "zone_market_noi_001",
+      "familyId": "family_nguyen_001",
+      "name": "Chợ gần nhà của Bà nội",
+      "zoneType": "market",
+      "addressText": "Chợ Tân Mỹ, 19 Nguyễn Thị Thập, P. Tân Phú, Quận 7, TP.HCM",
+      "centerLatitude": 10.729412,
+      "centerLongitude": 106.721902,
+      "radiusMeters": 100,
+      "appliesToUserIds": ["user_ba_noi_hoa"],
+      "activeSchedule": {
+        "timezone": "Asia/Bangkok",
+        "rules": [
+          {
+            "daysOfWeek": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+            "startTime": "05:30",
+            "endTime": "11:30"
+          }
+        ]
+      },
+      "alertOnEnter": false,
+      "alertOnExit": true,
+      "specialRules": [
+        {
+          "condition": "outside_home_more_than_90_minutes",
+          "description": "Báo khi Bà nội ở ngoài nhà quá lâu.",
+          "notifyUserIds": ["user_ba_minh", "user_me_lan"]
+        }
+      ],
+      "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "managedByUserId": "user_ba_minh"
+    }
+  ],
+  "currentLocations": [
+    {
+      "userId": "user_ba_minh",
+      "latitude": 10.730391,
+      "longitude": 106.719622,
+      "addressText": "Block M8, Công trình Midtown, Đường số 16, Phú Mỹ Hưng, Quận 7, TP.HCM",
+      "lastUpdatedAt": "2026-04-09T17:40:58+07:00",
+      "gpsAccuracyMeters": 8,
+      "movementStatus": "đang ở cơ quan",
+      "placeContext": "Đang kiểm tra cuối ngày tại công trình",
+      "batteryPercent": 58,
+      "networkType": "5g",
+      "speedKmh": 0.4,
+      "headingDegrees": 132,
+      "isOnline": true,
+      "zoneId": "zone_site_ba_001",
+      "zoneName": "Công trình Midtown M8"
+    },
+    {
+      "userId": "user_me_lan",
+      "latitude": 10.738264,
+      "longitude": 106.707481,
+      "addressText": "Nguyễn Hữu Thọ, hướng về Riverside Residence, Quận 7, TP.HCM",
+      "lastUpdatedAt": "2026-04-09T17:38:21+07:00",
+      "gpsAccuracyMeters": 11,
+      "movementStatus": "đang đi xe",
+      "placeContext": "Đang trên đường về nhà sau giờ làm",
+      "batteryPercent": 41,
+      "networkType": "4g",
+      "speedKmh": 27.6,
+      "headingDegrees": 211,
+      "isOnline": true,
+      "zoneId": null,
+      "zoneName": null
+    },
+    {
+      "userId": "user_con_an",
+      "latitude": 10.7399,
+      "longitude": 106.71185,
+      "addressText": "Trung tâm Anh ngữ Sao Việt, 41 Lâm Văn Bền, P. Tân Kiểng, Quận 7, TP.HCM",
+      "lastUpdatedAt": "2026-04-09T17:40:12+07:00",
+      "gpsAccuracyMeters": 12,
+      "movementStatus": "đang đứng yên",
+      "placeContext": "Đang ngồi học thêm",
+      "batteryPercent": 18,
+      "networkType": "wifi",
+      "speedKmh": 0,
+      "headingDegrees": 0,
+      "isOnline": true,
+      "zoneId": null,
+      "zoneName": null
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "latitude": 10.737463,
+      "longitude": 106.704642,
+      "addressText": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
+      "lastUpdatedAt": "2026-04-09T17:39:36+07:00",
+      "gpsAccuracyMeters": 6,
+      "movementStatus": "đang ở nhà",
+      "placeContext": "Đang nghỉ ở phòng khách",
+      "batteryPercent": 76,
+      "networkType": "wifi",
+      "speedKmh": 0,
+      "headingDegrees": 0,
+      "isOnline": true,
+      "zoneId": "zone_home_001",
+      "zoneName": "Nhà"
+    }
+  ],
+  "locationHistory": [
+    {
+      "userId": "user_ba_minh",
+      "date": "2026-04-09",
+      "totalDistanceKm": 14.6,
+      "totalDurationMinutes": 690,
+      "zoneTransitions": {
+        "entered": 2,
+        "exited": 2
+      },
+      "routePolyline": [[10.737463, 106.704642], [10.7361, 106.70841], [10.73382, 106.71399], [10.731552, 106.71821], [10.730391, 106.719622]],
+      "timeline": [
+        {
+          "from": "2026-04-09T06:10:00+07:00",
+          "to": "2026-04-09T07:04:00+07:00",
+          "locationName": "Nhà",
+          "addressText": "Riverside Residence, Quận 7",
+          "latitude": 10.737463,
+          "longitude": 106.704642,
+          "activity": "Chuẩn bị đi làm, ăn sáng cùng gia đình",
+          "movementType": "still",
+          "durationMinutes": 54,
+          "geofenceEvent": "inside_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T07:04:00+07:00",
+          "to": "2026-04-09T07:48:00+07:00",
+          "locationName": "Trên đường đến công trình",
+          "addressText": "Nguyễn Hữu Thọ - Phú Mỹ Hưng, Quận 7",
+          "latitude": 10.73495,
+          "longitude": 106.71234,
+          "activity": "Đi xe máy đến công trình",
+          "movementType": "vehicle",
+          "durationMinutes": 44,
+          "geofenceEvent": "exit_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T07:48:00+07:00",
+          "to": "2026-04-09T11:57:00+07:00",
+          "locationName": "Công trình Midtown M8",
+          "addressText": "Phú Mỹ Hưng, Quận 7",
+          "latitude": 10.730284,
+          "longitude": 106.71985,
+          "activity": "Kiểm tra hiện trường và họp đội thi công",
+          "movementType": "walking",
+          "durationMinutes": 249,
+          "geofenceEvent": "enter_zone_site_ba_001"
+        },
+        {
+          "from": "2026-04-09T11:57:00+07:00",
+          "to": "2026-04-09T12:44:00+07:00",
+          "locationName": "Căng tin gần công trình",
+          "addressText": "Khu dịch vụ Midtown, Quận 7",
+          "latitude": 10.731248,
+          "longitude": 106.718204,
+          "activity": "Ăn trưa cùng đồng nghiệp",
+          "movementType": "still",
+          "durationMinutes": 47,
+          "geofenceEvent": "exit_zone_site_ba_001"
+        },
+        {
+          "from": "2026-04-09T12:44:00+07:00",
+          "to": "2026-04-09T17:40:00+07:00",
+          "locationName": "Công trình Midtown M8",
+          "addressText": "Phú Mỹ Hưng, Quận 7",
+          "latitude": 10.730391,
+          "longitude": 106.719622,
+          "activity": "Hoàn tất nghiệm thu cuối ngày",
+          "movementType": "walking",
+          "durationMinutes": 296,
+          "geofenceEvent": "enter_zone_site_ba_001"
+        }
+      ]
+    },
+    {
+      "userId": "user_me_lan",
+      "date": "2026-04-09",
+      "totalDistanceKm": 9.1,
+      "totalDurationMinutes": 698,
+      "zoneTransitions": {
+        "entered": 1,
+        "exited": 2
+      },
+      "routePolyline": [[10.737463, 106.704642], [10.73892, 106.70511], [10.739612, 106.705599], [10.74008, 106.70692], [10.738264, 106.707481]],
+      "timeline": [
+        {
+          "from": "2026-04-09T06:00:00+07:00",
+          "to": "2026-04-09T07:18:00+07:00",
+          "locationName": "Nhà",
+          "addressText": "Riverside Residence, Quận 7",
+          "latitude": 10.737463,
+          "longitude": 106.704642,
+          "activity": "Chuẩn bị đồ ăn sáng và đưa An đi học",
+          "movementType": "still",
+          "durationMinutes": 78,
+          "geofenceEvent": "inside_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T07:18:00+07:00",
+          "to": "2026-04-09T07:52:00+07:00",
+          "locationName": "Trên đường đến văn phòng",
+          "addressText": "Nguyễn Hữu Thọ, Quận 7",
+          "latitude": 10.73911,
+          "longitude": 106.70524,
+          "activity": "Đi xe đến văn phòng",
+          "movementType": "vehicle",
+          "durationMinutes": 34,
+          "geofenceEvent": "exit_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T07:52:00+07:00",
+          "to": "2026-04-09T11:58:00+07:00",
+          "locationName": "Văn phòng Mẹ",
+          "addressText": "Sunrise City North, Quận 7",
+          "latitude": 10.739612,
+          "longitude": 106.705599,
+          "activity": "Làm việc tại văn phòng",
+          "movementType": "still",
+          "durationMinutes": 246,
+          "geofenceEvent": "enter_zone_office_me_001"
+        },
+        {
+          "from": "2026-04-09T11:58:00+07:00",
+          "to": "2026-04-09T13:05:00+07:00",
+          "locationName": "Quán cà phê trưa",
+          "addressText": "Khu Nguyễn Hữu Thọ, Quận 7",
+          "latitude": 10.74042,
+          "longitude": 106.70642,
+          "activity": "Ăn trưa và trả lời tin nhắn gia đình",
+          "movementType": "walking",
+          "durationMinutes": 67,
+          "geofenceEvent": "exit_zone_office_me_001"
+        },
+        {
+          "from": "2026-04-09T13:05:00+07:00",
+          "to": "2026-04-09T17:18:00+07:00",
+          "locationName": "Văn phòng Mẹ",
+          "addressText": "Sunrise City North, Quận 7",
+          "latitude": 10.739612,
+          "longitude": 106.705599,
+          "activity": "Tiếp tục làm việc, kiểm tra thông báo của Con và Bà nội",
+          "movementType": "still",
+          "durationMinutes": 253,
+          "geofenceEvent": "enter_zone_office_me_001"
+        },
+        {
+          "from": "2026-04-09T17:18:00+07:00",
+          "to": "2026-04-09T17:38:00+07:00",
+          "locationName": "Đường về nhà",
+          "addressText": "Nguyễn Hữu Thọ, Quận 7",
+          "latitude": 10.738264,
+          "longitude": 106.707481,
+          "activity": "Đi xe về nhà",
+          "movementType": "vehicle",
+          "durationMinutes": 20,
+          "geofenceEvent": "exit_zone_office_me_001"
+        }
+      ]
+    },
+    {
+      "userId": "user_con_an",
+      "date": "2026-04-09",
+      "totalDistanceKm": 7.4,
+      "totalDurationMinutes": 685,
+      "zoneTransitions": {
+        "entered": 1,
+        "exited": 2
+      },
+      "routePolyline": [[10.737463, 106.704642], [10.739884, 106.707402], [10.741985, 106.709824], [10.74241, 106.71102], [10.7399, 106.71185]],
+      "timeline": [
+        {
+          "from": "2026-04-09T06:15:00+07:00",
+          "to": "2026-04-09T07:00:00+07:00",
+          "locationName": "Nhà",
+          "addressText": "Riverside Residence, Quận 7",
+          "latitude": 10.737463,
+          "longitude": 106.704642,
+          "activity": "Ăn sáng, chuẩn bị đến trường",
+          "movementType": "still",
+          "durationMinutes": 45,
+          "geofenceEvent": "inside_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T07:00:00+07:00",
+          "to": "2026-04-09T07:25:00+07:00",
+          "locationName": "Trên đường đến trường",
+          "addressText": "Nguyễn Hữu Thọ - Đường số 3, Quận 7",
+          "latitude": 10.739884,
+          "longitude": 106.707402,
+          "activity": "Đi xe cùng Mẹ đến trường",
+          "movementType": "vehicle",
+          "durationMinutes": 25,
+          "geofenceEvent": "exit_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T07:25:00+07:00",
+          "to": "2026-04-09T15:18:00+07:00",
+          "locationName": "Trường THCS Tân Hưng",
+          "addressText": "12 Đường số 3, Quận 7",
+          "latitude": 10.741985,
+          "longitude": 106.709824,
+          "activity": "Học ở trường, ra sân chơi giờ ra chơi",
+          "movementType": "still",
+          "durationMinutes": 473,
+          "geofenceEvent": "enter_zone_school_001"
+        },
+        {
+          "from": "2026-04-09T15:18:00+07:00",
+          "to": "2026-04-09T15:42:00+07:00",
+          "locationName": "Cửa hàng tiện lợi trước trường",
+          "addressText": "Gần cổng Trường THCS Tân Hưng, Quận 7",
+          "latitude": 10.74241,
+          "longitude": 106.71102,
+          "activity": "Ra ngoài mua nước trước giờ tan học",
+          "movementType": "walking",
+          "durationMinutes": 24,
+          "geofenceEvent": "exit_zone_school_001"
+        },
+        {
+          "from": "2026-04-09T15:42:00+07:00",
+          "to": "2026-04-09T16:05:00+07:00",
+          "locationName": "Trên đường đến lớp học thêm",
+          "addressText": "Đường Lâm Văn Bền, Quận 7",
+          "latitude": 10.74102,
+          "longitude": 106.71148,
+          "activity": "Đi xe cùng Ba đến lớp học thêm",
+          "movementType": "vehicle",
+          "durationMinutes": 23,
+          "geofenceEvent": "outside_all_zones"
+        },
+        {
+          "from": "2026-04-09T16:05:00+07:00",
+          "to": "2026-04-09T17:40:00+07:00",
+          "locationName": "Trung tâm Anh ngữ Sao Việt",
+          "addressText": "41 Lâm Văn Bền, Quận 7",
+          "latitude": 10.7399,
+          "longitude": 106.71185,
+          "activity": "Học thêm tiếng Anh",
+          "movementType": "still",
+          "durationMinutes": 95,
+          "geofenceEvent": "outside_all_zones"
+        }
+      ]
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "date": "2026-04-09",
+      "totalDistanceKm": 2.3,
+      "totalDurationMinutes": 710,
+      "zoneTransitions": {
+        "entered": 2,
+        "exited": 1
+      },
+      "routePolyline": [[10.737463, 106.704642], [10.73482, 106.71012], [10.73195, 106.71782], [10.729412, 106.721902], [10.737463, 106.704642]],
+      "timeline": [
+        {
+          "from": "2026-04-09T05:50:00+07:00",
+          "to": "2026-04-09T08:32:00+07:00",
+          "locationName": "Nhà",
+          "addressText": "Riverside Residence, Quận 7",
+          "latitude": 10.737463,
+          "longitude": 106.704642,
+          "activity": "Ở nhà, tưới cây và ăn sáng",
+          "movementType": "still",
+          "durationMinutes": 162,
+          "geofenceEvent": "inside_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T08:32:00+07:00",
+          "to": "2026-04-09T08:52:00+07:00",
+          "locationName": "Trên đường ra chợ",
+          "addressText": "Nguyễn Hữu Thọ - Nguyễn Thị Thập, Quận 7",
+          "latitude": 10.73482,
+          "longitude": 106.71012,
+          "activity": "Đi bộ chậm ra chợ",
+          "movementType": "walking",
+          "durationMinutes": 20,
+          "geofenceEvent": "exit_zone_home_001"
+        },
+        {
+          "from": "2026-04-09T08:52:00+07:00",
+          "to": "2026-04-09T09:34:00+07:00",
+          "locationName": "Chợ Tân Mỹ",
+          "addressText": "19 Nguyễn Thị Thập, Quận 7",
+          "latitude": 10.729412,
+          "longitude": 106.721902,
+          "activity": "Mua rau và đồ ăn sáng",
+          "movementType": "walking",
+          "durationMinutes": 42,
+          "geofenceEvent": "enter_zone_market_noi_001"
+        },
+        {
+          "from": "2026-04-09T09:34:00+07:00",
+          "to": "2026-04-09T10:12:00+07:00",
+          "locationName": "Nhà thuốc Minh Châu",
+          "addressText": "Đường Nguyễn Thị Thập, Quận 7",
+          "latitude": 10.731318,
+          "longitude": 106.718614,
+          "activity": "Ghé mua thuốc huyết áp",
+          "movementType": "walking",
+          "durationMinutes": 38,
+          "geofenceEvent": "exit_zone_market_noi_001"
+        },
+        {
+          "from": "2026-04-09T10:12:00+07:00",
+          "to": "2026-04-09T10:34:00+07:00",
+          "locationName": "Trên đường về nhà",
+          "addressText": "Nguyễn Hữu Thọ, Quận 7",
+          "latitude": 10.73492,
+          "longitude": 106.70974,
+          "activity": "Đi bộ về nhà",
+          "movementType": "walking",
+          "durationMinutes": 22,
+          "geofenceEvent": "outside_all_zones"
+        },
+        {
+          "from": "2026-04-09T10:34:00+07:00",
+          "to": "2026-04-09T17:40:00+07:00",
+          "locationName": "Nhà",
+          "addressText": "Riverside Residence, Quận 7",
+          "latitude": 10.737463,
+          "longitude": 106.704642,
+          "activity": "Nghỉ ngơi tại nhà sau khi trở về",
+          "movementType": "still",
+          "durationMinutes": 426,
+          "geofenceEvent": "enter_zone_home_001"
+        }
+      ]
+    }
+  ],
+  "activities": [
+    {
+      "userId": "user_ba_minh",
+      "currentActivity": {
+        "type": "still",
+        "label": "Đang đứng kiểm tra công trình",
+        "startedAt": "2026-04-09T17:18:00+07:00",
+        "confidence": 0.89
+      },
+      "history": [
+        {"from": "2026-04-09T07:04:00+07:00", "to": "2026-04-09T07:48:00+07:00", "type": "vehicle", "label": "Đi xe máy đến công trình"},
+        {"from": "2026-04-09T07:48:00+07:00", "to": "2026-04-09T11:57:00+07:00", "type": "walking", "label": "Di chuyển trong công trình"},
+        {"from": "2026-04-09T11:57:00+07:00", "to": "2026-04-09T12:44:00+07:00", "type": "still", "label": "Ngồi ăn trưa"},
+        {"from": "2026-04-09T12:44:00+07:00", "to": "2026-04-09T17:40:00+07:00", "type": "walking", "label": "Kiểm tra hiện trường"}
+      ],
+      "todaySummary": {
+        "walkingMinutes": 92,
+        "runningMinutes": 0,
+        "vehicleMinutes": 48,
+        "stillMinutes": 535,
+        "unknownMinutes": 15,
+        "totalActiveMinutes": 92,
+        "stepEstimate": 7420
+      }
+    },
+    {
+      "userId": "user_me_lan",
+      "currentActivity": {
+        "type": "vehicle",
+        "label": "Đang ngồi trên xe về nhà",
+        "startedAt": "2026-04-09T17:18:00+07:00",
+        "confidence": 0.93
+      },
+      "history": [
+        {"from": "2026-04-09T07:18:00+07:00", "to": "2026-04-09T07:52:00+07:00", "type": "vehicle", "label": "Di chuyển đến văn phòng"},
+        {"from": "2026-04-09T07:52:00+07:00", "to": "2026-04-09T11:58:00+07:00", "type": "still", "label": "Ngồi làm việc"},
+        {"from": "2026-04-09T11:58:00+07:00", "to": "2026-04-09T13:05:00+07:00", "type": "walking", "label": "Đi bộ ăn trưa"},
+        {"from": "2026-04-09T13:05:00+07:00", "to": "2026-04-09T17:18:00+07:00", "type": "still", "label": "Ngồi làm việc"},
+        {"from": "2026-04-09T17:18:00+07:00", "to": "2026-04-09T17:38:00+07:00", "type": "vehicle", "label": "Đi xe về nhà"}
+      ],
+      "todaySummary": {
+        "walkingMinutes": 46,
+        "runningMinutes": 0,
+        "vehicleMinutes": 54,
+        "stillMinutes": 580,
+        "unknownMinutes": 18,
+        "totalActiveMinutes": 46,
+        "stepEstimate": 4920
+      }
+    },
+    {
+      "userId": "user_con_an",
+      "currentActivity": {
+        "type": "still",
+        "label": "Đang ngồi học thêm",
+        "startedAt": "2026-04-09T16:05:00+07:00",
+        "confidence": 0.95
+      },
+      "history": [
+        {"from": "2026-04-09T07:00:00+07:00", "to": "2026-04-09T07:25:00+07:00", "type": "vehicle", "label": "Đi xe đến trường"},
+        {"from": "2026-04-09T07:25:00+07:00", "to": "2026-04-09T10:15:00+07:00", "type": "still", "label": "Ngồi học trong lớp"},
+        {"from": "2026-04-09T10:15:00+07:00", "to": "2026-04-09T10:33:00+07:00", "type": "running", "label": "Chạy ở sân trường giờ ra chơi"},
+        {"from": "2026-04-09T10:33:00+07:00", "to": "2026-04-09T15:18:00+07:00", "type": "still", "label": "Ngồi học"},
+        {"from": "2026-04-09T15:18:00+07:00", "to": "2026-04-09T15:42:00+07:00", "type": "walking", "label": "Đi bộ ra ngoài cổng trường"},
+        {"from": "2026-04-09T15:42:00+07:00", "to": "2026-04-09T16:05:00+07:00", "type": "vehicle", "label": "Đi xe đến lớp học thêm"}
+      ],
+      "todaySummary": {
+        "walkingMinutes": 51,
+        "runningMinutes": 18,
+        "vehicleMinutes": 48,
+        "stillMinutes": 545,
+        "unknownMinutes": 14,
+        "totalActiveMinutes": 69,
+        "stepEstimate": 8350
+      }
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "currentActivity": {
+        "type": "still",
+        "label": "Đang nghỉ ở phòng khách",
+        "startedAt": "2026-04-09T15:10:00+07:00",
+        "confidence": 0.91
+      },
+      "history": [
+        {"from": "2026-04-09T05:50:00+07:00", "to": "2026-04-09T08:32:00+07:00", "type": "still", "label": "Ở nhà"},
+        {"from": "2026-04-09T08:32:00+07:00", "to": "2026-04-09T10:34:00+07:00", "type": "walking", "label": "Đi bộ chậm ra chợ và về nhà"},
+        {"from": "2026-04-09T10:42:00+07:00", "to": "2026-04-09T10:43:00+07:00", "type": "unknown", "label": "Thiết bị ghi nhận va chạm bất thường"},
+        {"from": "2026-04-09T10:47:00+07:00", "to": "2026-04-09T17:40:00+07:00", "type": "still", "label": "Nghỉ ngơi tại nhà"}
+      ],
+      "todaySummary": {
+        "walkingMinutes": 64,
+        "runningMinutes": 0,
+        "vehicleMinutes": 0,
+        "stillMinutes": 628,
+        "unknownMinutes": 18,
+        "totalActiveMinutes": 64,
+        "stepEstimate": 3460
+      }
+    }
+  ],
+  "screenUsage": [
+    {
+      "userId": "user_ba_minh",
+      "date": "2026-04-09",
+      "screenTimeMinutesToday": 288,
+      "unlockCount": 67,
+      "mostUsedApps": [
+        {"appName": "Zalo", "minutes": 72},
+        {"appName": "Google Maps", "minutes": 44},
+        {"appName": "Gmail", "minutes": 39},
+        {"appName": "FamilyGuard", "minutes": 34}
+      ],
+      "usageNote": "Sử dụng mức vừa đến cao, chủ yếu cho công việc và kiểm tra gia đình."
+    },
+    {
+      "userId": "user_me_lan",
+      "date": "2026-04-09",
+      "screenTimeMinutesToday": 236,
+      "unlockCount": 52,
+      "mostUsedApps": [
+        {"appName": "Zalo", "minutes": 61},
+        {"appName": "Outlook", "minutes": 58},
+        {"appName": "FamilyGuard", "minutes": 29},
+        {"appName": "Safari", "minutes": 24}
+      ],
+      "usageNote": "Dùng điện thoại đều trong giờ làm, ưu tiên kiểm tra thông báo từ An và Bà nội."
+    },
+    {
+      "userId": "user_con_an",
+      "date": "2026-04-09",
+      "screenTimeMinutesToday": 132,
+      "unlockCount": 31,
+      "mostUsedApps": [
+        {"appName": "Google Classroom", "minutes": 28},
+        {"appName": "FamilyGuard", "minutes": 22},
+        {"appName": "YouTube Kids", "minutes": 18},
+        {"appName": "Từ điển Anh Việt", "minutes": 14}
+      ],
+      "studyHours": ["07:30-11:30", "13:00-16:30"],
+      "breakHours": ["12:00-13:00", "19:00-20:00"],
+      "blockedAppAttemptsToday": 2,
+      "usageNote": "Thời gian dùng vừa phải, chủ yếu cho học tập; thiết bị đang pin yếu cuối ngày."
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "date": "2026-04-09",
+      "screenTimeMinutesToday": 38,
+      "unlockCount": 9,
+      "mostUsedApps": [
+        {"appName": "FamilyGuard", "minutes": 14},
+        {"appName": "Điện thoại", "minutes": 12},
+        {"appName": "Zalo", "minutes": 8}
+      ],
+      "usageNote": "Dùng rất ít, chủ yếu để xem thông báo đơn giản và gọi nhanh cho người thân."
+    }
+  ],
+  "alerts": [
+    {
+      "alertId": "alert_me_arrived_office_20260409_0752",
+      "type": "geofence_enter",
+      "priority": "low",
+      "sourceUserId": "user_me_lan",
+      "sourceDisplayName": "Trần Thị Lan",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "title": "Mẹ đã đến văn phòng",
+      "message": "Lan đã vào vùng an toàn \"Văn phòng Mẹ\" lúc 07:52.",
+      "createdAt": "2026-04-09T07:52:00+07:00",
+      "relatedZoneId": "zone_office_me_001",
+      "relatedEventId": null,
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": true, "user_me_lan": true},
+      "handlingStatus": "processed",
+      "handledByUserId": "user_ba_minh",
+      "handledAt": "2026-04-09T08:05:00+07:00"
+    },
+    {
+      "alertId": "alert_noi_outside_too_long_20260409_1003",
+      "type": "outside_home_too_long",
+      "priority": "high",
+      "sourceUserId": "user_ba_noi_hoa",
+      "sourceDisplayName": "Lê Thị Hoa",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "title": "Bà nội ở ngoài nhà lâu hơn bình thường",
+      "message": "Bà nội đã ra khỏi vùng Nhà hơn 90 phút và hiện chưa trở về.",
+      "createdAt": "2026-04-09T10:03:00+07:00",
+      "relatedZoneId": "zone_home_001",
+      "relatedEventId": null,
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": true, "user_me_lan": true},
+      "handlingStatus": "processed",
+      "handledByUserId": "user_me_lan",
+      "handledAt": "2026-04-09T10:06:00+07:00"
+    },
+    {
+      "alertId": "alert_noi_fall_suspected_20260409_1042",
+      "type": "fall_detection",
+      "priority": "critical",
+      "sourceUserId": "user_ba_noi_hoa",
+      "sourceDisplayName": "Lê Thị Hoa",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "title": "Nghi ngờ Bà nội bị té ngã",
+      "message": "Thiết bị của Bà nội ghi nhận va chạm mạnh tại nhà lúc 10:42. Chưa có phản hồi trong thời gian đếm ngược.",
+      "createdAt": "2026-04-09T10:42:12+07:00",
+      "relatedZoneId": "zone_home_001",
+      "relatedEventId": "fall_noi_20260409_1042",
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": true, "user_me_lan": true},
+      "handlingStatus": "processed",
+      "handledByUserId": "user_me_lan",
+      "handledAt": "2026-04-09T10:47:10+07:00"
+    },
+    {
+      "alertId": "alert_noi_sos_real_20260409_1044",
+      "type": "sos",
+      "priority": "critical",
+      "sourceUserId": "user_ba_noi_hoa",
+      "sourceDisplayName": "Lê Thị Hoa",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "title": "Bà nội vừa bấm SOS",
+      "message": "Bà nội bấm SOS tại nhà lúc 10:44 với lý do chóng mặt trong nhà tắm.",
+      "createdAt": "2026-04-09T10:44:08+07:00",
+      "relatedZoneId": "zone_home_001",
+      "relatedEventId": "sos_noi_20260409_1044",
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": true, "user_me_lan": true},
+      "handlingStatus": "processed",
+      "handledByUserId": "user_me_lan",
+      "handledAt": "2026-04-09T10:47:30+07:00"
+    },
+    {
+      "alertId": "alert_con_left_school_early_20260409_1518",
+      "type": "geofence_exit_early",
+      "priority": "high",
+      "sourceUserId": "user_con_an",
+      "sourceDisplayName": "Nguyễn Minh An",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "title": "An rời trường sớm hơn lịch",
+      "message": "An ra khỏi vùng an toàn Trường THCS Tân Hưng lúc 15:18, sớm hơn giờ tan học 16:30.",
+      "createdAt": "2026-04-09T15:18:14+07:00",
+      "relatedZoneId": "zone_school_001",
+      "relatedEventId": null,
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": true, "user_me_lan": true},
+      "handlingStatus": "processed",
+      "handledByUserId": "user_me_lan",
+      "handledAt": "2026-04-09T15:21:02+07:00"
+    },
+    {
+      "alertId": "alert_con_sos_test_20260409_1638",
+      "type": "sos_test",
+      "priority": "high",
+      "sourceUserId": "user_con_an",
+      "sourceDisplayName": "Nguyễn Minh An",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "title": "An vừa gửi SOS thử",
+      "message": "An bấm SOS thử tại lớp học thêm theo hướng dẫn của Ba.",
+      "createdAt": "2026-04-09T16:38:00+07:00",
+      "relatedZoneId": null,
+      "relatedEventId": "sos_con_20260409_1638",
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": true, "user_me_lan": true},
+      "handlingStatus": "processed",
+      "handledByUserId": "user_ba_minh",
+      "handledAt": "2026-04-09T16:41:10+07:00"
+    },
+    {
+      "alertId": "alert_con_low_battery_20260409_1705",
+      "type": "low_battery",
+      "priority": "medium",
+      "sourceUserId": "user_con_an",
+      "sourceDisplayName": "Nguyễn Minh An",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan", "user_con_an"],
+      "title": "Pin thiết bị của An sắp hết",
+      "message": "Thiết bị của An còn 18% pin tại lớp học thêm. Nên sạc trước khi về nhà.",
+      "createdAt": "2026-04-09T17:05:00+07:00",
+      "relatedZoneId": null,
+      "relatedEventId": null,
+      "deliveryStatus": "sent",
+      "readStatus": {"user_ba_minh": false, "user_me_lan": true, "user_con_an": false},
+      "handlingStatus": "unprocessed",
+      "handledByUserId": null,
+      "handledAt": null
+    }
+  ],
+  "fallEvents": [
+    {
+      "eventId": "fall_noi_20260408_1918",
+      "userId": "user_ba_noi_hoa",
+      "detectedAt": "2026-04-08T19:18:44+07:00",
+      "latitude": 10.737463,
+      "longitude": 106.704642,
+      "addressText": "Phòng khách, Riverside Residence, Quận 7",
+      "promptText": "Bà có ổn không?",
+      "countdownSeconds": 20,
+      "countdownResult": "đã phản hồi",
+      "finalStatus": "đã xác nhận an toàn",
+      "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "alertSentAt": null,
+      "confirmedSafeAt": "2026-04-08T19:19:01+07:00",
+      "note": "Bà nội chạm nhầm điện thoại khi ngồi xuống ghế."
+    },
+    {
+      "eventId": "fall_noi_20260409_1042",
+      "userId": "user_ba_noi_hoa",
+      "detectedAt": "2026-04-09T10:42:12+07:00",
+      "latitude": 10.737463,
+      "longitude": 106.704642,
+      "addressText": "Nhà tắm, Riverside Residence, Quận 7",
+      "promptText": "Bà có ổn không?",
+      "countdownSeconds": 30,
+      "countdownResult": "không phản hồi",
+      "finalStatus": "đã gửi cảnh báo cho người thân",
+      "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "alertSentAt": "2026-04-09T10:42:42+07:00",
+      "confirmedSafeAt": "2026-04-09T10:47:10+07:00",
+      "note": "Bà bị choáng nhẹ trong nhà tắm, sau đó ngồi nghỉ và xác nhận đã an toàn qua cuộc gọi của Mẹ."
+    }
+  ],
+  "sosEvents": [
+    {
+      "eventId": "sos_con_20260409_1638",
+      "userId": "user_con_an",
+      "testMode": true,
+      "triggerType": "manual_button",
+      "createdAt": "2026-04-09T16:38:00+07:00",
+      "latitude": 10.7399,
+      "longitude": 106.71185,
+      "addressText": "Trung tâm Anh ngữ Sao Việt, 41 Lâm Văn Bền, Quận 7, TP.HCM",
+      "shortReason": "Bấm thử nút SOS theo hướng dẫn",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "responseStatus": "đã phản hồi",
+      "firstResponderUserId": "user_ba_minh",
+      "firstResponseAt": "2026-04-09T16:39:08+07:00",
+      "resolvedAt": "2026-04-09T16:41:10+07:00",
+      "resolutionNote": "Ba xác nhận đây là SOS thử, Mẹ đã thấy thông báo.",
+      "communicationLog": [
+        {
+          "type": "in_app_message",
+          "fromUserId": "user_ba_minh",
+          "toUserId": "user_con_an",
+          "time": "2026-04-09T16:39:08+07:00",
+          "content": "Ba đã nhận được SOS thử của con."
+        },
+        {
+          "type": "in_app_message",
+          "fromUserId": "user_me_lan",
+          "toUserId": "user_con_an",
+          "time": "2026-04-09T16:40:12+07:00",
+          "content": "Mẹ đã thấy rồi, lát về nhớ sạc máy nhé."
+        }
+      ]
+    },
+    {
+      "eventId": "sos_noi_20260409_1044",
+      "userId": "user_ba_noi_hoa",
+      "testMode": false,
+      "triggerType": "manual_button",
+      "createdAt": "2026-04-09T10:44:08+07:00",
+      "latitude": 10.737463,
+      "longitude": 106.704642,
+      "addressText": "Nhà tắm, Riverside Residence, Quận 7, TP.HCM",
+      "shortReason": "Chóng mặt trong nhà tắm",
+      "recipientUserIds": ["user_ba_minh", "user_me_lan"],
+      "responseStatus": "đã phản hồi",
+      "firstResponderUserId": "user_me_lan",
+      "firstResponseAt": "2026-04-09T10:45:02+07:00",
+      "resolvedAt": "2026-04-09T10:47:30+07:00",
+      "resolutionNote": "Mẹ gọi xác nhận Bà nội ổn, Ba tiếp tục theo dõi từ app.",
+      "communicationLog": [
+        {
+          "type": "phone_call",
+          "fromUserId": "user_me_lan",
+          "toUserId": "user_ba_noi_hoa",
+          "time": "2026-04-09T10:45:02+07:00",
+          "content": "Cuộc gọi kết nối 1 phút 14 giây, Bà nội nói còn chóng mặt nhẹ."
+        },
+        {
+          "type": "phone_call",
+          "fromUserId": "user_ba_minh",
+          "toUserId": "user_ba_noi_hoa",
+          "time": "2026-04-09T10:46:18+07:00",
+          "content": "Ba gọi lại để kiểm tra, cuộc gọi nhỡ vì Mẹ đang nói chuyện với Bà."
+        },
+        {
+          "type": "in_app_message",
+          "fromUserId": "user_me_lan",
+          "toUserId": "user_ba_minh",
+          "time": "2026-04-09T10:47:30+07:00",
+          "content": "Mẹ ổn rồi, em đang ngồi nghỉ và uống nước."
+        }
+      ]
+    }
+  ],
+  "notifications": {
+    "user_ba_minh": [
+      {
+        "notificationId": "noti_ba_1",
+        "type": "alert",
+        "title": "Pin của An còn 18%",
+        "body": "Thiết bị của An đang pin yếu tại lớp học thêm.",
+        "createdAt": "2026-04-09T17:05:00+07:00",
+        "isRead": false,
+        "priority": "medium",
+        "relatedAlertId": "alert_con_low_battery_20260409_1705"
+      },
+      {
+        "notificationId": "noti_ba_2",
+        "type": "alert",
+        "title": "An đã gửi SOS thử",
+        "body": "Ba đã xác nhận đây là thao tác thử nút SOS.",
+        "createdAt": "2026-04-09T16:38:00+07:00",
+        "isRead": true,
+        "priority": "high",
+        "relatedAlertId": "alert_con_sos_test_20260409_1638"
+      },
+      {
+        "notificationId": "noti_ba_3",
+        "type": "alert",
+        "title": "An rời trường sớm",
+        "body": "An ra khỏi vùng Trường THCS Tân Hưng lúc 15:18.",
+        "createdAt": "2026-04-09T15:18:14+07:00",
+        "isRead": true,
+        "priority": "high",
+        "relatedAlertId": "alert_con_left_school_early_20260409_1518"
+      },
+      {
+        "notificationId": "noti_ba_4",
+        "type": "alert",
+        "title": "Bà nội vừa bấm SOS",
+        "body": "Sự cố đã được Mẹ xử lý, Bà nội hiện đã an toàn.",
+        "createdAt": "2026-04-09T10:44:08+07:00",
+        "isRead": true,
+        "priority": "critical",
+        "relatedAlertId": "alert_noi_sos_real_20260409_1044"
+      },
+      {
+        "notificationId": "noti_ba_5",
+        "type": "alert",
+        "title": "Nghi ngờ Bà nội té ngã",
+        "body": "Thiết bị ghi nhận va chạm mạnh trong nhà tắm lúc 10:42.",
+        "createdAt": "2026-04-09T10:42:12+07:00",
+        "isRead": true,
+        "priority": "critical",
+        "relatedAlertId": "alert_noi_fall_suspected_20260409_1042"
+      },
+      {
+        "notificationId": "noti_ba_6",
+        "type": "info",
+        "title": "Mẹ đã đến văn phòng",
+        "body": "Lan vào vùng an toàn lúc 07:52.",
+        "createdAt": "2026-04-09T07:52:00+07:00",
+        "isRead": true,
+        "priority": "low",
+        "relatedAlertId": "alert_me_arrived_office_20260409_0752"
+      }
+    ],
+    "user_me_lan": [
+      {
+        "notificationId": "noti_me_1",
+        "type": "alert",
+        "title": "Pin của An sắp hết",
+        "body": "Thiết bị của An còn 18% pin ở lớp học thêm.",
+        "createdAt": "2026-04-09T17:05:00+07:00",
+        "isRead": true,
+        "priority": "medium",
+        "relatedAlertId": "alert_con_low_battery_20260409_1705"
+      },
+      {
+        "notificationId": "noti_me_2",
+        "type": "alert",
+        "title": "An đã gửi SOS thử",
+        "body": "Ba đã phản hồi, đây là thao tác kiểm tra.",
+        "createdAt": "2026-04-09T16:38:00+07:00",
+        "isRead": true,
+        "priority": "high",
+        "relatedAlertId": "alert_con_sos_test_20260409_1638"
+      },
+      {
+        "notificationId": "noti_me_3",
+        "type": "alert",
+        "title": "An rời trường sớm hơn lịch",
+        "body": "Mẹ đã gọi xác nhận An chỉ ra cổng mua nước.",
+        "createdAt": "2026-04-09T15:18:14+07:00",
+        "isRead": true,
+        "priority": "high",
+        "relatedAlertId": "alert_con_left_school_early_20260409_1518"
+      },
+      {
+        "notificationId": "noti_me_4",
+        "type": "alert",
+        "title": "Bà nội vừa bấm SOS",
+        "body": "Mẹ đã gọi và xác nhận Bà nội ổn.",
+        "createdAt": "2026-04-09T10:44:08+07:00",
+        "isRead": true,
+        "priority": "critical",
+        "relatedAlertId": "alert_noi_sos_real_20260409_1044"
+      },
+      {
+        "notificationId": "noti_me_5",
+        "type": "alert",
+        "title": "Bà nội ở ngoài nhà lâu",
+        "body": "Cảnh báo được gửi lúc 10:03 và đã theo dõi an toàn.",
+        "createdAt": "2026-04-09T10:03:00+07:00",
+        "isRead": true,
+        "priority": "high",
+        "relatedAlertId": "alert_noi_outside_too_long_20260409_1003"
+      }
+    ],
+    "user_con_an": [
+      {
+        "notificationId": "noti_con_1",
+        "type": "device",
+        "title": "Pin máy sắp hết",
+        "body": "Máy của bạn còn 18%. Hãy sạc khi về nhà.",
+        "createdAt": "2026-04-09T17:05:00+07:00",
+        "isRead": false,
+        "priority": "medium",
+        "relatedAlertId": "alert_con_low_battery_20260409_1705"
+      },
+      {
+        "notificationId": "noti_con_2",
+        "type": "sos",
+        "title": "Gia đình đã nhận SOS",
+        "body": "Ba và Mẹ đã thấy tín hiệu SOS thử của bạn.",
+        "createdAt": "2026-04-09T16:39:08+07:00",
+        "isRead": true,
+        "priority": "high",
+        "relatedAlertId": "alert_con_sos_test_20260409_1638"
+      },
+      {
+        "notificationId": "noti_con_3",
+        "type": "safe_zone",
+        "title": "Bạn đã rời trường sớm",
+        "body": "Ứng dụng đã báo cho Ba và Mẹ để bảo đảm an toàn.",
+        "createdAt": "2026-04-09T15:18:14+07:00",
+        "isRead": true,
+        "priority": "medium",
+        "relatedAlertId": "alert_con_left_school_early_20260409_1518"
+      },
+      {
+        "notificationId": "noti_con_4",
+        "type": "info",
+        "title": "Lịch hôm nay",
+        "body": "Sau lớp học thêm, bạn cần về nhà trước 18:30.",
+        "createdAt": "2026-04-09T16:00:00+07:00",
+        "isRead": true,
+        "priority": "low",
+        "relatedAlertId": null
+      }
+    ],
+    "user_ba_noi_hoa": [
+      {
+        "notificationId": "noti_noi_1",
+        "type": "simple_alert",
+        "title": "Lan đang gọi cho mẹ",
+        "body": "Mẹ hãy nhấc máy nhé.",
+        "createdAt": "2026-04-09T10:45:02+07:00",
+        "isRead": true,
+        "priority": "critical",
+        "relatedAlertId": "alert_noi_sos_real_20260409_1044"
+      },
+      {
+        "notificationId": "noti_noi_2",
+        "type": "simple_alert",
+        "title": "Gia đình đã nhận SOS",
+        "body": "Ba Minh và Mẹ Lan đang theo dõi mẹ.",
+        "createdAt": "2026-04-09T10:44:20+07:00",
+        "isRead": true,
+        "priority": "critical",
+        "relatedAlertId": "alert_noi_sos_real_20260409_1044"
+      },
+      {
+        "notificationId": "noti_noi_3",
+        "type": "simple_info",
+        "title": "Mẹ đang an toàn",
+        "body": "Ứng dụng ghi nhận mẹ đã ở nhà.",
+        "createdAt": "2026-04-09T11:00:00+07:00",
+        "isRead": true,
+        "priority": "low",
+        "relatedAlertId": null
+      }
+    ]
+  },
+  "dashboards": {
+    "user_ba_minh": {
+      "dashboardType": "family_manager",
+      "header": {
+        "title": "Gia đình hôm nay",
+        "subtitle": "Thứ Năm, 09/04/2026 - 17:45"
+      },
+      "summary": {
+        "safeMembersCount": 2,
+        "attentionMembersCount": 2,
+        "onlineCount": 4,
+        "criticalUnreadCount": 1
+      },
+      "memberQuickStatus": [
+        {"userId": "user_ba_minh", "label": "Ba", "status": "Tại công trình", "zoneName": "Công trình Midtown M8"},
+        {"userId": "user_me_lan", "label": "Mẹ", "status": "Đang đi xe về nhà", "zoneName": null},
+        {"userId": "user_con_an", "label": "An", "status": "Đang học thêm", "zoneName": null},
+        {"userId": "user_ba_noi_hoa", "label": "Bà nội", "status": "Ở nhà", "zoneName": "Nhà"}
+      ],
+      "attentionMembers": [
+        {"userId": "user_con_an", "reason": "Rời trường sớm lúc 15:18 và hiện pin chỉ còn 18%."},
+        {"userId": "user_ba_noi_hoa", "reason": "Có nghi ngờ té ngã lúc 10:42, hiện đã an toàn nhưng cần theo dõi."}
+      ],
+      "latestAlertIds": [
+        "alert_con_low_battery_20260409_1705",
+        "alert_con_sos_test_20260409_1638",
+        "alert_con_left_school_early_20260409_1518",
+        "alert_noi_sos_real_20260409_1044"
+      ],
+      "safeZoneSummary": {
+        "totalZones": 5,
+        "activeZones": 5,
+        "breachCountToday": 2
+      },
+      "quickActions": [
+        "Xem bản đồ gia đình",
+        "Gọi Mẹ",
+        "Gọi An",
+        "Tạo vùng an toàn",
+        "Mở báo cáo hôm nay"
+      ]
+    },
+    "user_me_lan": {
+      "dashboardType": "caregiver_focus",
+      "header": {
+        "title": "Theo dõi An và Bà nội",
+        "subtitle": "Ưu tiên người thân cần chú ý trong ngày"
+      },
+      "priorityCards": [
+        {
+          "userId": "user_con_an",
+          "title": "Vị trí hiện tại của An",
+          "value": "Trung tâm Anh ngữ Sao Việt",
+          "status": "Pin 18%, đang ngồi học thêm"
+        },
+        {
+          "userId": "user_ba_noi_hoa",
+          "title": "Tình trạng của Bà nội",
+          "value": "Đang ở nhà",
+          "status": "Đã xác nhận an toàn sau cảnh báo té ngã"
+        }
+      ],
+      "recentNotifications": ["noti_me_1", "noti_me_2", "noti_me_4"],
+      "quickCalls": [
+        {"userId": "user_con_an", "label": "Gọi An"},
+        {"userId": "user_ba_noi_hoa", "label": "Gọi Bà nội"},
+        {"userId": "user_ba_minh", "label": "Gọi Ba Minh"}
+      ],
+      "spouseBasicStatus": {
+        "userId": "user_ba_minh",
+        "status": "Đang ở công trình",
+        "lastUpdatedAt": "2026-04-09T17:40:58+07:00"
+      }
+    },
+    "user_con_an": {
+      "dashboardType": "child_simple",
+      "header": {
+        "title": "Xin chào An",
+        "subtitle": "Hôm nay bạn đang học thêm"
+      },
+      "selfLocation": {
+        "addressText": "Trung tâm Anh ngữ Sao Việt, Quận 7",
+        "lastUpdatedAt": "2026-04-09T17:40:12+07:00",
+        "status": "Đang đứng yên"
+      },
+      "currentSafeZone": {
+        "zoneName": "Trường THCS Tân Hưng",
+        "status": "Đã rời vùng lúc 15:18",
+        "nextExpectedZone": "Nhà trước 18:30"
+      },
+      "sosButton": {
+        "label": "SOS",
+        "size": "large",
+        "description": "Bấm để báo ngay cho Ba và Mẹ"
+      },
+      "emergencyContactsQuick": ["contact_con_1", "contact_con_2"],
+      "notificationsPreview": ["noti_con_1", "noti_con_2"]
+    },
+    "user_ba_noi_hoa": {
+      "dashboardType": "senior_simple",
+      "header": {
+        "title": "Bà nội",
+        "subtitle": "17:45 - Hôm nay mẹ đang an toàn"
+      },
+      "currentStatus": {
+        "timeText": "17:45",
+        "locationText": "Đang ở nhà",
+        "safetyText": "Đã an toàn sau khi được gia đình xác nhận"
+      },
+      "largeSosButton": {
+        "label": "SOS KHẨN",
+        "color": "red",
+        "description": "Bấm một lần để gọi Ba Minh và Mẹ Lan"
+      },
+      "quickContacts": ["contact_noi_1", "contact_noi_2"],
+      "simpleNotifications": ["noti_noi_1", "noti_noi_2"]
+    }
+  },
+  "settings": [
+    {
+      "userId": "user_ba_minh",
+      "language": "vi-VN",
+      "theme": "light",
+      "fontScale": 1,
+      "receiveNotifications": true,
+      "alertSound": true,
+      "vibration": true,
+      "shareLocation": true,
+      "autoSendSosAlert": true,
+      "allowBackgroundTracking": true,
+      "privacyMode": "family_full_access",
+      "emergencyContactIds": ["contact_ba_1"]
+    },
+    {
+      "userId": "user_me_lan",
+      "language": "vi-VN",
+      "theme": "light",
+      "fontScale": 1,
+      "receiveNotifications": true,
+      "alertSound": true,
+      "vibration": true,
+      "shareLocation": true,
+      "autoSendSosAlert": true,
+      "allowBackgroundTracking": true,
+      "privacyMode": "caregiver_limited_spouse_view",
+      "emergencyContactIds": ["contact_me_1"]
+    },
+    {
+      "userId": "user_con_an",
+      "language": "vi-VN",
+      "theme": "light",
+      "fontScale": 1,
+      "receiveNotifications": true,
+      "alertSound": true,
+      "vibration": true,
+      "shareLocation": true,
+      "autoSendSosAlert": true,
+      "allowBackgroundTracking": true,
+      "privacyMode": "self_only",
+      "emergencyContactIds": ["contact_con_1", "contact_con_2"]
+    },
+    {
+      "userId": "user_ba_noi_hoa",
+      "language": "vi-VN",
+      "theme": "light",
+      "fontScale": 1.2,
+      "receiveNotifications": true,
+      "alertSound": true,
+      "vibration": true,
+      "shareLocation": true,
+      "autoSendSosAlert": true,
+      "allowBackgroundTracking": true,
+      "privacyMode": "self_only",
+      "simpleMode": true,
+      "emergencyContactIds": ["contact_noi_1", "contact_noi_2"]
+    }
+  ],
+  "emergencyContacts": [
+    {
+      "contactId": "contact_ba_1",
+      "ownerUserId": "user_ba_minh",
+      "contactUserId": "user_me_lan",
+      "name": "Trần Thị Lan",
+      "phoneNumber": "+84 907 226 541",
+      "relationship": "Vợ",
+      "priorityOrder": 1,
+      "canReceiveSos": true
+    },
+    {
+      "contactId": "contact_me_1",
+      "ownerUserId": "user_me_lan",
+      "contactUserId": "user_ba_minh",
+      "name": "Nguyễn Văn Minh",
+      "phoneNumber": "+84 903 118 286",
+      "relationship": "Chồng",
+      "priorityOrder": 1,
+      "canReceiveSos": true
+    },
+    {
+      "contactId": "contact_con_1",
+      "ownerUserId": "user_con_an",
+      "contactUserId": "user_ba_minh",
+      "name": "Ba Minh",
+      "phoneNumber": "+84 903 118 286",
+      "relationship": "Ba",
+      "priorityOrder": 1,
+      "canReceiveSos": true
+    },
+    {
+      "contactId": "contact_con_2",
+      "ownerUserId": "user_con_an",
+      "contactUserId": "user_me_lan",
+      "name": "Mẹ Lan",
+      "phoneNumber": "+84 907 226 541",
+      "relationship": "Mẹ",
+      "priorityOrder": 2,
+      "canReceiveSos": true
+    },
+    {
+      "contactId": "contact_noi_1",
+      "ownerUserId": "user_ba_noi_hoa",
+      "contactUserId": "user_ba_minh",
+      "name": "Ba Minh",
+      "phoneNumber": "+84 903 118 286",
+      "relationship": "Con trai",
+      "priorityOrder": 1,
+      "canReceiveSos": true
+    },
+    {
+      "contactId": "contact_noi_2",
+      "ownerUserId": "user_ba_noi_hoa",
+      "contactUserId": "user_me_lan",
+      "name": "Mẹ Lan",
+      "phoneNumber": "+84 907 226 541",
+      "relationship": "Con dâu",
+      "priorityOrder": 2,
+      "canReceiveSos": true
+    }
+  ],
+  "reports": {
+    "reportDate": "2026-04-09",
+    "familyDailySummary": {
+      "familyId": "family_nguyen_001",
+      "totalAlertsToday": 7,
+      "totalZoneEntriesToday": 6,
+      "totalZoneExitsToday": 7,
+      "totalDistanceKm": 33.4,
+      "totalActiveMinutes": 271,
+      "totalSosEvents": 2,
+      "totalFallAlerts": 1,
+      "totalLowBatteryAlerts": 1,
+      "lowestSafetyMemberUserId": "user_ba_noi_hoa",
+      "lowestSafetyMemberReason": "Có cảnh báo té ngã và SOS trong cùng ngày."
+    },
+    "memberDailySummaries": [
+      {
+        "userId": "user_ba_minh",
+        "distanceKm": 14.6,
+        "activeMinutes": 92,
+        "zoneEntries": 2,
+        "zoneExits": 2,
+        "alertCount": 0,
+        "safetyScore": 95
+      },
+      {
+        "userId": "user_me_lan",
+        "distanceKm": 9.1,
+        "activeMinutes": 46,
+        "zoneEntries": 1,
+        "zoneExits": 2,
+        "alertCount": 1,
+        "safetyScore": 92
+      },
+      {
+        "userId": "user_con_an",
+        "distanceKm": 7.4,
+        "activeMinutes": 69,
+        "zoneEntries": 1,
+        "zoneExits": 2,
+        "alertCount": 3,
+        "safetyScore": 74
+      },
+      {
+        "userId": "user_ba_noi_hoa",
+        "distanceKm": 2.3,
+        "activeMinutes": 64,
+        "zoneEntries": 2,
+        "zoneExits": 1,
+        "alertCount": 3,
+        "safetyScore": 68
+      }
+    ]
+  },
+  "uiStates": {
+    "emptyStates": [
+      {
+        "stateId": "empty_medical_appointments",
+        "module": "medicalAppointments",
+        "title": "Chưa có lịch hẹn nào",
+        "description": "Gia đình chưa thêm lịch khám hoặc tái khám."
+      },
+      {
+        "stateId": "empty_shared_notes",
+        "module": "sharedNotes",
+        "title": "Chưa có ghi chú gia đình",
+        "description": "Ba hoặc Mẹ có thể tạo ghi chú chung cho cả nhà."
+      }
+    ],
+    "loadingStates": [
+      {
+        "stateId": "loading_family_map",
+        "module": "map",
+        "title": "Đang đồng bộ vị trí gia đình",
+        "description": "Ứng dụng đang lấy dữ liệu GPS và vùng an toàn mới nhất."
+      },
+      {
+        "stateId": "loading_daily_report",
+        "module": "reports",
+        "title": "Đang tạo báo cáo hôm nay",
+        "description": "Hệ thống đang tổng hợp lộ trình, cảnh báo và thời gian hoạt động."
+      }
+    ],
+    "errorStates": [
+      {
+        "stateId": "error_report_timeout",
+        "module": "reports",
+        "title": "Tải báo cáo chậm",
+        "description": "Kết nối mạng không ổn định. Hãy thử lại sau ít giây.",
+        "retryable": true
+      },
+      {
+        "stateId": "error_location_permission_partial",
+        "module": "tracking",
+        "title": "Thiếu quyền vị trí nền",
+        "description": "Thiết bị của Mẹ chỉ gửi vị trí đầy đủ khi đã bật chạy nền.",
+        "retryable": true,
+        "affectedUserId": "user_me_lan"
+      }
+    ],
+    "neutralStates": [
+      {
+        "stateId": "no_new_alerts",
+        "module": "alerts",
+        "title": "Không có cảnh báo mới",
+        "description": "Mọi cảnh báo quan trọng hiện đã được xử lý."
+      },
+      {
+        "stateId": "temporary_disconnect",
+        "module": "devices",
+        "title": "Mất kết nối tạm thời",
+        "description": "Vòng tay của Bà nội đang ngoại tuyến, dữ liệu sẽ tự đồng bộ lại khi kết nối trở lại.",
+        "affectedDeviceId": "device_ba_noi_band"
+      },
+      {
+        "stateId": "device_offline",
+        "module": "devices",
+        "title": "Thiết bị offline",
+        "description": "Thiết bị đeo của Bà nội chưa đồng bộ từ 14:02.",
+        "affectedDeviceId": "device_ba_noi_band"
+      }
+    ]
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
