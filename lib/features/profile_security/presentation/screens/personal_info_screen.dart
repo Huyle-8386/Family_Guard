@@ -1,0 +1,497 @@
+import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
+import 'package:family_guard/core/widgets/app_back_header.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_emergency_contact_name_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_emergency_contact_phone_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_emergency_contact_relationship_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_personal_email_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_personal_name_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_personal_phone_screen.dart';
+import 'package:family_guard/features/profile_security/presentation/screens/edit_personal_role_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class PersonalInfoScreen extends StatefulWidget {
+  const PersonalInfoScreen({
+    super.key,
+    this.showBackButton = true,
+    this.homeRouteName = AppRoutes.home,
+    this.trackingRouteName = AppRoutes.tracking,
+    this.settingsRouteName = AppRoutes.settings,
+    this.thirdTab = AppBottomMenuThirdTab.notifications,
+    this.thirdTabRouteName,
+  });
+
+  final bool showBackButton;
+  final String homeRouteName;
+  final String trackingRouteName;
+  final String settingsRouteName;
+  final AppBottomMenuThirdTab thirdTab;
+  final String? thirdTabRouteName;
+
+  @override
+  State<PersonalInfoScreen> createState() => _PersonalInfoScreenState();
+}
+
+class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
+  String name = 'Mẹ Xôi';
+  String email = 'lakhon.vcl@email.com';
+  String phone = '0123 456 789';
+  String role = 'Người chăm sóc';
+  String emergencyName = 'Bố Xôi';
+  String emergencyRelation = 'Vợ/Chồng';
+  String emergencyPhone = '0123 456 789';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF0F8F7),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 110),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppBackHeaderBar(
+                    title: 'Thông Tin Cá Nhân',
+                    onBack: () => Navigator.maybePop(context),
+                    showLeading: widget.showBackButton,
+                    padding: EdgeInsets.zero,
+                    titleFontSize: 20,
+                  ),
+                  const SizedBox(height: 16),
+                  const _AvatarEditor(),
+                  const SizedBox(height: 24),
+                  _InfoCard(
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    role: role,
+                    onTapName: () => _editString(
+                      EditPersonalNameScreen(initialValue: name),
+                      (value) => name = value,
+                    ),
+                    onTapEmail: () => _editString(
+                      EditPersonalEmailScreen(initialValue: email),
+                      (value) => email = value,
+                    ),
+                    onTapPhone: () => _editString(
+                      EditPersonalPhoneScreen(initialValue: phone),
+                      (value) => phone = value,
+                    ),
+                    onTapRole: () => _editString(
+                      EditPersonalRoleScreen(initialValue: role),
+                      (value) => role = value,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _EmergencyContactSection(
+                    name: emergencyName,
+                    relationship: emergencyRelation,
+                    phone: emergencyPhone,
+                    onTapName: () => _editString(
+                      EditEmergencyContactNameScreen(
+                        initialValue: emergencyName,
+                      ),
+                      (value) => emergencyName = value,
+                    ),
+                    onTapRelationship: () => _editString(
+                      EditEmergencyContactRelationshipScreen(
+                        initialValue: emergencyRelation,
+                      ),
+                      (value) => emergencyRelation = value,
+                    ),
+                    onTapPhone: () => _editString(
+                      EditEmergencyContactPhoneScreen(
+                        initialValue: emergencyPhone,
+                      ),
+                      (value) => emergencyPhone = value,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const _MetaInfo(),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AppFlowBottomNav(
+                current: AppNavTab.settings,
+                homeRouteName: widget.homeRouteName,
+                trackingRouteName: widget.trackingRouteName,
+                settingsRouteName: widget.settingsRouteName,
+                thirdTab: widget.thirdTab,
+                thirdTabRouteName: widget.thirdTabRouteName,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _editString(Widget screen, ValueChanged<String> onSaved) async {
+    final result = await Navigator.of(
+      context,
+    ).push<String>(MaterialPageRoute(builder: (_) => screen));
+
+    if (result != null && result.isNotEmpty) {
+      setState(() => onSaved(result));
+    }
+  }
+}
+
+class _AvatarEditor extends StatelessWidget {
+  const _AvatarEditor();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: 112,
+                height: 112,
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 4),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x1A000000),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Container(color: const Color(0xFFE5E7EB)),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 8,
+                bottom: 8,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF22C55E),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 11),
+          Text(
+            'Thay đổi ảnh',
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0xFF87E4DB),
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  const _InfoCard({
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.role,
+    required this.onTapName,
+    required this.onTapEmail,
+    required this.onTapPhone,
+    required this.onTapRole,
+  });
+
+  final String name;
+  final String email;
+  final String phone;
+  final String role;
+  final VoidCallback onTapName;
+  final VoidCallback onTapEmail;
+  final VoidCallback onTapPhone;
+  final VoidCallback onTapRole;
+
+  @override
+  Widget build(BuildContext context) {
+    return _InfoSurface(
+      child: Column(
+        children: [
+          _DataRow(label: 'Họ & Tên', value: name, onTap: onTapName),
+          const _RowDivider(),
+          _DataRow(
+            label: 'Email',
+            value: email,
+            faded: true,
+            onTap: onTapEmail,
+          ),
+          const _RowDivider(),
+          _DataRow(label: 'Điện thoại', value: phone, onTap: onTapPhone),
+          const _RowDivider(),
+          _RoleRow(value: role, onTap: onTapRole),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmergencyContactSection extends StatelessWidget {
+  const _EmergencyContactSection({
+    required this.name,
+    required this.relationship,
+    required this.phone,
+    required this.onTapName,
+    required this.onTapRelationship,
+    required this.onTapPhone,
+  });
+
+  final String name;
+  final String relationship;
+  final String phone;
+  final VoidCallback onTapName;
+  final VoidCallback onTapRelationship;
+  final VoidCallback onTapPhone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'LIÊN HỆ KHẨN CẤP',
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0xFF638888),
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.325,
+              height: 1.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _InfoSurface(
+          child: Column(
+            children: [
+              _DataRow(label: 'Tên', value: name, onTap: onTapName),
+              const _RowDivider(),
+              _DataRow(
+                label: 'Quan hệ',
+                value: relationship,
+                onTap: onTapRelationship,
+              ),
+              const _RowDivider(),
+              _DataRow(label: 'Điện thoại', value: phone, onTap: onTapPhone),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MetaInfo extends StatelessWidget {
+  const _MetaInfo();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          Text(
+            'Tài khoản tạo ngày 27/10/2025',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0xFF638888),
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              height: 1.5,
+            ),
+          ),
+          Text(
+            'Đã liên kết với 4 thành viên',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0xFF638888),
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DataRow extends StatelessWidget {
+  const _DataRow({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    this.faded = false,
+  });
+
+  final String label;
+  final String value;
+  final bool faded;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 17),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 106,
+              child: Text(
+                label,
+                style: GoogleFonts.beVietnamPro(
+                  color: const Color(0xFF111818),
+                  fontSize: 17,
+                  fontWeight: FontWeight.w400,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                style: GoogleFonts.beVietnamPro(
+                  color: faded
+                      ? const Color(0xFF9CA3AF)
+                      : const Color(0xFF6B7280),
+                  fontSize: 17,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Color(0xFF94A3B8),
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RoleRow extends StatelessWidget {
+  const _RoleRow({required this.value, required this.onTap});
+
+  final String value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 106,
+              child: Text(
+                'Vai trò',
+                style: GoogleFonts.beVietnamPro(
+                  color: const Color(0xFF111818),
+                  fontSize: 17,
+                  fontWeight: FontWeight.w400,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                value,
+                style: GoogleFonts.beVietnamPro(
+                  color: const Color(0xFF4B5563),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.3,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Color(0xFF94A3B8),
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RowDivider extends StatelessWidget {
+  const _RowDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(height: 1, thickness: 1, color: Color(0xFFF3F4F6));
+  }
+}
+
+class _InfoSurface extends StatelessWidget {
+  const _InfoSurface({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D000000),
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
