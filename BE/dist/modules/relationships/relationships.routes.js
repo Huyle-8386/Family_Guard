@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_middleware_1 = require("../../middlewares/auth.middleware");
+const relationships_controller_1 = require("./relationships.controller");
+const router = (0, express_1.Router)();
+const controller = new relationships_controller_1.RelationshipsController();
+router.post('/relationships/invite', auth_middleware_1.authMiddleware, controller.invite.bind(controller));
+router.get('/relationships', auth_middleware_1.authMiddleware, controller.listMine.bind(controller));
+router.patch('/relationships/:id', auth_middleware_1.authMiddleware, controller.update.bind(controller));
+router.delete('/relationships/:id', auth_middleware_1.authMiddleware, controller.delete.bind(controller));
+exports.default = router;

@@ -1,6 +1,5 @@
-import 'package:family_guard/core/constants/app_colors.dart';
-import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/widgets/app_back_header.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/features/member_management/presentation/cubit/member_management_cubit.dart';
 import 'package:family_guard/features/member_management/presentation/models/member_management_demo_data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,10 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 enum _AddMemberTab { phone, email }
 
 class AddMemberScreen extends StatefulWidget {
-  const AddMemberScreen({
-    super.key,
-    this.args = const AddMemberFlowArgs(),
-  });
+  const AddMemberScreen({super.key, this.args = const AddMemberFlowArgs()});
 
   final AddMemberFlowArgs args;
 
@@ -20,86 +16,183 @@ class AddMemberScreen extends StatefulWidget {
 }
 
 class _AddMemberScreenState extends State<AddMemberScreen> {
+  static const List<String> _relationshipOptions = [
+    'Chồng',
+    'Vợ',
+    'Bố',
+    'Mẹ',
+    'Con',
+    'Ông',
+    'Bà',
+    'Anh',
+    'Chị',
+    'Em',
+    'Cô',
+    'Chú',
+    'Bác',
+    'Cháu',
+    'Người thân khác',
+  ];
+
   final _controller = TextEditingController();
+  final _inputFocusNode = FocusNode();
+  final Set<String> _addedMemberIds = <String>{};
   late _AddMemberTab _tab;
+  late final MemberManagementCubit _cubit;
+  String _lastSearchQuery = '';
+  String? _lastErrorMessage;
 
   @override
   void initState() {
     super.initState();
+    _cubit = MemberManagementCubit(
+      getRelationshipsUseCase: AppDependencies.instance.getRelationshipsUseCase,
+      searchUsersUseCase: AppDependencies.instance.searchUsersUseCase,
+      inviteRelationshipUseCase:
+          AppDependencies.instance.inviteRelationshipUseCase,
+      updateRelationshipUseCase:
+          AppDependencies.instance.updateRelationshipUseCase,
+      deleteRelationshipUseCase:
+          AppDependencies.instance.deleteRelationshipUseCase,
+      realtimeClient: AppDependencies.instance.realtimeClient,
+    )..addListener(_handleCubitChanged);
     _tab = widget.args.initialMode == AddMemberEntryMode.email
         ? _AddMemberTab.email
         : _AddMemberTab.phone;
     _controller.text = widget.args.prefilledValue;
+    _controller.addListener(_handleQueryChanged);
+    _handleQueryChanged();
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_handleQueryChanged);
+    _cubit.removeListener(_handleCubitChanged);
+    _cubit.dispose();
     _controller.dispose();
+    _inputFocusNode.dispose();
     super.dispose();
   }
 
   bool get _isEditing => widget.args.isEditing;
+  bool get _isPhoneTab => _tab == _AddMemberTab.phone;
+  String get _query => _controller.text.trim();
+
+  bool get _isValidQuery {
+    if (_query.isEmpty) {
+      return false;
+    }
+    return _isPhoneTab ? _isValidPhone(_query) : _isValidEmail(_query);
+  }
+
+  List<MemberManagementMember> get _matchedMembers {
+    if (!_isValidQuery) {
+      return const [];
+    }
+    final mode = _isPhoneTab
+        ? AddMemberEntryMode.phone
+        : AddMemberEntryMode.email;
+    return _cubit.state.searchResults
+        .map((user) => MemberManagementMember.fromSearchUser(user, mode: mode))
+        .toList();
+  }
+
+  void _handleQueryChanged() {
+    final query = _query;
+    if (!_isValidQuery) {
+      _lastSearchQuery = '';
+      _cubit.clearSearchResults();
+    } else if (query != _lastSearchQuery) {
+      _lastSearchQuery = query;
+      _cubit.searchMembers(query);
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _handleCubitChanged() {
+    final errorMessage = _cubit.state.errorMessage;
+    if (errorMessage != null &&
+        errorMessage.isNotEmpty &&
+        errorMessage != _lastErrorMessage &&
+        mounted) {
+      _lastErrorMessage = errorMessage;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final title = _isEditing ? 'Chỉnh sửa thành viên' : 'Thêm thành viên';
-    final headline = _isEditing
-        ? 'Cập nhật liên hệ thành viên'
-        : 'Mời thêm thành viên vào gia đình';
-    final description = _isEditing
-        ? 'Chỉnh lại số điện thoại hoặc email để tiếp tục đồng bộ liên lạc và theo dõi.'
-        : 'Nhập số điện thoại hoặc email để tìm và kết nối người thân vào FamilyGuard.';
-    final buttonLabel = _isEditing ? 'Lưu thay đổi' : 'Tìm thành viên';
+    final hintText = _isPhoneTab ? '0123 456 789' : 'example@family.com';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3FAF9),
+      backgroundColor: const Color(0xFFF0F8F7),
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            AppBackHeaderBar(
-              title: title,
-              titleFontSize: 20,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: Column(
+            children: [
+              _TopAppBar(title: title),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(31, 18, 31, 0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _IntroCard(
-                      headline: headline,
-                      description: description,
-                      isEditing: _isEditing,
-                    ),
-                    const SizedBox(height: 20),
-                    _FormCard(
-                      tab: _tab,
+                    _SegmentedMode(tab: _tab, onTabChanged: _handleTabChanged),
+                    const SizedBox(height: 30),
+                    _SearchInput(
+                      hintText: hintText,
+                      focusNode: _inputFocusNode,
                       controller: _controller,
-                      isEditing: _isEditing,
-                      onTabChanged: (tab) => setState(() => _tab = tab),
-                      onActionTap: _handlePrimaryAction,
-                      buttonLabel: buttonLabel,
+                      keyboardType: _isPhoneTab
+                          ? TextInputType.phone
+                          : TextInputType.emailAddress,
+                      onSubmit: _handlePrimaryAction,
                     ),
-                    const SizedBox(height: 20),
-                    _IllustrationCard(
-                      title: _isEditing
-                          ? 'Thông tin mới sẽ được dùng cho các lời mời và màn hình quản lý thành viên.'
-                          : 'Sau khi tìm thấy, bạn có thể chọn đúng thành viên và tiếp tục vào màn quản lý chi tiết.',
-                    ),
+                    const SizedBox(height: 34),
+                    if (_isEditing)
+                      SizedBox(
+                        width: double.infinity,
+                        child: _PrimaryActionButton(
+                          label: 'Lưu thay đổi',
+                          onTap: _handlePrimaryAction,
+                        ),
+                      )
+                    else
+                      _SearchResultSection(
+                        query: _query,
+                        isPhoneTab: _isPhoneTab,
+                        isValidQuery: _isValidQuery,
+                        isSearching: _cubit.state.isSearching,
+                        members: _matchedMembers,
+                        addedMemberIds: _addedMemberIds,
+                        onAddMember: _handleAddMember,
+                      ),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   void _handlePrimaryAction() {
-    final query = _controller.text.trim();
     if (_isEditing) {
       final member = widget.args.member;
       ScaffoldMessenger.of(context)
@@ -118,7 +211,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       return;
     }
 
-    if (query.isEmpty) {
+    if (_query.isEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
@@ -134,231 +227,158 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       return;
     }
 
-    Navigator.pushNamed(
-      context,
-      AppRoutes.memberSelection,
-      arguments: MemberSelectionArgs(
-        query: query,
-        mode: _tab == _AddMemberTab.email
-            ? AddMemberEntryMode.email
-            : AddMemberEntryMode.phone,
-      ),
+    if (!_isValidQuery) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              _isPhoneTab
+                  ? 'Số điện thoại chưa đúng định dạng.'
+                  : 'Email chưa đúng định dạng.',
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    if (_matchedMembers.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Không tìm thấy người dùng phù hợp.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
+  }
+
+  void _handleAddMember(MemberManagementMember member) {
+    _showRelationshipConfirmDialog(member);
+  }
+
+  bool _isValidEmail(String value) {
+    final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+    return emailRegex.hasMatch(value.trim());
+  }
+
+  bool _isValidPhone(String value) {
+    final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.startsWith('84') && digits.length == 11) {
+      return true;
+    }
+    return digits.startsWith('0') && digits.length == 10;
+  }
+
+  void _handleTabChanged(_AddMemberTab tab) {
+    if (_tab == tab) {
+      return;
+    }
+
+    final wasFocused = _inputFocusNode.hasFocus;
+    if (wasFocused) {
+      _inputFocusNode.unfocus();
+    }
+
+    setState(() {
+      _tab = tab;
+    });
+    _lastSearchQuery = '';
+    _handleQueryChanged();
+
+    if (wasFocused) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _inputFocusNode.requestFocus();
+        }
+      });
+    }
+  }
+
+  Future<void> _showRelationshipConfirmDialog(
+    MemberManagementMember member,
+  ) async {
+    final relation = await showDialog<String>(
+      context: context,
+      barrierColor: const Color(0x990F172A),
+      builder: (context) =>
+          _RelationshipConfirmDialog(relationshipOptions: _relationshipOptions),
     );
+
+    if (!mounted || relation == null) {
+      return;
+    }
+
+    final created = await _cubit.inviteMember(
+      targetUid: member.id,
+      relationType: relation,
+    );
+    if (!mounted || created == null) {
+      return;
+    }
+
+    setState(() {
+      _addedMemberIds.add(member.id);
+    });
+
+    final goToMemberList = await showDialog<bool>(
+      context: context,
+      barrierColor: const Color(0x990F172A),
+      builder: (context) => const _InviteSuccessDialog(),
+    );
+
+    if (!mounted || goToMemberList != true) {
+      return;
+    }
+
+    Navigator.of(context).pop(true);
   }
 }
 
-class _IntroCard extends StatelessWidget {
-  const _IntroCard({
-    required this.headline,
-    required this.description,
-    required this.isEditing,
-  });
+class _TopAppBar extends StatelessWidget {
+  const _TopAppBar({required this.title});
 
-  final String headline;
-  final String description;
-  final bool isEditing;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
+      height: 64,
+      padding: const EdgeInsets.fromLTRB(24, 0, 14, 0),
+      decoration: const BoxDecoration(
+        color: Color(0xB3F8FAFC),
+        border: Border(bottom: BorderSide(color: Color(0x80E2E8F0))),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 18,
-            offset: Offset(0, 8),
+            color: Color(0x80E2E8F0),
+            blurRadius: 2,
+            offset: Offset(0, 1),
           ),
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE6F7F7),
-              borderRadius: BorderRadius.circular(18),
+          IconButton(
+            onPressed: () => Navigator.maybePop(context),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20,
+              color: Color(0xFF0D9488),
             ),
-            child: Icon(
-              isEditing ? Icons.edit_outlined : Icons.person_add_alt_1_rounded,
-              color: AppColors.primary,
-              size: 26,
-            ),
+            splashRadius: 20,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints.tightFor(width: 28, height: 28),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  headline,
-                  style: GoogleFonts.beVietnamPro(
-                    color: const Color(0xFF0F172A),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: GoogleFonts.beVietnamPro(
-                    color: const Color(0xFF64748B),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FormCard extends StatelessWidget {
-  const _FormCard({
-    required this.tab,
-    required this.controller,
-    required this.isEditing,
-    required this.onTabChanged,
-    required this.onActionTap,
-    required this.buttonLabel,
-  });
-
-  final _AddMemberTab tab;
-  final TextEditingController controller;
-  final bool isEditing;
-  final ValueChanged<_AddMemberTab> onTabChanged;
-  final VoidCallback onActionTap;
-  final String buttonLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final isPhoneTab = tab == _AddMemberTab.phone;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFDFF4F2),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _SegmentSwitcher(tab: tab, onTabChanged: onTabChanged),
-          const SizedBox(height: 20),
+          const SizedBox(width: 8),
           Text(
-            isPhoneTab ? 'Số điện thoại' : 'Email',
+            title,
             style: GoogleFonts.beVietnamPro(
-              color: const Color(0xFF0F172A),
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  isPhoneTab ? Icons.call_outlined : Icons.mail_outline_rounded,
-                  color: const Color(0xFF94A3B8),
-                  size: 20,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    keyboardType: isPhoneTab
-                        ? TextInputType.phone
-                        : TextInputType.emailAddress,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (_) => onActionTap(),
-                    style: GoogleFonts.beVietnamPro(
-                      color: const Color(0xFF0F172A),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: isPhoneTab
-                          ? 'Nhập số điện thoại người thân'
-                          : 'Nhập email người thân',
-                      hintStyle: GoogleFonts.beVietnamPro(
-                        color: const Color(0xFF94A3B8),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.72),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(
-                  Icons.info_outline_rounded,
-                  size: 18,
-                  color: Color(0xFF00ADB2),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    isEditing
-                        ? 'Thông tin sau khi lưu sẽ cập nhật cho thành viên đang được chỉnh sửa.'
-                        : 'Người thân sẽ xuất hiện ở bước tiếp theo để bạn xác nhận và đi tiếp.',
-                    style: GoogleFonts.beVietnamPro(
-                      color: const Color(0xFF475569),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      height: 1.45,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 18),
-          SizedBox(
-            height: 54,
-            child: ElevatedButton(
-              onPressed: onActionTap,
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              child: Text(
-                buttonLabel,
-                style: GoogleFonts.beVietnamPro(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              color: const Color(0xFF0D9488),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              height: 28 / 18,
             ),
           ),
         ],
@@ -367,11 +387,8 @@ class _FormCard extends StatelessWidget {
   }
 }
 
-class _SegmentSwitcher extends StatelessWidget {
-  const _SegmentSwitcher({
-    required this.tab,
-    required this.onTabChanged,
-  });
+class _SegmentedMode extends StatelessWidget {
+  const _SegmentedMode({required this.tab, required this.onTabChanged});
 
   final _AddMemberTab tab;
   final ValueChanged<_AddMemberTab> onTabChanged;
@@ -379,11 +396,11 @@ class _SegmentSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
-      padding: const EdgeInsets.all(4),
+      height: 56,
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(18),
+        color: const Color(0xFFEFF5F4),
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
         children: [
@@ -422,18 +439,20 @@ class _SegmentButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isSelected ? AppColors.primary : Colors.transparent,
-      borderRadius: BorderRadius.circular(14),
+      color: isSelected ? Colors.white : const Color(0xFFF1F5F9),
+      borderRadius: BorderRadius.circular(999),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(999),
         child: Center(
           child: Text(
             label,
             style: GoogleFonts.beVietnamPro(
-              color: isSelected ? Colors.white : const Color(0xFF475569),
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
+              color: isSelected
+                  ? const Color(0xFF00696C)
+                  : const Color(0xFF3C4949),
+              fontSize: 14,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
         ),
@@ -442,50 +461,563 @@ class _SegmentButton extends StatelessWidget {
   }
 }
 
-class _IllustrationCard extends StatelessWidget {
-  const _IllustrationCard({required this.title});
+class _SearchInput extends StatelessWidget {
+  const _SearchInput({
+    required this.hintText,
+    required this.focusNode,
+    required this.controller,
+    required this.keyboardType,
+    required this.onSubmit,
+  });
 
-  final String title;
+  final String hintText;
+  final FocusNode focusNode;
+  final TextEditingController controller;
+  final TextInputType keyboardType;
+  final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 18,
-            offset: Offset(0, 8),
+        color: const Color(0xFFE3E9E9),
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.search, size: 20, color: Color(0xFF9AA7A6)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              key: ValueKey<TextInputType>(keyboardType),
+              focusNode: focusNode,
+              controller: controller,
+              textInputAction: TextInputAction.search,
+              keyboardType: keyboardType,
+              textAlign: TextAlign.left,
+              textAlignVertical: TextAlignVertical.center,
+              onSubmitted: (_) => onSubmit(),
+              style: GoogleFonts.beVietnamPro(
+                color: const Color(0xFF3C4949),
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                filled: false,
+                fillColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                isCollapsed: true,
+                contentPadding: EdgeInsets.zero,
+                hintText: hintText,
+                hintStyle: GoogleFonts.beVietnamPro(
+                  color: const Color(0x803C4949),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Image.asset(
-            'assets/images/image_family.png',
-            width: 240,
-            height: 220,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) => const SizedBox(
-              width: 240,
-              height: 220,
+    );
+  }
+}
+
+class _SearchResultSection extends StatelessWidget {
+  const _SearchResultSection({
+    required this.query,
+    required this.isPhoneTab,
+    required this.isValidQuery,
+    required this.isSearching,
+    required this.members,
+    required this.addedMemberIds,
+    required this.onAddMember,
+  });
+
+  final String query;
+  final bool isPhoneTab;
+  final bool isValidQuery;
+  final bool isSearching;
+  final List<MemberManagementMember> members;
+  final Set<String> addedMemberIds;
+  final ValueChanged<MemberManagementMember> onAddMember;
+
+  @override
+  Widget build(BuildContext context) {
+    if (query.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    if (!isValidQuery) {
+      return _ResultHintText(
+        text: isPhoneTab
+            ? 'Nhập đúng định dạng số điện thoại để tìm kiếm.'
+            : 'Nhập đúng định dạng email để tìm kiếm.',
+      );
+    }
+
+    if (isSearching) {
+      return const _ResultHintText(text: 'Đang tìm kiếm người dùng...');
+    }
+
+    if (members.isEmpty) {
+      return const _ResultHintText(text: 'Không tìm thấy người dùng phù hợp.');
+    }
+
+    return Column(
+      children: members
+          .map(
+            (member) => Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: _SearchResultCard(
+                member: member,
+                isAdded: addedMemberIds.contains(member.id),
+                onAddTap: () => onAddMember(member),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.beVietnamPro(
-              color: const Color(0xFF334155),
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              height: 1.5,
-            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _ResultHintText extends StatelessWidget {
+  const _ResultHintText({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.beVietnamPro(
+          color: const Color(0xFF64748B),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchResultCard extends StatelessWidget {
+  const _SearchResultCard({
+    required this.member,
+    required this.isAdded,
+    required this.onAddTap,
+  });
+
+  final MemberManagementMember member;
+  final bool isAdded;
+  final VoidCallback onAddTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 12,
+            offset: Offset(0, 4),
           ),
         ],
+      ),
+      child: Row(
+        children: [
+          ClipOval(
+            child: Image.network(
+              member.avatarUrl,
+              width: 56,
+              height: 56,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: 56,
+                height: 56,
+                color: const Color(0xFFE2E8F0),
+                alignment: Alignment.center,
+                child: const Icon(Icons.person, color: Color(0xFF64748B)),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              member.name,
+              style: GoogleFonts.beVietnamPro(
+                color: const Color(0xFF171D1D),
+                fontSize: 34 / 1.9,
+                fontWeight: FontWeight.w700,
+                height: 28 / 18,
+              ),
+            ),
+          ),
+          _PrimaryActionButton(
+            label: isAdded
+                ? 'Đã thêm'
+                : (member.invitationPending ? 'Đã mời' : 'Thêm'),
+            onTap: (isAdded || member.invitationPending) ? null : onAddTap,
+            height: 40,
+            horizontalPadding: 18,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrimaryActionButton extends StatelessWidget {
+  const _PrimaryActionButton({
+    required this.label,
+    required this.onTap,
+    this.height = 64,
+    this.horizontalPadding = 24,
+  });
+
+  final String label;
+  final VoidCallback? onTap;
+  final double height;
+  final double horizontalPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: const Color(0xFF01ADB2),
+          disabledBackgroundColor: const Color(0xFF9AC7C9),
+          foregroundColor: Colors.white,
+          shadowColor: const Color(0x4D01ADB2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.beVietnamPro(
+            fontSize: height >= 56 ? 24 : 24 / 1.45,
+            fontWeight: FontWeight.w700,
+            height: height >= 56 ? 28 / 24 : 20 / (24 / 1.45),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RelationshipConfirmDialog extends StatefulWidget {
+  const _RelationshipConfirmDialog({required this.relationshipOptions});
+
+  final List<String> relationshipOptions;
+
+  @override
+  State<_RelationshipConfirmDialog> createState() =>
+      _RelationshipConfirmDialogState();
+}
+
+class _RelationshipConfirmDialogState
+    extends State<_RelationshipConfirmDialog> {
+  String? _selectedRelation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 354),
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x40000000),
+              blurRadius: 50,
+              offset: Offset(0, 18),
+              spreadRadius: -12,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Xác nhận',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF0F172A),
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                height: 28 / 20,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Quan hệ với bạn là:',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF64748B),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 20 / 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            _RelationshipDropdown(
+              value: _selectedRelation,
+              options: widget.relationshipOptions,
+              onChanged: (value) {
+                setState(() {
+                  _selectedRelation = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Xác nhận thành viên trong gia đình của bạn',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF64748B),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                height: 22.75 / 14,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _selectedRelation == null
+                    ? null
+                    : () => Navigator.of(context).pop(_selectedRelation),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color(0xFF4DD1C4),
+                  disabledBackgroundColor: const Color(0xFFB4DFDB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                ),
+                child: Text(
+                  'Xác nhận',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFE2E8F0), width: 2),
+                  foregroundColor: const Color(0xFF334155),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                ),
+                child: Text(
+                  'Hủy',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RelationshipDropdown extends StatelessWidget {
+  const _RelationshipDropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String? value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3E9E9),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0x1C000000)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isExpanded: true,
+          hint: Text(
+            'Lựa chọn mối quan hệ',
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0x80171D1D),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Color(0xFF6B7280),
+            size: 24,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          dropdownColor: const Color(0xFFE3E9E9),
+          style: GoogleFonts.beVietnamPro(
+            color: const Color(0xFF171D1D),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          items: options
+              .map(
+                (option) => DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+}
+
+class _InviteSuccessDialog extends StatelessWidget {
+  const _InviteSuccessDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 342),
+        padding: const EdgeInsets.fromLTRB(32, 32, 32, 32),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x40000000),
+              blurRadius: 50,
+              offset: Offset(0, 18),
+              spreadRadius: -12,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                color: Color(0x1A19A7A8),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.check_rounded,
+                size: 40,
+                color: Color(0xFF19A7A8),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Gửi lời mời thành công',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.beVietnamPro(
+                color: const Color(0xFF0F172A),
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                height: 32 / 24,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Bạn đã gửi lời mời tới thành công.\nLời mời có hiệu lực trong 24h.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.beVietnamPro(
+                color: const Color(0xFF475569),
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                height: 26 / 16,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color(0xFF19A7A8),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  shadowColor: const Color(0x3319A7A8),
+                ),
+                child: Text(
+                  'Xong',
+                  style: GoogleFonts.beVietnamPro(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

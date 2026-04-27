@@ -1,7 +1,14 @@
+// ignore_for_file: unused_element, unused_element_parameter, unused_field
+
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/routes/app_route_observer.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
 import 'package:family_guard/core/alerts/presentation/screens/child_emergency_alert_screen.dart';
 import 'package:family_guard/core/alerts/presentation/screens/senior_fall_alert_screen.dart';
+import 'package:family_guard/features/notification/domain/entities/app_notification.dart';
+import 'package:family_guard/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:family_guard/features/notification/presentation/screens/notification_camera_fall_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,19 +19,128 @@ class NotificationScreen extends StatefulWidget {
     this.trackingRouteName = AppRoutes.tracking,
     this.notificationsRouteName = AppRoutes.notifications,
     this.settingsRouteName = AppRoutes.settings,
+    this.showBottomNav = true,
   });
 
   final String homeRouteName;
   final String trackingRouteName;
   final String notificationsRouteName;
   final String settingsRouteName;
+  final bool showBottomNav;
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
-class _NotificationScreenState extends State<NotificationScreen> {
+class _NotificationScreenState extends State<NotificationScreen>
+    with RouteAware {
   _NotificationFilter selectedFilter = _NotificationFilter.all;
+  late final NotificationCubit _cubit;
+  String? _lastErrorMessage;
+  String? _lastSuccessMessage;
+  bool _showMemberConfirmation = true;
+  ModalRoute<dynamic>? _route;
+
+  void _handleMemberConfirmation(bool accepted) {
+    setState(() => _showMemberConfirmation = false);
+    final message = accepted
+        ? 'Đã xác nhận thêm người thân vào nhóm gia đình.'
+        : 'Đã hủy yêu cầu xác nhận người thân.';
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+      );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = NotificationCubit(
+      getNotificationsUseCase: AppDependencies.instance.getNotificationsUseCase,
+      respondNotificationUseCase:
+          AppDependencies.instance.respondNotificationUseCase,
+      realtimeClient: AppDependencies.instance.realtimeClient,
+    )..addListener(_handleCubitChanged);
+    _cubit.loadNotifications();
+    _cubit.startRealtime();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && route != _route) {
+      if (_route is PageRoute) {
+        appRouteObserver.unsubscribe(this);
+      }
+      _route = route;
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    _cubit.removeListener(_handleCubitChanged);
+    _cubit.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _cubit.loadNotifications(showLoader: false);
+  }
+
+  void _handleCubitChanged() {
+    final state = _cubit.state;
+
+    if (state.errorMessage != null &&
+        state.errorMessage!.isNotEmpty &&
+        state.errorMessage != _lastErrorMessage &&
+        mounted) {
+      _lastErrorMessage = state.errorMessage;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(state.errorMessage!),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
+
+    if (state.successMessage != null &&
+        state.successMessage!.isNotEmpty &&
+        state.successMessage != _lastSuccessMessage &&
+        mounted) {
+      _lastSuccessMessage = state.successMessage;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(state.successMessage!),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _respondToNotification({
+    required int notificationId,
+    required bool accepted,
+  }) async {
+    if (accepted) {
+      await _cubit.confirmNotification(notificationId);
+      return;
+    }
+
+    await _cubit.cancelNotification(notificationId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +151,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             Column(
               children: [
-                _Header(settingsRouteName: widget.settingsRouteName),
+                _Header(
+                  settingsRouteName: widget.settingsRouteName,
+                  showBackButton: !widget.showBottomNav,
+                  onBack: () => Navigator.maybePop(context),
+                ),
                 const SizedBox(height: 10),
                 _FilterBar(
                   selectedFilter: selectedFilter,
@@ -45,28 +165,118 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 const SizedBox(height: 10),
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      0,
+                      16,
+                      widget.showBottomNav ? 110 : 20,
+                    ),
                     children: _buildNotificationItems(context),
                   ),
                 ),
               ],
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: AppFlowBottomNav(
-                current: AppNavTab.notifications,
-                homeRouteName: widget.homeRouteName,
-                trackingRouteName: widget.trackingRouteName,
-                settingsRouteName: widget.settingsRouteName,
-                thirdTabRouteName: widget.notificationsRouteName,
+            if (widget.showBottomNav)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: AppFlowBottomNav(
+                  current: AppNavTab.notifications,
+                  homeRouteName: widget.homeRouteName,
+                  trackingRouteName: widget.trackingRouteName,
+                  settingsRouteName: widget.settingsRouteName,
+                  thirdTabRouteName: widget.notificationsRouteName,
+                ),
               ),
-            ),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildApiNotificationItems() {
+    final items = <Widget>[];
+    final notifications = _cubit.state.notifications;
+
+    if (_cubit.state.isLoading && notifications.isEmpty) {
+      return const [
+        SizedBox(height: 12),
+        Center(child: CircularProgressIndicator()),
+      ];
+    }
+
+    for (final notification in notifications) {
+      items.add(const SizedBox(height: 12));
+      items.add(
+        _ApiMemberConfirmationCard(
+          title: _buildNotificationTitle(notification),
+          content: _buildNotificationContent(notification),
+          timeLabel: _formatNotificationTime(notification.createdAt),
+          showActions: notification.processing != 'done',
+          onConfirm: () => _respondToNotification(
+            notificationId: notification.id,
+            accepted: true,
+          ),
+          onCancel: () => _respondToNotification(
+            notificationId: notification.id,
+            accepted: false,
+          ),
+        ),
+      );
+    }
+
+    return items;
+  }
+
+  String _buildNotificationTitle(AppNotification notification) {
+    if ((notification.senderName ?? '').trim().isNotEmpty) {
+      return 'Xác nhận mối quan hệ';
+    }
+
+    final title = notification.title.trim();
+    return title.isEmpty ? 'Thông báo' : title;
+  }
+
+  String _buildNotificationContent(AppNotification notification) {
+    final senderName = (notification.senderName ?? '').trim();
+    final senderRelation = (notification.senderRelation ?? '').trim();
+    if (senderName.isNotEmpty && senderRelation.isNotEmpty) {
+      return 'Bạn có một lời mời xác nhận mối quan hệ từ $senderName($senderRelation). Xác nhận ngay?';
+    }
+
+    if (senderName.isNotEmpty) {
+      return 'Bạn có một lời mời xác nhận mối quan hệ từ $senderName. Xác nhận ngay?';
+    }
+
+    final content = notification.content.trim();
+    if (content.isNotEmpty) {
+      return content;
+    }
+
+    return 'Bạn có một lời mời xác nhận mối quan hệ mới. Xác nhận ngay?';
+  }
+
+  String _formatNotificationTime(DateTime? value) {
+    if (value == null) {
+      return 'Vừa xong';
+    }
+
+    final local = value.toLocal();
+    final now = DateTime.now();
+    final difference = now.difference(local);
+    if (difference.inMinutes < 1) {
+      return 'Vừa xong';
+    }
+    if (difference.inHours < 1) {
+      return '${difference.inMinutes} phút trước';
+    }
+    if (difference.inDays < 1) {
+      final hour = local.hour.toString().padLeft(2, '0');
+      final minute = local.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
+    }
+    return '${local.day.toString().padLeft(2, '0')}/${local.month.toString().padLeft(2, '0')}';
   }
 
   List<Widget> _buildNotificationItems(BuildContext context) {
@@ -77,6 +287,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
           const SizedBox(height: 12),
           _EmergencyCard(
             onDetailTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => NotificationCameraFallDetailScreen(
+                  homeRouteName: widget.homeRouteName,
+                  trackingRouteName: widget.trackingRouteName,
+                  notificationsRouteName: widget.notificationsRouteName,
+                  settingsRouteName: widget.settingsRouteName,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          _SeniorFallMapCard(
+            onOpenMapTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => const SeniorFallAlertScreen(),
               ),
@@ -109,9 +332,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
       case _NotificationFilter.all:
         return [
           const _DateDivider(label: 'Hôm nay'),
+          ..._buildApiNotificationItems(),
           const SizedBox(height: 12),
           _EmergencyCard(
             onDetailTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => NotificationCameraFallDetailScreen(
+                  homeRouteName: widget.homeRouteName,
+                  trackingRouteName: widget.trackingRouteName,
+                  notificationsRouteName: widget.notificationsRouteName,
+                  settingsRouteName: widget.settingsRouteName,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          _SeniorFallMapCard(
+            onOpenMapTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => const SeniorFallAlertScreen(),
               ),
@@ -144,9 +381,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
 enum _NotificationFilter { all, emergency, activity, mood }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.settingsRouteName});
+  const _Header({
+    required this.settingsRouteName,
+    this.showBackButton = false,
+    this.onBack,
+  });
 
   final String settingsRouteName;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -162,16 +405,27 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Thông báo',
-            style: GoogleFonts.inter(
-              color: const Color(0xFF0F172A),
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.75,
-              height: 1,
+          if (showBackButton)
+            IconButton(
+              onPressed: onBack,
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Color(0xFF334155),
+                size: 20,
+              ),
+              tooltip: 'Quay lại',
+            ),
+          Expanded(
+            child: Text(
+              'Thông báo',
+              style: GoogleFonts.inter(
+                color: const Color(0xFF0F172A),
+                fontSize: 30,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.75,
+                height: 1,
+              ),
             ),
           ),
           IconButton(
@@ -393,16 +647,21 @@ class _EmergencyCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Phát hiện té ngã',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFFEF4444),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        Expanded(
+                          child: Text(
+                            'Phát hiện té ngã',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFFEF4444),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 12),
                         Text(
                           '10:32 AM',
                           style: GoogleFonts.inter(
@@ -415,7 +674,7 @@ class _EmergencyCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Điện thoại của bà phát hiện một cú ngã\nmạnh trong phòng khách. Bà đã xác\nnhận rằng bà vẫn ổn.',
+                      'Camera phòng khách phát hiện có\nngười ngã ở phòng khách.',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF475569),
                         fontSize: 14,
@@ -526,16 +785,21 @@ class _WarningCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Cảnh báo',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFFEF4444),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        'Cảnh báo',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFEF4444),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 12),
                     Text(
                       '2:10 PM',
                       style: GoogleFonts.inter(
@@ -574,6 +838,115 @@ class _WarningCard extends StatelessWidget {
                         Icons.arrow_forward_rounded,
                         size: 14,
                         color: Color(0xFFEF4444),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SeniorFallMapCard extends StatelessWidget {
+  const _SeniorFallMapCard({required this.onOpenMapTap});
+
+  final VoidCallback onOpenMapTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(21),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFFEE2E2)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.personal_injury_rounded,
+              color: Color(0xFFDC2626),
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Bà nội có thể đang bị té',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFDC2626),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Vừa xong',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF64748B),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Hệ thống phát hiện tín hiệu té ngã gần vị trí của bà. Mở bản đồ để kiểm tra vùng đỏ nhấp nháy.',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF475569),
+                    fontSize: 14,
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                InkWell(
+                  onTap: onOpenMapTap,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Mở bản đồ',
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFDC2626),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 14,
+                        color: Color(0xFFDC2626),
                       ),
                     ],
                   ),
@@ -644,16 +1017,21 @@ class _SafeZoneCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Rời khỏi khu vực an toàn',
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF0F172A),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        Expanded(
+                          child: Text(
+                            'Rời khỏi khu vực an toàn',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF0F172A),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 12),
                         Text(
                           '11:45 AM',
                           style: GoogleFonts.inter(
@@ -767,16 +1145,21 @@ class _MoodCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Thông báo tâm trạng',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF0F172A),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        'Thông báo tâm trạng',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF0F172A),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 12),
                     Text(
                       '2:10 PM',
                       style: GoogleFonts.inter(
@@ -868,16 +1251,21 @@ class _OlderNotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Pin yếu',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF0F172A),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Text(
+                        'Pin yếu',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF0F172A),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 12),
                     Text(
                       'Hôm qua',
                       style: GoogleFonts.inter(
@@ -896,6 +1284,306 @@ class _OlderNotificationCard extends StatelessWidget {
                     fontSize: 14,
                     height: 1.45,
                   ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ApiMemberConfirmationCard extends StatelessWidget {
+  const _ApiMemberConfirmationCard({
+    required this.title,
+    required this.content,
+    required this.timeLabel,
+    this.showActions = true,
+    required this.onConfirm,
+    required this.onCancel,
+  });
+
+  final String title;
+  final String content;
+  final String timeLabel;
+  final bool showActions;
+  final VoidCallback onConfirm;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(21),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDFB),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFCCFBF1)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.person_add_alt_1_rounded,
+              color: Color(0xFF0EA5A8),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF0F172A),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      timeLabel,
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF64748B),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  content,
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF475569),
+                    fontSize: 14,
+                    height: 1.45,
+                  ),
+                ),
+                if (showActions) ...[
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: onConfirm,
+                          borderRadius: BorderRadius.circular(24),
+                          child: Container(
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00ACB2),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Xác nhận',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: InkWell(
+                          onTap: onCancel,
+                          borderRadius: BorderRadius.circular(24),
+                          child: Container(
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Hủy',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFF334155),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemberConfirmationCard extends StatelessWidget {
+  const _MemberConfirmationCard({
+    required this.title,
+    required this.content,
+    required this.timeLabel,
+    this.showActions = true,
+    required this.onConfirm,
+    required this.onCancel,
+  });
+
+  final String title;
+  final String content;
+  final String timeLabel;
+  final bool showActions;
+  final VoidCallback onConfirm;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(21),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDFB),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: const Color(0xFFCCFBF1)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.person_add_alt_1_rounded,
+              color: Color(0xFF0EA5A8),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Xác nhận người thân',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF0F172A),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Vừa xong',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFF64748B),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Nguyễn Thị Loan(Mẹ) vừa gửi yêu cầu tham gia nhóm gia đình để chia sẻ vị trí và trạng thái an toàn.',
+                  style: GoogleFonts.inter(
+                    color: const Color(0xFF475569),
+                    fontSize: 14,
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: onConfirm,
+                        borderRadius: BorderRadius.circular(24),
+                        child: Container(
+                          height: 35,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00ACB2),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Xác nhận',
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: InkWell(
+                        onTap: onCancel,
+                        borderRadius: BorderRadius.circular(24),
+                        child: Container(
+                          height: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Hủy',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF334155),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

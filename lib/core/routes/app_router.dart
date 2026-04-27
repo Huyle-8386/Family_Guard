@@ -1,6 +1,8 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/features/camera/presentation/screens/camera_add_flow_screens.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_conversation_screen.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:family_guard/features/camera/presentation/screens/camera_list_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/screens/checkin_reminder_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/widgets/checkin_reminder_selected_screen.dart';
 import 'package:family_guard/features/emotion/presentation/screens/emotion_pulse_screen.dart';
@@ -107,6 +109,19 @@ class AppRouter {
     AppRoutes.tracking: (context) => const FamilyMapScreen(),
     AppRoutes.settings: (context) => const SettingsScreen(),
     AppRoutes.profile: (context) => const PersonalInfoScreen(),
+    AppRoutes.cameraList: (context) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final rawMap = args is Map ? args : const <Object?, Object?>{};
+      return CameraListScreen(
+        hasCamera: rawMap['hasCamera'] == true,
+        showSuccessPopup: rawMap['showSuccessPopup'] == true,
+      );
+    },
+    AppRoutes.cameraAddConnect: (context) => const CameraAddConnectScreen(),
+    AppRoutes.cameraAddConnectPreview: (context) =>
+        const CameraAddConnectPreviewScreen(),
+    AppRoutes.cameraAddSetup: (context) => const CameraAddSetupScreen(),
+    AppRoutes.cameraAddComplete: (context) => const CameraAddCompleteScreen(),
     AppRoutes.passwordSecurity: (context) => const PasswordSecurityScreen(),
     AppRoutes.notifications: (context) => const NotificationScreen(),
     AppRoutes.memberManagement: (context) => const ThanhVienScreen(),

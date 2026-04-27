@@ -1,5 +1,6 @@
+import 'package:family_guard/core/network/network_error_mapper.dart';
 import 'package:family_guard/core/utils/validators.dart';
-import 'package:family_guard/features/login/domain/entities/auth_user.dart';
+import 'package:family_guard/features/login/domain/entities/auth_session.dart';
 import 'package:family_guard/features/login/domain/usecases/login_usecase.dart';
 import 'package:family_guard/features/login/presentation/cubit/login_state.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class LoginCubit extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<AuthUser?> submit() async {
+  Future<AuthSession?> submit() async {
     if (!(formKey.currentState?.validate() ?? false)) {
       return null;
     }
@@ -33,12 +34,12 @@ class LoginCubit extends ChangeNotifier {
     _state = _state.copyWith(
       isLoading: true,
       clearError: true,
-      clearUser: true,
+      clearSession: true,
     );
     notifyListeners();
 
     try {
-      final user = await _loginUseCase(
+      final session = await _loginUseCase(
         email: emailController.text.trim(),
         password: passwordController.text,
       );
@@ -46,16 +47,17 @@ class LoginCubit extends ChangeNotifier {
       _state = _state.copyWith(
         isLoading: false,
         clearError: true,
-        user: user,
+        session: session,
       );
       notifyListeners();
-      return user;
+      return session;
     } catch (error) {
       _state = _state.copyWith(
         isLoading: false,
-        errorMessage: error is AuthException
-            ? error.message
-            : 'Đăng nhập thất bại. Vui lòng thử lại.',
+        errorMessage: mapNetworkErrorMessage(
+          error,
+          fallback: 'Dang nhap that bai. Vui long thu lai.',
+        ),
       );
       notifyListeners();
       return null;

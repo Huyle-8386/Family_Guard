@@ -1,7 +1,5 @@
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/features/login/data/datasources/auth_remote_data_source.dart';
-import 'package:family_guard/features/login/data/repositories_impl/auth_repository_impl.dart';
-import 'package:family_guard/features/login/domain/usecases/login_usecase.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/features/login/presentation/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,11 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _cubit = LoginCubit(
-      LoginUseCase(
-        AuthRepositoryImpl(AuthRemoteDataSourceImpl()),
-      ),
-    );
+    _cubit = LoginCubit(AppDependencies.instance.loginUseCase);
   }
 
   @override
@@ -33,14 +27,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    final user = await _cubit.submit();
-    if (!mounted || user == null) return;
+    final session = await _cubit.submit();
+    if (!mounted || session == null) return;
 
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      user.homeRoute,
-      (_) => false,
-    );
+    Navigator.pushNamedAndRemoveUntil(context, session.homeRoute, (_) => false);
   }
 
   void _goToSignup() {
@@ -200,8 +190,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: actionColor,
                           foregroundColor: Colors.white,
-                          disabledBackgroundColor:
-                              actionColor.withValues(alpha: 0.5),
+                          disabledBackgroundColor: actionColor.withValues(
+                            alpha: 0.5,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -228,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    
+
                     Row(
                       children: [
                         const Expanded(
@@ -330,8 +321,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(0, 20),
-                            tapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: Text(
                             'Đăng ký',

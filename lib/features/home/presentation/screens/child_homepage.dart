@@ -1,6 +1,9 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
+import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,7 +106,8 @@ class ChildHomePage extends StatelessWidget {
     ),
     _ChildMission(
       title: 'V\u1EC1 nh\u00E0 tr\u01B0\u1EDBc 18:30',
-      subtitle: 'Ba v\u00E0 M\u1EB9 \u0111ang theo d\u00F5i \u0111\u01B0\u1EDDng v\u1EC1',
+      subtitle:
+          'Ba v\u00E0 M\u1EB9 \u0111ang theo d\u00F5i \u0111\u01B0\u1EDDng v\u1EC1',
       badge: 'Quan tr\u1ECDng',
       color: _danger,
       routeName: AppRoutes.safeZone,
@@ -131,7 +135,15 @@ class ChildHomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHero(context),
+                    FutureBuilder(
+                      future: AppDependencies.instance.getSavedSessionUseCase(),
+                      builder: (context, snapshot) {
+                        return _buildHero(
+                          context,
+                          CurrentUserViewData.fromSession(snapshot.data),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 20),
                     _buildTodayCard(),
                     const SizedBox(height: 20),
@@ -139,7 +151,9 @@ class ChildHomePage extends StatelessWidget {
                     const SizedBox(height: 12),
                     _buildActionsGrid(context),
                     const SizedBox(height: 20),
-                    _buildSectionTitle('Ng\u01B0\u1EDDi th\u00E2n c\u1EE7a b\u1EA1n'),
+                    _buildSectionTitle(
+                      'Ng\u01B0\u1EDDi th\u00E2n c\u1EE7a b\u1EA1n',
+                    ),
                     const SizedBox(height: 12),
                     _buildContacts(context),
                     const SizedBox(height: 20),
@@ -169,7 +183,7 @@ class ChildHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHero(BuildContext context) {
+  Widget _buildHero(BuildContext context, CurrentUserViewData userView) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -203,7 +217,7 @@ class ChildHomePage extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'A',
+                  userView.initials,
                   style: GoogleFonts.lexend(
                     color: _blueDark,
                     fontSize: 30,
@@ -217,7 +231,7 @@ class ChildHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Xin ch\u00E0o An',
+                      'Xin chào ${userView.shortName}',
                       style: GoogleFonts.lexend(
                         color: _blueDark,
                         fontSize: 24,
@@ -226,7 +240,7 @@ class ChildHomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Nguy\u1EC5n Minh An',
+                      userView.fullName,
                       style: GoogleFonts.beVietnamPro(
                         color: _muted,
                         fontSize: 14,
@@ -270,7 +284,11 @@ class ChildHomePage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.school_rounded, color: Colors.white, size: 22),
+                    const Icon(
+                      Icons.school_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -320,8 +338,7 @@ class ChildHomePage extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AppRoutes.kidLocation),
+                  onPressed: () => _openFamilyMap(context),
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
                     backgroundColor: const Color(0xFFE6F6FF),
@@ -470,9 +487,7 @@ class ChildHomePage extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           child: Ink(
             decoration: BoxDecoration(
-              color: action.isPrimary
-                  ? const Color(0xFFFFF2F4)
-                  : _surface,
+              color: action.isPrimary ? const Color(0xFFFFF2F4) : _surface,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: action.isPrimary
@@ -719,9 +734,26 @@ class ChildHomePage extends StatelessWidget {
       _showSosSheet(context);
       return;
     }
+    if (action.routeName == AppRoutes.kidLocation) {
+      _openFamilyMap(context);
+      return;
+    }
     if (action.routeName != null) {
       Navigator.pushNamed(context, action.routeName!);
     }
+  }
+
+  static void _openFamilyMap(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const FamilyMapScreen(
+          homeRouteName: AppRoutes.kidHome,
+          notificationsRouteName: AppRoutes.notifications,
+          settingsRouteName: AppRoutes.kidProfile,
+          showBottomNav: false,
+        ),
+      ),
+    );
   }
 
   static void _showSosSheet(BuildContext context) {

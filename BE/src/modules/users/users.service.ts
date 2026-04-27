@@ -52,7 +52,8 @@ export class UsersService {
     const { data: relationships } = await supabaseAdmin
       .from('relationship')
       .select('uid, relation_id, processing')
-      .or(`uid.eq.${currentUid},relation_id.eq.${currentUid}`);
+      .or(`uid.eq.${currentUid},relation_id.eq.${currentUid}`)
+      .not('processing', 'in', '(daxoa,huy)');
 
     const blockedIds = new Set<string>();
     for (const item of relationships ?? []) {
