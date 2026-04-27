@@ -1,4 +1,6 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/widgets/password_security_screen.dart';
@@ -97,17 +99,15 @@ class SettingsScreen extends StatelessWidget {
                               icon: Icons.groups_2_outlined,
                               iconBg: const Color(0x3317E8E8),
                               iconColor: const Color(0xFF00ACB1),
-                              label: 'Quản Lí Thành Viên',
-                              onTap: (ctx) => Navigator.pushNamed(
-                                ctx,
-                                AppRoutes.memberList,
-                              ),
+                              label: 'Quản lý thành viên',
+                              onTap: (ctx) =>
+                                  Navigator.pushNamed(ctx, AppRoutes.memberList),
                             ),
                             _MenuItemData(
                               icon: Icons.location_on_outlined,
                               iconBg: const Color(0xFFECFDF5),
                               iconColor: const Color(0xFF16A34A),
-                              label: 'Vùng An Toàn',
+                              label: 'Vùng an toàn',
                               onTap: (ctx) =>
                                   Navigator.pushNamed(ctx, AppRoutes.safeZone),
                             ),
@@ -121,7 +121,7 @@ class SettingsScreen extends StatelessWidget {
                               icon: Icons.notifications_none,
                               iconBg: const Color(0xFFFFF7ED),
                               iconColor: const Color(0xFFEA580C),
-                              label: 'Thông Báo',
+                              label: 'Thông báo',
                               onTap: (ctx) => Navigator.of(ctx).push(
                                 MaterialPageRoute<void>(
                                   builder: (_) =>
@@ -139,7 +139,7 @@ class SettingsScreen extends StatelessWidget {
                               icon: Icons.palette_outlined,
                               iconBg: const Color(0xFFFAF5FF),
                               iconColor: const Color(0xFF9333EA),
-                              label: 'Màu Sắc Ứng Dụng',
+                              label: 'Màu sắc ứng dụng',
                               onTap: (ctx) => Navigator.of(ctx).push(
                                 MaterialPageRoute<void>(
                                   builder: (_) => SettingsAppThemeScreen(
@@ -156,7 +156,7 @@ class SettingsScreen extends StatelessWidget {
                               icon: Icons.shield_outlined,
                               iconBg: const Color(0xFFF3F4F6),
                               iconColor: const Color(0xFF6B7280),
-                              label: 'An Toàn',
+                              label: 'An toàn',
                               onTap: (ctx) => Navigator.of(ctx).push(
                                 MaterialPageRoute<void>(
                                   builder: (_) => SettingsSafetyScreen(
@@ -273,6 +273,10 @@ class SettingsScreen extends StatelessWidget {
     );
 
     if (shouldLogout == true && context.mounted) {
+      await AppDependencies.instance.logoutUseCase();
+      if (!context.mounted) {
+        return;
+      }
       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (_) => false);
     }
   }
@@ -308,96 +312,138 @@ class _ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(32),
-      child: Container(
-        padding: const EdgeInsets.all(17),
-        decoration: BoxDecoration(
-          color: Colors.white,
+    return FutureBuilder(
+      future: AppDependencies.instance.getSavedSessionUseCase(),
+      builder: (context, snapshot) {
+        final session = snapshot.data;
+        final user = CurrentUserViewData.fromSession(session);
+        final email = session?.profile.email.trim().isNotEmpty == true
+            ? session!.profile.email.trim()
+            : session?.email ?? '';
+
+        return InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: const Color(0xFFF3F4F6)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0D000000),
-              blurRadius: 2,
-              offset: Offset(0, 1),
+          child: Container(
+            padding: const EdgeInsets.all(17),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: const Color(0xFFF3F4F6)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0D000000),
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Stack(
+            child: Row(
               children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80',
+                Stack(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        color: const Color(0xFFE2E8F0),
                       ),
-                      fit: BoxFit.cover,
+                      child: ClipOval(
+                        child: user.avatarUrl.isNotEmpty
+                            ? Image.network(
+                                user.avatarUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) =>
+                                    _ProfileInitials(initials: user.initials),
+                              )
+                            : _ProfileInitials(initials: user.initials),
+                      ),
                     ),
+                    Positioned(
+                      right: 1,
+                      bottom: 1,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF22C55E),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.fullName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF111818),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
+                        ),
+                      ),
+                      Text(
+                        email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFF638888),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Positioned(
-                  right: 1,
-                  bottom: 1,
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF22C55E),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF9FAFB),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.edit_outlined,
+                    size: 16,
+                    color: Color(0xFF9CA3AF),
                   ),
                 ),
               ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Mẹ Xôi',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF111818),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      height: 1.2,
-                    ),
-                  ),
-                  Text(
-                    'lakhon.vcl@email.com',
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF638888),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF9FAFB),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.edit_outlined,
-                size: 16,
-                color: Color(0xFF9CA3AF),
-              ),
-            ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ProfileInitials extends StatelessWidget {
+  const _ProfileInitials({required this.initials});
+
+  final String initials;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFFE2E8F0),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: GoogleFonts.inter(
+          color: const Color(0xFF334155),
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -552,7 +598,7 @@ class _LogoutButton extends StatelessWidget {
           ],
         ),
         child: Text(
-          'Đăng Xuất',
+          'Đăng xuất',
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             color: const Color(0xFFEF4444),

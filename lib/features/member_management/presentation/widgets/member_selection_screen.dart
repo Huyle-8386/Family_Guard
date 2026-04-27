@@ -20,12 +20,17 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
   int selectedIndex = 0;
 
   List<MemberManagementMember> get _members =>
-      filterMemberManagementMembers(widget.args.query);
+      filterMemberManagementMembers(
+        widget.args.query,
+        mode: widget.args.mode,
+      );
 
   @override
   Widget build(BuildContext context) {
     final members = _members;
-    final safeSelectedIndex = selectedIndex >= members.length ? 0 : selectedIndex;
+    final safeSelectedIndex = selectedIndex >= members.length
+        ? 0
+        : selectedIndex;
     final selectedMember = members[safeSelectedIndex];
     final queryLabel = widget.args.query.trim();
     final description = queryLabel.isEmpty
@@ -60,18 +65,20 @@ class _MemberSelectionScreenState extends State<MemberSelectionScreen> {
                           itemCount: members.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 179 / 184,
-                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 179 / 184,
+                              ),
                           itemBuilder: (context, index) {
                             final member = members[index];
                             return _MemberCard(
                               member: member,
                               isSelected: index == selectedIndex,
-                              onTap: () => setState(() => selectedIndex = index),
+                              onTap: () =>
+                                  setState(() => selectedIndex = index),
                             );
                           },
                         ),
@@ -147,6 +154,7 @@ class _Header extends StatelessWidget {
     );
   }
 }
+
 class _MemberCard extends StatelessWidget {
   const _MemberCard({
     required this.member,
@@ -173,7 +181,9 @@ class _MemberCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.85),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: isSelected ? const Color(0xFF00ADB2) : const Color(0xFF87E4DB),
+                color: isSelected
+                    ? const Color(0xFF00ADB2)
+                    : const Color(0xFF87E4DB),
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: [
@@ -208,11 +218,15 @@ class _MemberCard extends StatelessWidget {
                           child: Image.network(
                             member.avatarUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: const Color(0xFFE2E8F0),
-                              alignment: Alignment.center,
-                              child: const Icon(Icons.person, color: Color(0xFF64748B)),
-                            ),
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  color: const Color(0xFFE2E8F0),
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.person,
+                                    color: Color(0xFF64748B),
+                                  ),
+                                ),
                           ),
                         ),
                       ),
@@ -297,5 +311,3 @@ class _MemberCard extends StatelessWidget {
     );
   }
 }
-
-

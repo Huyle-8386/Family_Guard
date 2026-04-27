@@ -17,7 +17,7 @@ class _PriorityContactsScreenState extends State<PriorityContactsScreen> {
     const _PriorityContact(
       name: 'Mẹ',
       subtitle: 'Lần cuối được ghi nhận: 5 phút trước · Tại nhà',
-      avatarUrl: 'http://localhost:3845/assets/031d7b7bbeebfb8515afb8f1f848c77c4dc8cabc.png',
+      avatarUrl: 'assets/images/image_family.png',
       autoCall: true,
       emergencyMessage: true,
       liveLocation: false,
@@ -25,7 +25,7 @@ class _PriorityContactsScreenState extends State<PriorityContactsScreen> {
     const _PriorityContact(
       name: 'Bố',
       subtitle: 'Trạng thái: Đang theo dõi',
-      avatarUrl: 'http://localhost:3845/assets/6298d61b5af57fe690d4e522ba3e35c8a920281f.png',
+      avatarUrl: 'assets/images/logo.png',
       autoCall: true,
       emergencyMessage: true,
       liveLocation: true,
@@ -191,22 +191,21 @@ class _PriorityContactCard extends StatelessWidget {
                   border: Border.all(color: const Color(0xFF00A8AD), width: 2),
                 ),
                 child: ClipOval(
-                  child: Image.network(
-                    contact.avatarUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: const Color(0xFFE2E8F0),
-                      alignment: Alignment.center,
-                      child: Text(
-                        contact.name.characters.first,
-                        style: GoogleFonts.inter(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0F172A),
+                  child: contact.avatarUrl.startsWith('assets/')
+                      ? Image.asset(
+                          contact.avatarUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _AvatarFallback(
+                            firstLetter: contact.name.characters.first,
+                          ),
+                        )
+                      : Image.network(
+                          contact.avatarUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _AvatarFallback(
+                            firstLetter: contact.name.characters.first,
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -342,6 +341,28 @@ class _CompactSwitch extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarFallback extends StatelessWidget {
+  const _AvatarFallback({required this.firstLetter});
+
+  final String firstLetter;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFFE2E8F0),
+      alignment: Alignment.center,
+      child: Text(
+        firstLetter,
+        style: GoogleFonts.inter(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFF0F172A),
         ),
       ),
     );

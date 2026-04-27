@@ -36,14 +36,71 @@ class AdultMemberDetailScreen extends StatelessWidget {
   }
 }
 
-class _MemberDetailScaffold extends StatelessWidget {
+class _MemberDetailScaffold extends StatefulWidget {
   const _MemberDetailScaffold({required this.args, required this.onCallTap});
 
   final MemberTrackingArgs args;
   final VoidCallback onCallTap;
 
   @override
+  State<_MemberDetailScaffold> createState() => _MemberDetailScaffoldState();
+}
+
+class _MemberDetailScaffoldState extends State<_MemberDetailScaffold> {
+  static const List<String> _defaultRelationshipOptions = [
+    'Chồng',
+    'Vợ',
+    'Bố',
+    'Mẹ',
+    'Anh',
+    'Chị',
+    'Em',
+    'Con',
+    'Ông',
+    'Bà',
+    'Cô',
+    'Chú',
+    'Bác',
+  ];
+
+  late String _relationship;
+
+  List<String> get _relationshipOptions {
+    if (_defaultRelationshipOptions.contains(_relationship)) {
+      return _defaultRelationshipOptions;
+    }
+
+    return [_relationship, ..._defaultRelationshipOptions];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _relationship = widget.args.relationship;
+  }
+
+  Future<void> _showRelationshipDialog() async {
+    final selectedRelationship = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => _RelationshipEditDialog(
+        initialValue: _relationship,
+        relationshipOptions: _relationshipOptions,
+      ),
+    );
+
+    if (!mounted || selectedRelationship == null) {
+      return;
+    }
+
+    setState(() {
+      _relationship = selectedRelationship;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final args = widget.args;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0F8F7),
       body: SafeArea(
@@ -54,12 +111,15 @@ class _MemberDetailScaffold extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(6, 0, 6, 24),
               child: Column(
                 children: [
-                  _TopBar(onBack: () => Navigator.maybePop(context)),
+                  _TopBar(
+                    onBack: () => Navigator.maybePop(context),
+                    onEdit: _showRelationshipDialog,
+                  ),
                   const SizedBox(height: 10),
                   _ProfileCard(
                     args: args,
                     onViewLocation: () => Navigator.maybePop(context),
-                    onCallTap: onCallTap,
+                    onCallTap: widget.onCallTap,
                   ),
                   const SizedBox(height: 30),
                   _InfoSectionCard(
@@ -71,7 +131,7 @@ class _MemberDetailScaffold extends StatelessWidget {
                         _DetailRow(label: 'SĐT', value: args.phoneNumber),
                         _DetailRow(
                           label: 'Quan hệ',
-                          value: args.relationship,
+                          value: _relationship,
                           hasDivider: false,
                         ),
                       ],
@@ -114,23 +174,47 @@ class _MemberDetailScaffold extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.onBack});
+  const _TopBar({required this.onBack, required this.onEdit});
 
   final VoidCallback onBack;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 9),
-      alignment: Alignment.centerLeft,
-      child: IconButton(
-        onPressed: onBack,
-        splashRadius: 20,
-        icon: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 20,
-          color: AppColors.brand,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 9),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: onBack,
+              splashRadius: 20,
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: AppColors.brand,
+              ),
+            ),
+            const Spacer(),
+            InkWell(
+              onTap: onEdit,
+              borderRadius: BorderRadius.circular(999),
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.edit_outlined,
+                  size: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -780,6 +864,213 @@ class _DeviceLabelValue extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _RelationshipEditDialog extends StatefulWidget {
+  const _RelationshipEditDialog({
+    required this.initialValue,
+    required this.relationshipOptions,
+  });
+
+  final String initialValue;
+  final List<String> relationshipOptions;
+
+  @override
+  State<_RelationshipEditDialog> createState() => _RelationshipEditDialogState();
+}
+
+class _RelationshipEditDialogState extends State<_RelationshipEditDialog> {
+  late String? _selectedRelation;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedRelation = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 354),
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x40000000),
+              blurRadius: 50,
+              offset: Offset(0, 18),
+              spreadRadius: -12,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Xác nhận',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF0F172A),
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                height: 28 / 20,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Quan hệ với bạn là:',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF64748B),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 20 / 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            _RelationshipDropdown(
+              value: _selectedRelation,
+              options: widget.relationshipOptions,
+              onChanged: (value) {
+                setState(() {
+                  _selectedRelation = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Xác nhận thành viên trong gia đình của bạn',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF64748B),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                height: 22.75 / 14,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _selectedRelation == null
+                    ? null
+                    : () => Navigator.of(context).pop(_selectedRelation),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color(0xFF4DD1C4),
+                  disabledBackgroundColor: const Color(0xFFB4DFDB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                ),
+                child: Text(
+                  'Xác nhận',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFE2E8F0), width: 2),
+                  foregroundColor: const Color(0xFF334155),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                ),
+                child: Text(
+                  'Hủy',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RelationshipDropdown extends StatelessWidget {
+  const _RelationshipDropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String? value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3E9E9),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0x1C000000)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isExpanded: true,
+          hint: Text(
+            'Lựa chọn mối quan hệ',
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0x80171D1D),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Color(0xFF6B7280),
+            size: 24,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          dropdownColor: const Color(0xFFE3E9E9),
+          style: GoogleFonts.beVietnamPro(
+            color: const Color(0xFF171D1D),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          items: options
+              .map(
+                (option) => DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ),
     );
   }
 }
