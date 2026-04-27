@@ -1,4 +1,5 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/fall_detection/data/fall_detection_service.dart';
 import 'package:family_guard/features/login/data/datasources/auth_remote_data_source.dart';
 import 'package:family_guard/features/login/data/repositories_impl/auth_repository_impl.dart';
 import 'package:family_guard/features/login/domain/usecases/login_usecase.dart';
@@ -20,9 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _cubit = LoginCubit(
-      LoginUseCase(
-        AuthRepositoryImpl(AuthRemoteDataSourceImpl()),
-      ),
+      LoginUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl())),
     );
   }
 
@@ -36,11 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final user = await _cubit.submit();
     if (!mounted || user == null) return;
 
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      user.homeRoute,
-      (_) => false,
-    );
+    FallDetectionService.instance.startMonitoring();
+
+    Navigator.pushNamedAndRemoveUntil(context, user.homeRoute, (_) => false);
   }
 
   void _goToSignup() {
@@ -200,8 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: actionColor,
                           foregroundColor: Colors.white,
-                          disabledBackgroundColor:
-                              actionColor.withValues(alpha: 0.5),
+                          disabledBackgroundColor: actionColor.withValues(
+                            alpha: 0.5,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -228,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    
+
                     Row(
                       children: [
                         const Expanded(
@@ -330,8 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(0, 20),
-                            tapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: Text(
                             'Đăng ký',

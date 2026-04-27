@@ -1,4 +1,5 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/fall_detection/presentation/fall_detection_debug_panel.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
@@ -245,6 +246,15 @@ class HomePage extends StatelessWidget {
                         _QuickActionsGrid(actions: _quickActions),
                       ],
                     ),
+                  ),
+                ),
+                Positioned(
+                  left: 8,
+                  right: 8,
+                  bottom: 120,
+                  child: SizedBox(
+                    width: double.maxFinite,
+                    child: const FallDetectionDebugPanel(),
                   ),
                 ),
                 const Positioned(

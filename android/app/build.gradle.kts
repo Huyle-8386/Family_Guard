@@ -39,6 +39,12 @@ android {
     }
 }
 
+dependencies {
+    // Keep runtime and select-tf-ops aligned; newer models may require newer op versions.
+    implementation("org.tensorflow:tensorflow-lite:2.16.1")
+    implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.16.1")
+}
+
 flutter {
     source = "../.."
 }

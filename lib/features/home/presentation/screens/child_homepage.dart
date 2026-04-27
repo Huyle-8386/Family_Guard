@@ -1,4 +1,5 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/fall_detection/presentation/fall_detection_debug_panel.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
@@ -103,7 +104,8 @@ class ChildHomePage extends StatelessWidget {
     ),
     _ChildMission(
       title: 'V\u1EC1 nh\u00E0 tr\u01B0\u1EDBc 18:30',
-      subtitle: 'Ba v\u00E0 M\u1EB9 \u0111ang theo d\u00F5i \u0111\u01B0\u1EDDng v\u1EC1',
+      subtitle:
+          'Ba v\u00E0 M\u1EB9 \u0111ang theo d\u00F5i \u0111\u01B0\u1EDDng v\u1EC1',
       badge: 'Quan tr\u1ECDng',
       color: _danger,
       routeName: AppRoutes.safeZone,
@@ -139,7 +141,9 @@ class ChildHomePage extends StatelessWidget {
                     const SizedBox(height: 12),
                     _buildActionsGrid(context),
                     const SizedBox(height: 20),
-                    _buildSectionTitle('Ng\u01B0\u1EDDi th\u00E2n c\u1EE7a b\u1EA1n'),
+                    _buildSectionTitle(
+                      'Ng\u01B0\u1EDDi th\u00E2n c\u1EE7a b\u1EA1n',
+                    ),
                     const SizedBox(height: 12),
                     _buildContacts(context),
                     const SizedBox(height: 20),
@@ -148,6 +152,15 @@ class ChildHomePage extends StatelessWidget {
                     _buildMissions(context),
                   ],
                 ),
+              ),
+            ),
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 128,
+              child: SizedBox(
+                width: double.maxFinite,
+                child: const FallDetectionDebugPanel(),
               ),
             ),
             const Positioned(
@@ -270,7 +283,11 @@ class ChildHomePage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.school_rounded, color: Colors.white, size: 22),
+                    const Icon(
+                      Icons.school_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -470,9 +487,7 @@ class ChildHomePage extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           child: Ink(
             decoration: BoxDecoration(
-              color: action.isPrimary
-                  ? const Color(0xFFFFF2F4)
-                  : _surface,
+              color: action.isPrimary ? const Color(0xFFFFF2F4) : _surface,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: action.isPrimary
