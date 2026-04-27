@@ -1,4 +1,4 @@
-import 'package:family_guard/features/login/domain/entities/auth_user.dart';
+import 'package:family_guard/features/login/domain/entities/auth_session.dart';
 import 'package:family_guard/features/login/domain/repositories/auth_repository.dart';
 
 class LoginUseCase {
@@ -6,7 +6,7 @@ class LoginUseCase {
 
   final AuthRepository _repository;
 
-  Future<AuthUser> call({required String email, required String password}) {
+  Future<AuthSession> call({required String email, required String password}) {
     return _repository.login(email: email, password: password);
   }
 }

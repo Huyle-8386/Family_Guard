@@ -18,12 +18,14 @@ class FamilyMapScreen extends StatefulWidget {
     this.trackingRouteName = AppRoutes.tracking,
     this.notificationsRouteName = AppRoutes.notifications,
     this.settingsRouteName = AppRoutes.settings,
+    this.showBottomNav = true,
   });
 
   final String homeRouteName;
   final String trackingRouteName;
   final String notificationsRouteName;
   final String settingsRouteName;
+  final bool showBottomNav;
 
   @override
   State<FamilyMapScreen> createState() => _FamilyMapScreenState();
@@ -168,6 +170,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                     children: [
                       _TopControls(
                         selected: _selectedFilter,
+                        topPadding: widget.showBottomNav ? 14 : 72,
                         onChatTap: () =>
                             Navigator.pushNamed(context, AppRoutes.chatList),
                         onChanged: (filter) {
@@ -187,6 +190,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                       ),
                       const Spacer(),
                       _BottomSheetAndNav(
+                        showBottomNav: widget.showBottomNav,
                         homeRouteName: widget.homeRouteName,
                         trackingRouteName: widget.trackingRouteName,
                         notificationsRouteName: widget.notificationsRouteName,
@@ -205,6 +209,14 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                     ],
                   ),
                 ),
+                if (!widget.showBottomNav)
+                  Positioned(
+                    left: 14,
+                    top: 14,
+                    child: _StandaloneBackButton(
+                      onTap: () => Navigator.maybePop(context),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -550,16 +562,18 @@ class _TopControls extends StatelessWidget {
     required this.selected,
     required this.onChanged,
     required this.onChatTap,
+    this.topPadding = 14,
   });
 
   final _MemberFilter selected;
   final ValueChanged<_MemberFilter> onChanged;
   final VoidCallback onChatTap;
+  final double topPadding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+      padding: EdgeInsets.fromLTRB(14, topPadding, 14, 0),
       child: Row(
         children: [
           Expanded(
@@ -824,6 +838,7 @@ class _MapMember {
 
 class _BottomSheetAndNav extends StatelessWidget {
   const _BottomSheetAndNav({
+    required this.showBottomNav,
     required this.homeRouteName,
     required this.trackingRouteName,
     required this.notificationsRouteName,
@@ -834,6 +849,7 @@ class _BottomSheetAndNav extends StatelessWidget {
     required this.onChatTap,
   });
 
+  final bool showBottomNav;
   final String homeRouteName;
   final String trackingRouteName;
   final String notificationsRouteName;
@@ -865,20 +881,55 @@ class _BottomSheetAndNav extends StatelessWidget {
               onCallTap: onCallTap!,
               onChatTap: onChatTap!,
             ),
-          Container(
-            width: double.infinity,
-            color: selectedMember != null
-                ? const Color(0xFFF0F8F7)
-                : Colors.transparent,
-            child: AppFlowBottomNav(
-              current: AppNavTab.tracking,
-              homeRouteName: homeRouteName,
-              trackingRouteName: trackingRouteName,
-              settingsRouteName: settingsRouteName,
-              thirdTabRouteName: notificationsRouteName,
+          if (showBottomNav)
+            Container(
+              width: double.infinity,
+              color: selectedMember != null
+                  ? const Color(0xFFF0F8F7)
+                  : Colors.transparent,
+              child: AppFlowBottomNav(
+                current: AppNavTab.tracking,
+                homeRouteName: homeRouteName,
+                trackingRouteName: trackingRouteName,
+                settingsRouteName: settingsRouteName,
+                thirdTabRouteName: notificationsRouteName,
+              ),
             ),
+          if (!showBottomNav) const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class _StandaloneBackButton extends StatelessWidget {
+  const _StandaloneBackButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.95),
+        shape: BoxShape.circle,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1A000000),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
         ],
+      ),
+      child: IconButton(
+        onPressed: onTap,
+        icon: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 20,
+          color: Color(0xFF334155),
+        ),
       ),
     );
   }

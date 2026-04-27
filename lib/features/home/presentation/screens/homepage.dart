@@ -1,4 +1,8 @@
+// ignore_for_file: unused_element
+
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
@@ -13,7 +17,7 @@ class HomePage extends StatelessWidget {
   static const _primaryColor = Color(0xFF00ACB2);
   static const _secondaryColor = Color(0xFF87E4DB);
   static const _headerAvatarUrl =
-      'https://www.figma.com/api/mcp/asset/2f585926-b307-4889-9fd8-50f79d086344';
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop';
 
   static final List<_MemberCardData> _members = [
     _MemberCardData(
@@ -22,9 +26,9 @@ class HomePage extends StatelessWidget {
       battery: '85%',
       location: '123 Đường Nguyễn Huệ...',
       avatarUrl:
-          'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e',
+          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
       mapImageUrl:
-          'https://www.figma.com/api/mcp/asset/377b4370-a162-4432-b61e-7545f1fb1039',
+          'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
       statusDotColor: const Color(0xFF22C55E),
       statusTextColor: const Color(0xFF008A8E),
       accentColor: const Color(0xFF00ACB2),
@@ -38,7 +42,7 @@ class HomePage extends StatelessWidget {
         name: 'Mẹ',
         status: 'Đang ở nhà',
         avatarUrl:
-            'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e',
+            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
         phoneNumber: '+84 909 123 456',
         relationship: 'Mẹ',
         battery: 85,
@@ -77,9 +81,9 @@ class HomePage extends StatelessWidget {
       battery: '24%',
       location: 'Công viên Tao Đàn',
       avatarUrl:
-          'https://www.figma.com/api/mcp/asset/5e8718f5-141a-45c5-9a6f-b47576bb2bc4',
+          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
       mapImageUrl:
-          'https://www.figma.com/api/mcp/asset/5ecd790f-6840-4bcd-aef9-7210007ea537',
+          'https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80',
       statusDotColor: const Color(0xFFEAB308),
       statusTextColor: const Color(0xFF374151),
       accentColor: const Color(0xFF111827),
@@ -94,7 +98,7 @@ class HomePage extends StatelessWidget {
         name: 'Bố',
         status: 'Đang đi dạo',
         avatarUrl:
-            'https://www.figma.com/api/mcp/asset/5e8718f5-141a-45c5-9a6f-b47576bb2bc4',
+            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
         phoneNumber: '+84 909 456 123',
         relationship: 'Bố',
         battery: 24,
@@ -168,7 +172,7 @@ class HomePage extends StatelessWidget {
       icon: Icons.videocam_rounded,
       iconColor: const Color(0xFF10B981),
       glowColor: const Color(0x33A7F3D0),
-      onTap: _showCameraComingSoon,
+      onTapRouteName: AppRoutes.cameraList,
     ),
     _QuickActionData(
       title: 'Nhịp tim',
@@ -199,17 +203,6 @@ class HomePage extends StatelessWidget {
   static Widget _buildKidDeviceControlScreen() =>
       const KidDeviceControlScreen();
 
-  static void _showCameraComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('Chức năng camera đang được phát triển.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,7 +221,17 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 8),
-                        const _Header(),
+                        FutureBuilder(
+                          future: AppDependencies.instance
+                              .getSavedSessionUseCase(),
+                          builder: (context, snapshot) {
+                            return _Header(
+                              userView: CurrentUserViewData.fromSession(
+                                snapshot.data,
+                              ),
+                            );
+                          },
+                        ),
                         const SizedBox(height: 26),
                         _MemberCardsSection(members: _members),
                         const SizedBox(height: 22),
@@ -300,8 +303,10 @@ class _TopDecoration extends StatelessWidget {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header();
+class _LegacyHeader extends StatelessWidget {
+  const _LegacyHeader({required this.userView});
+
+  final CurrentUserViewData userView;
 
   @override
   Widget build(BuildContext context) {
@@ -336,19 +341,83 @@ class _Header extends StatelessWidget {
               ],
             ),
             child: ClipOval(
-              child: Image.network(
-                HomePage._headerAvatarUrl,
+              child: _AdaptiveImage(
+                source: userView.avatarUrl.isNotEmpty
+                    ? userView.avatarUrl
+                    : HomePage._headerAvatarUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFE5E7EB),
-                    alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.person_rounded,
-                      color: Color(0xFF4B5563),
+                fallback: Container(
+                  color: const Color(0xFFE5E7EB),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.person_rounded,
+                    color: Color(0xFF4B5563),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.userView});
+
+  final CurrentUserViewData userView;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Chào buổi tối,\n${userView.shortName}',
+          style: GoogleFonts.beVietnamPro(
+            color: const Color(0xFF00ACB2),
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            height: 32 / 24,
+          ),
+        ),
+        GestureDetector(
+          onTap: () => Navigator.pushNamed(context, AppRoutes.profile),
+          child: Container(
+            width: 48,
+            height: 48,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1A000000),
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: _AdaptiveImage(
+                source: userView.avatarUrl.isNotEmpty
+                    ? userView.avatarUrl
+                    : HomePage._headerAvatarUrl,
+                fit: BoxFit.cover,
+                fallback: Container(
+                  color: const Color(0xFFE5E7EB),
+                  alignment: Alignment.center,
+                  child: Text(
+                    userView.initials,
+                    style: GoogleFonts.beVietnamPro(
+                      color: const Color(0xFF4B5563),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
             ),
           ),
@@ -410,13 +479,11 @@ class _MemberCard extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: Image.network(
-                  data.mapImageUrl,
+                child: _AdaptiveImage(
+                  source: data.mapImageUrl,
                   fit: BoxFit.cover,
                   opacity: const AlwaysStoppedAnimation(0.6),
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: const Color(0xFFF4F8F7));
-                  },
+                  fallback: Container(color: const Color(0xFFF4F8F7)),
                 ),
               ),
               Positioned.fill(
@@ -463,20 +530,17 @@ class _MemberCard extends StatelessWidget {
                                     ],
                                   ),
                                   child: ClipOval(
-                                    child: Image.network(
-                                      data.avatarUrl,
+                                    child: _AdaptiveImage(
+                                      source: data.avatarUrl,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return Container(
-                                              color: const Color(0xFFE5E7EB),
-                                              alignment: Alignment.center,
-                                              child: const Icon(
-                                                Icons.person_rounded,
-                                                color: Color(0xFF6B7280),
-                                              ),
-                                            );
-                                          },
+                                      fallback: Container(
+                                        color: const Color(0xFFE5E7EB),
+                                        alignment: Alignment.center,
+                                        child: const Icon(
+                                          Icons.person_rounded,
+                                          color: Color(0xFF6B7280),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -729,11 +793,6 @@ class _QuickActionCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(40),
       onTap: () {
-        final onTap = data.onTap;
-        if (onTap != null) {
-          onTap(context);
-          return;
-        }
         if (data.onTapRouteName != null) {
           Navigator.pushNamed(context, data.onTapRouteName!);
           return;
@@ -773,7 +832,7 @@ class _QuickActionCard extends StatelessWidget {
               child: Icon(data.icon, color: data.iconColor, size: 22),
             ),
             const SizedBox(height: 12),
-            Expanded(
+            Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -792,7 +851,7 @@ class _QuickActionCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     data.subtitle,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.publicSans(
                       color: const Color(0xFF6B7280),
@@ -856,7 +915,6 @@ class _QuickActionData {
     required this.icon,
     required this.iconColor,
     required this.glowColor,
-    this.onTap,
     this.onTapRouteName,
     this.builder,
   });
@@ -866,7 +924,39 @@ class _QuickActionData {
   final IconData icon;
   final Color iconColor;
   final Color glowColor;
-  final void Function(BuildContext context)? onTap;
   final String? onTapRouteName;
   final Widget Function()? builder;
+}
+
+class _AdaptiveImage extends StatelessWidget {
+  const _AdaptiveImage({
+    required this.source,
+    required this.fit,
+    required this.fallback,
+    this.opacity,
+  });
+
+  final String source;
+  final BoxFit fit;
+  final Widget fallback;
+  final Animation<double>? opacity;
+
+  @override
+  Widget build(BuildContext context) {
+    if (source.startsWith('assets/')) {
+      return Image.asset(
+        source,
+        fit: fit,
+        opacity: opacity,
+        errorBuilder: (context, error, stackTrace) => fallback,
+      );
+    }
+
+    return Image.network(
+      source,
+      fit: fit,
+      opacity: opacity,
+      errorBuilder: (context, error, stackTrace) => fallback,
+    );
+  }
 }

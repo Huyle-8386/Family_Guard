@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class EditEmergencyContactRelationshipScreen extends StatelessWidget {
   const EditEmergencyContactRelationshipScreen({
     super.key,
-    this.initialValue = 'Vợ/Chồng',
+    this.initialValue = 'Chồng',
   });
 
   final String initialValue;
@@ -15,7 +15,7 @@ class EditEmergencyContactRelationshipScreen extends StatelessWidget {
       appBarTitle: 'Liên hệ khẩn cấp',
       title: 'Vai trò',
       description: 'Nhập quan hệ của bạn với liên hệ này.',
-      options: const ['Vợ/Chồng', 'Cha/Mẹ', 'Con', 'Anh/Chị', 'Thêm...'],
+      options: const ['Chồng', 'Vợ', 'Cha/Mẹ', 'Con', 'Anh/Chị', 'Thêm...'],
       initialSelected: initialValue,
     );
   }

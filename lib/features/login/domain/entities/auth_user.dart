@@ -1,21 +1,12 @@
 class AuthUser {
-  const AuthUser({
-    required this.userId,
-    required this.familyId,
-    required this.email,
-    required this.displayName,
-    required this.role,
-    required this.roleLabel,
-    required this.homeRoute,
-  });
+  const AuthUser({required this.id, required this.email});
 
-  final String userId;
-  final String familyId;
+  final String id;
   final String email;
-  final String displayName;
-  final String role;
-  final String roleLabel;
-  final String homeRoute;
+
+  AuthUser copyWith({String? id, String? email}) {
+    return AuthUser(id: id ?? this.id, email: email ?? this.email);
+  }
 }
 
 class AuthException implements Exception {
