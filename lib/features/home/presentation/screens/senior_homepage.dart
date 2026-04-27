@@ -1,4 +1,5 @@
 ﻿import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/fall_detection/presentation/fall_detection_debug_panel.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
 import 'package:family_guard/features/home/presentation/widgets/senior_home/senior_sos_sheet.dart';
@@ -41,6 +42,15 @@ class _SeniorHomePageState extends State<SeniorHomePage> {
                     _buildQuickContactCard(context),
                   ],
                 ),
+              ),
+            ),
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 110,
+              child: SizedBox(
+                width: double.maxFinite,
+                child: const FallDetectionDebugPanel(),
               ),
             ),
             Positioned(
@@ -1035,4 +1045,3 @@ const List<_SeniorQuickContact> _directoryContacts = [
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&auto=format&fit=crop',
   ),
 ];
-
