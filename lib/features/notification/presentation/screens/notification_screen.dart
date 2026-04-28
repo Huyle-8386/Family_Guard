@@ -207,13 +207,14 @@ class _NotificationScreenState extends State<NotificationScreen>
     }
 
     for (final notification in notifications) {
+      final isActionable = _isActionableNotification(notification);
       items.add(const SizedBox(height: 12));
       items.add(
         _ApiMemberConfirmationCard(
           title: _buildNotificationTitle(notification),
           content: _buildNotificationContent(notification),
           timeLabel: _formatNotificationTime(notification.createdAt),
-          showActions: notification.processing != 'done',
+          showActions: isActionable && notification.processing != 'done',
           onConfirm: () => _respondToNotification(
             notificationId: notification.id,
             accepted: true,
@@ -229,8 +230,14 @@ class _NotificationScreenState extends State<NotificationScreen>
     return items;
   }
 
+  bool _isActionableNotification(AppNotification notification) {
+    final senderName = (notification.senderName ?? '').trim();
+    final senderRelation = (notification.senderRelation ?? '').trim();
+    return senderName.isNotEmpty || senderRelation.isNotEmpty;
+  }
+
   String _buildNotificationTitle(AppNotification notification) {
-    if ((notification.senderName ?? '').trim().isNotEmpty) {
+    if (_isActionableNotification(notification)) {
       return 'Xác nhận mối quan hệ';
     }
 

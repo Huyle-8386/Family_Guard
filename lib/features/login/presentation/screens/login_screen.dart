@@ -30,6 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final session = await _cubit.submit();
     if (!mounted || session == null) return;
 
+    await AppDependencies.instance.safeZoneService.initialize(force: true);
+    await AppDependencies.instance.locationTrackingService.start();
     Navigator.pushNamedAndRemoveUntil(context, session.homeRoute, (_) => false);
   }
 

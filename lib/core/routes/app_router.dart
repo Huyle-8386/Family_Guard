@@ -157,8 +157,11 @@ class AppRouter {
         _safeZoneRoute(const SafeZoneSelectMemberScreen()),
     AppRoutes.safeZoneEmpty: (context) =>
         _safeZoneRoute(const SafeZoneEmptyScreen()),
-    AppRoutes.safeZoneAdd: (context) =>
-        _safeZoneRoute(const SafeZoneAddScreen()),
+    AppRoutes.safeZoneAdd: (context) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final initialMemberId = args is String ? args : null;
+      return _safeZoneRoute(SafeZoneAddScreen(initialMemberId: initialMemberId));
+    },
     AppRoutes.safeZoneDetail: (context) =>
         _safeZoneRoute(const SafeZoneDetailScreen()),
     AppRoutes.safeZoneTimeRules: (context) =>
