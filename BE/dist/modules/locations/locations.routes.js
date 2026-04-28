@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_middleware_1 = require("../../middlewares/auth.middleware");
+const locations_controller_1 = require("./locations.controller");
+const router = (0, express_1.Router)();
+const controller = new locations_controller_1.LocationsController();
+router.post('/locations/me', auth_middleware_1.authMiddleware, controller.updateMe.bind(controller));
+router.get('/locations/me', auth_middleware_1.authMiddleware, controller.getMe.bind(controller));
+router.get('/locations/family', auth_middleware_1.authMiddleware, controller.getFamily.bind(controller));
+exports.default = router;

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Loại vùng an toàn
 enum SafeZoneType {
-  home('Nhà', Icons.home_rounded, Color(0xFFEFF6FF), Color(0xFF3B82F6)),
-  school('Trường học', Icons.school_rounded, Color(0xFFFFFBEB), Color(0xFFD97706)),
-  hospital('Bệnh viện', Icons.local_hospital_rounded, Color(0xFFFFF1F2), Color(0xFFF43F5E)),
-  custom('Tùy chỉnh', Icons.tune_rounded, Color(0xFFF8FAFC), Color(0xFF64748B));
+  home('Nha', Icons.home_rounded, Color(0xFFEFF6FF), Color(0xFF3B82F6)),
+  school('Truong hoc', Icons.school_rounded, Color(0xFFFFFBEB), Color(0xFFD97706)),
+  hospital('Benh vien', Icons.local_hospital_rounded, Color(0xFFFFF1F2), Color(0xFFF43F5E)),
+  custom('Tuy chinh', Icons.tune_rounded, Color(0xFFF8FAFC), Color(0xFF64748B));
 
   final String label;
   final IconData icon;
@@ -14,7 +13,6 @@ enum SafeZoneType {
   const SafeZoneType(this.label, this.icon, this.bgColor, this.iconColor);
 }
 
-/// Cấu hình cảnh báo
 class AlertConfig {
   final bool leaveAlert;
   final bool enterAlert;
@@ -22,7 +20,7 @@ class AlertConfig {
   final bool pushEnabled;
   final bool smsEnabled;
   final bool callEnabled;
-  final int urgencyLevel; // 0=thấp, 1=trung bình, 2=cao
+  final int urgencyLevel;
 
   const AlertConfig({
     this.leaveAlert = true,
@@ -55,11 +53,10 @@ class AlertConfig {
   }
 }
 
-/// Khung giờ hoạt động
 class TimeSlot {
   final TimeOfDay startTime;
   final TimeOfDay endTime;
-  final List<int> activeDays; // 0=CN, 1=T2, ..., 6=T7
+  final List<int> activeDays;
 
   const TimeSlot({
     required this.startTime,
@@ -67,8 +64,7 @@ class TimeSlot {
     this.activeDays = const [1, 2, 3, 4, 5],
   });
 
-  String get label =>
-      '${_fmt(startTime)} - ${_fmt(endTime)}';
+  String get label => '${_fmt(startTime)} - ${_fmt(endTime)}';
 
   static String _fmt(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
@@ -86,7 +82,6 @@ class TimeSlot {
   }
 }
 
-/// Người thân
 class AlertRecipient {
   final String id;
   final String name;
@@ -103,14 +98,15 @@ class AlertRecipient {
   });
 }
 
-/// Model vùng an toàn
 class SafeZone {
   final String id;
+  final String? ownerUid;
+  final String? targetUid;
   String name;
   String address;
   double latitude;
   double longitude;
-  double radius; // metres
+  double radius;
   SafeZoneType zoneType;
   bool isActive;
   bool timeBasedEnabled;
@@ -122,6 +118,8 @@ class SafeZone {
 
   SafeZone({
     required this.id,
+    this.ownerUid,
+    this.targetUid,
     required this.name,
     this.address = '',
     this.latitude = 10.7769,
@@ -146,6 +144,9 @@ class SafeZone {
         updatedAt = updatedAt ?? DateTime.now();
 
   SafeZone copyWith({
+    String? id,
+    String? ownerUid,
+    String? targetUid,
     String? name,
     String? address,
     double? latitude,
@@ -159,7 +160,9 @@ class SafeZone {
     List<String>? recipientIds,
   }) {
     return SafeZone(
-      id: id,
+      id: id ?? this.id,
+      ownerUid: ownerUid ?? this.ownerUid,
+      targetUid: targetUid ?? this.targetUid,
       name: name ?? this.name,
       address: address ?? this.address,
       latitude: latitude ?? this.latitude,
@@ -175,13 +178,17 @@ class SafeZone {
       updatedAt: DateTime.now(),
     );
   }
+
+  double get centerLatitude => latitude;
+  double get centerLongitude => longitude;
+  int get radiusMeters => radius.round();
 }
 
-/// Thành viên gia đình (mở rộng cho safe zone)
 class SafeZoneMember {
   final String id;
   final String name;
-  final String ageGroup; // '60+ TUỔI', 'NGƯỜI CHĂM SÓC', 'TRẺ EM (<18)'
+  final String role;
+  final String ageGroup;
   final Color badgeColor;
   final Color badgeBorderColor;
   final Color badgeTextColor;
@@ -192,6 +199,7 @@ class SafeZoneMember {
   const SafeZoneMember({
     required this.id,
     required this.name,
+    this.role = '',
     required this.ageGroup,
     required this.badgeColor,
     required this.badgeBorderColor,
@@ -202,4 +210,30 @@ class SafeZoneMember {
   });
 
   int get zoneCount => zoneIds.length;
+
+  SafeZoneMember copyWith({
+    String? id,
+    String? name,
+    String? role,
+    String? ageGroup,
+    Color? badgeColor,
+    Color? badgeBorderColor,
+    Color? badgeTextColor,
+    String? avatarUrl,
+    bool? isOnline,
+    List<String>? zoneIds,
+  }) {
+    return SafeZoneMember(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      role: role ?? this.role,
+      ageGroup: ageGroup ?? this.ageGroup,
+      badgeColor: badgeColor ?? this.badgeColor,
+      badgeBorderColor: badgeBorderColor ?? this.badgeBorderColor,
+      badgeTextColor: badgeTextColor ?? this.badgeTextColor,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      isOnline: isOnline ?? this.isOnline,
+      zoneIds: zoneIds ?? this.zoneIds,
+    );
+  }
 }

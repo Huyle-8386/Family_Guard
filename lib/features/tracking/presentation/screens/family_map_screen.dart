@@ -2,11 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:family_guard/features/calling/presentation/widgets/call_bottom_sheets.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_models.dart';
+import 'package:family_guard/features/location_tracking/domain/entities/user_location.dart';
+import 'package:family_guard/features/location_tracking/presentation/bloc/location_tracking_bloc.dart';
+import 'package:family_guard/features/location_tracking/presentation/bloc/location_tracking_event.dart';
+import 'package:family_guard/features/login/domain/entities/auth_profile.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
@@ -40,97 +45,71 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
 
   final MapController _mapController = MapController();
   late final AnimationController _mapAnimationController;
+  late final LocationTrackingBloc _locationBloc;
 
   _LatLngTween? _centerTween;
   Tween<double>? _zoomTween;
   bool _isMapReady = false;
 
   _MemberFilter _selectedFilter = _MemberFilter.all;
-  String? _selectedMemberName;
+  String? _selectedMemberId;
+  AuthProfile? _currentProfile;
+  UserLocation? _lastSyncedOwnLocation;
 
-  // Fake tracking data for now.
-  // TODO: replace with repository/use case calling GET /tracking/locations/current.
-  static const List<_MapMember> _members = [
-    _MapMember(
-      id: '1',
-      name: 'Xôi',
-      role: _MemberFilter.children,
-      battery: 82,
-      subtitle: 'Đang đi bộ về nhà từ trường',
-      distanceLabel: '0.5 km',
-      activityIcon: Icons.directions_walk,
-      markerBorderColor: Color(0xFF60A5FA),
-      location: LatLng(16.0544, 108.2022),
-      routeHistory: [
-        LatLng(16.0528, 108.1988),
-        LatLng(16.0533, 108.1998),
-        LatLng(16.0539, 108.2007),
-        LatLng(16.0544, 108.2015),
-        LatLng(16.0544, 108.2022),
-      ],
-      avatarUrl:
-          'https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?q=80&w=300&auto=format&fit=crop',
-    ),
-    _MapMember(
-      id: '2',
-      name: 'Bố Xôi',
-      role: _MemberFilter.adults,
-      battery: 82,
-      subtitle: 'Đang lái xe',
-      distanceLabel: '3 km',
-      activityIcon: Icons.pedal_bike_rounded,
-      markerBorderColor: Color(0xFF17E8E8),
-      location: LatLng(16.0560, 108.2040),
-      routeHistory: [
-        LatLng(16.0581, 108.2062),
-        LatLng(16.0574, 108.2056),
-        LatLng(16.0569, 108.2050),
-        LatLng(16.0564, 108.2044),
-        LatLng(16.0560, 108.2040),
-      ],
-      avatarUrl:
-          'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop',
-    ),
-    _MapMember(
-      id: '3',
-      name: 'Bà nội',
-      role: _MemberFilter.seniors,
-      battery: 82,
-      subtitle: 'Đang ở nhà riêng',
-      distanceLabel: '5 km',
-      activityIcon: Icons.directions_walk,
-      markerBorderColor: Color(0xFF4ADE80),
-      location: LatLng(16.0529, 108.2058),
-      routeHistory: [
-        LatLng(16.0518, 108.2074),
-        LatLng(16.0521, 108.2069),
-        LatLng(16.0524, 108.2064),
-        LatLng(16.0527, 108.2060),
-        LatLng(16.0529, 108.2058),
-      ],
-      avatarUrl:
-          'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?q=80&w=300&auto=format&fit=crop',
-    ),
-  ];
+  static const String _fallbackAvatarUrl =
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&auto=format&fit=crop';
+
+  List<_MapMember> get _members {
+    final state = _locationBloc.state;
+    final members = state.familyLocations
+        .map((item) => _mapMemberFromLocation(item, state.myLocation))
+        .toList(growable: true);
+
+    final selfMember = _buildSelfMember(state.myLocation);
+    if (selfMember != null &&
+        !members.any((member) => member.id == selfMember.id)) {
+      members.insert(0, selfMember);
+    }
+
+    return members;
+  }
 
   List<_MapMember> get _filteredMembers {
+    final members = _members;
     if (_selectedFilter == _MemberFilter.all) {
-      return _members;
+      return members;
     }
-    return _members.where((member) => member.role == _selectedFilter).toList();
+    return members.where((member) => member.role == _selectedFilter).toList();
   }
 
   @override
   void initState() {
     super.initState();
+    final dependencies = AppDependencies.instance;
+    _locationBloc = LocationTrackingBloc(
+      getMyLocationUseCase: dependencies.getMyLocationUseCase,
+      getFamilyLocationsUseCase: dependencies.getFamilyLocationsUseCase,
+    )..addListener(_handleLocationStateChanged);
+    dependencies.locationTrackingService.addListener(_handleTrackingServiceChanged);
     _mapAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 650),
     )..addListener(_handleMapAnimation);
+    _loadCurrentProfile();
+    _locationBloc.dispatch(const LoadMyLocationEvent());
+    _locationBloc.dispatch(const StartFamilyLocationPollingEvent());
+    dependencies.locationTrackingService.refreshNow();
   }
 
   @override
   void dispose() {
+    AppDependencies.instance.locationTrackingService.removeListener(
+      _handleTrackingServiceChanged,
+    );
+    _locationBloc
+      ..removeListener(_handleLocationStateChanged)
+      ..dispatch(const StopFamilyLocationPollingEvent())
+      ..dispose();
     _mapAnimationController
       ..removeListener(_handleMapAnimation)
       ..dispose();
@@ -176,7 +155,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                         onChanged: (filter) {
                           setState(() {
                             _selectedFilter = filter;
-                            _selectedMemberName = null;
+                            _selectedMemberId = null;
                           });
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (!mounted) {
@@ -229,11 +208,11 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     if (visibleMembers.isEmpty) {
       return _members.first;
     }
-    if (_selectedMemberName == null) {
+    if (_selectedMemberId == null) {
       return visibleMembers.first;
     }
     for (final member in visibleMembers) {
-      if (member.name == _selectedMemberName) {
+      if (member.id == _selectedMemberId) {
         return member;
       }
     }
@@ -241,12 +220,12 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
   }
 
   _MapMember? _resolveSelectedMemberForUi(List<_MapMember> visibleMembers) {
-    if (visibleMembers.isEmpty || _selectedMemberName == null) {
+    if (visibleMembers.isEmpty || _selectedMemberId == null) {
       return null;
     }
 
     for (final member in visibleMembers) {
-      if (member.name == _selectedMemberName) {
+      if (member.id == _selectedMemberId) {
         return member;
       }
     }
@@ -256,14 +235,16 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
 
   void _selectMember(String memberName) {
     final member = _members.firstWhere((item) => item.name == memberName);
-    setState(() => _selectedMemberName = memberName);
-    moveToLocation(member.location);
+    setState(() => _selectedMemberId = member.id);
+    if (member.hasLocation) {
+      moveToLocation(member.location);
+    }
   }
 
   void _handleMapReady() {
     _isMapReady = true;
     final selectedMember = _resolveSelectedMemberForUi(_filteredMembers);
-    if (selectedMember != null) {
+    if (selectedMember != null && selectedMember.hasLocation) {
       moveToLocation(selectedMember.location);
     }
   }
@@ -288,21 +269,25 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
   }
 
   LatLng _focusTargetForMembers(List<_MapMember> members) {
-    if (members.isEmpty) {
+    final locatedMembers = members.where((member) => member.hasLocation).toList();
+    if (locatedMembers.isEmpty) {
       return _initialCenter;
     }
-    if (members.length == 1) {
-      return members.first.location;
+    if (locatedMembers.length == 1) {
+      return locatedMembers.first.location;
     }
 
     var latitude = 0.0;
     var longitude = 0.0;
-    for (final member in members) {
+    for (final member in locatedMembers) {
       latitude += member.location.latitude;
       longitude += member.location.longitude;
     }
 
-    return LatLng(latitude / members.length, longitude / members.length);
+    return LatLng(
+      latitude / locatedMembers.length,
+      longitude / locatedMembers.length,
+    );
   }
 
   void _handleMapAnimation() {
@@ -319,6 +304,200 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       _zoomTween!.transform(animationValue),
       id: 'family-member-focus',
     );
+  }
+
+  void _handleLocationStateChanged() {
+    if (!mounted) {
+      return;
+    }
+
+    final hasSelectedMember = _selectedMemberId != null &&
+        _members.any((member) => member.id == _selectedMemberId);
+
+    setState(() {
+      if (!hasSelectedMember) {
+        _selectedMemberId = null;
+      }
+    });
+  }
+
+  Future<void> _loadCurrentProfile() async {
+    try {
+      final session = await AppDependencies.instance.authLocalDataSource
+          .getSavedSession();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _currentProfile = session?.profile;
+      });
+    } catch (_) {
+      // Leave self marker unnamed rather than breaking the map.
+    }
+  }
+
+  void _handleTrackingServiceChanged() {
+    final service = AppDependencies.instance.locationTrackingService;
+    final latestLocation = service.lastLocation;
+    if (latestLocation == null) {
+      return;
+    }
+
+    final hasChanged = _lastSyncedOwnLocation?.updatedAt != latestLocation.updatedAt ||
+        _lastSyncedOwnLocation?.latitude != latestLocation.latitude ||
+        _lastSyncedOwnLocation?.longitude != latestLocation.longitude;
+
+    if (!hasChanged) {
+      return;
+    }
+
+    _lastSyncedOwnLocation = latestLocation;
+    _locationBloc.dispatch(const LoadMyLocationEvent());
+    _locationBloc.dispatch(const LoadFamilyLocationsEvent(showLoader: false));
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  _MapMember _mapMemberFromLocation(
+    UserLocation location,
+    UserLocation? myLocation,
+  ) {
+    final hasLocation = location.hasLocation;
+    final latLng = hasLocation
+        ? LatLng(location.latitude!, location.longitude!)
+        : _initialCenter;
+
+    return _MapMember(
+      id: location.uid,
+      name: _displayName(location),
+      role: _mapRole(location.role),
+      battery: 82,
+      subtitle: location.formattedAddress ??
+          location.coordinateLabel ??
+          'Vi tri chua cap nhat',
+      distanceLabel: _formatDistanceFromMe(location, myLocation),
+      lastUpdatedLabel: _formatUpdatedAt(location.updatedAt),
+      activityIcon: _activityIconFor(location.speed),
+      markerBorderColor: _markerColorFor(location.role),
+      location: latLng,
+      routeHistory: hasLocation ? <LatLng>[latLng] : const <LatLng>[],
+      avatarUrl: _avatarUrlFor(location.avata),
+      hasLocation: hasLocation,
+    );
+  }
+
+  _MapMember? _buildSelfMember(UserLocation? location) {
+    final profile = _currentProfile;
+    if (profile == null || location == null) {
+      return null;
+    }
+
+    return _mapMemberFromLocation(
+      location.copyWith(
+        uid: profile.uid,
+        name: profile.name,
+        role: profile.role,
+        email: profile.email,
+        phone: profile.phone,
+        avata: profile.avata,
+      ),
+      location,
+    );
+  }
+
+  String _displayName(UserLocation location) {
+    final name = location.name?.trim();
+    if (name != null && name.isNotEmpty) {
+      return name;
+    }
+    final email = location.email?.trim();
+    if (email != null && email.isNotEmpty) {
+      return email;
+    }
+    return 'Thanh vien';
+  }
+
+  _MemberFilter _mapRole(String? role) {
+    if (role == 'nguoichamsoc') {
+      return _MemberFilter.adults;
+    }
+    return _MemberFilter.children;
+  }
+
+  IconData _activityIconFor(double? speed) {
+    if (speed != null && speed >= 6) {
+      return Icons.drive_eta_rounded;
+    }
+    if (speed != null && speed >= 1.5) {
+      return Icons.directions_walk;
+    }
+    return Icons.location_on_outlined;
+  }
+
+  Color _markerColorFor(String? role) {
+    if (role == 'nguoichamsoc') {
+      return const Color(0xFF17E8E8);
+    }
+    return const Color(0xFF60A5FA);
+  }
+
+  String _avatarUrlFor(String? avatarUrl) {
+    final trimmed = avatarUrl?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return _fallbackAvatarUrl;
+    }
+    return trimmed;
+  }
+
+  String _formatUpdatedAt(DateTime? updatedAt) {
+    if (updatedAt == null) {
+      return 'Chua cap nhat';
+    }
+
+    final localTime = updatedAt.toLocal();
+    final difference = DateTime.now().difference(localTime);
+
+    if (difference.inSeconds < 60) {
+      return 'Vua cap nhat';
+    }
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} phut truoc';
+    }
+    if (difference.inHours < 24) {
+      return '${difference.inHours} gio truoc';
+    }
+    if (difference.inDays < 7) {
+      return '${difference.inDays} ngay truoc';
+    }
+
+    final day = localTime.day.toString().padLeft(2, '0');
+    final month = localTime.month.toString().padLeft(2, '0');
+    final hour = localTime.hour.toString().padLeft(2, '0');
+    final minute = localTime.minute.toString().padLeft(2, '0');
+    return '$day/$month ${hour}:$minute';
+  }
+
+  String _formatDistanceFromMe(UserLocation location, UserLocation? myLocation) {
+    if (!location.hasLocation || myLocation == null || !myLocation.hasLocation) {
+      return 'Chua xac dinh';
+    }
+
+    final distance = const Distance().as(
+      LengthUnit.Meter,
+      LatLng(myLocation.latitude!, myLocation.longitude!),
+      LatLng(location.latitude!, location.longitude!),
+    );
+
+    if (distance < 1000) {
+      return '${distance.round()} m';
+    }
+
+    final kilometers = distance / 1000;
+    final formatted = kilometers >= 10
+        ? kilometers.toStringAsFixed(0)
+        : kilometers.toStringAsFixed(1);
+    return '$formatted km';
   }
 
   void _openMemberDetails(_MapMember member) {
@@ -449,6 +628,10 @@ class _MapLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final membersWithLocation = members
+        .where((member) => member.hasLocation)
+        .toList(growable: false);
+
     return Stack(
       children: [
         Positioned.fill(
@@ -479,7 +662,9 @@ class _MapLayer extends StatelessWidget {
                   ),
                 ],
               ),
-              if (selectedMember != null)
+              if (selectedMember != null &&
+                  selectedMember!.hasLocation &&
+                  selectedMember!.routeHistory.isNotEmpty)
                 PolylineLayer(
                   polylines: [
                     Polyline(
@@ -492,7 +677,7 @@ class _MapLayer extends StatelessWidget {
                   ],
                 ),
               CircleLayer(
-                circles: members
+                circles: membersWithLocation
                     .map(
                       (member) => CircleMarker(
                         point: member.location,
@@ -506,7 +691,7 @@ class _MapLayer extends StatelessWidget {
                     .toList(),
               ),
               MarkerLayer(
-                markers: members
+                markers: membersWithLocation
                     .map(
                       (member) => Marker(
                         point: member.location,
@@ -821,6 +1006,8 @@ class _MapMember {
     required this.location,
     required this.routeHistory,
     required this.avatarUrl,
+    required this.lastUpdatedLabel,
+    required this.hasLocation,
   });
 
   final String id;
@@ -834,6 +1021,8 @@ class _MapMember {
   final LatLng location;
   final List<LatLng> routeHistory;
   final String avatarUrl;
+  final String lastUpdatedLabel;
+  final bool hasLocation;
 }
 
 class _BottomSheetAndNav extends StatelessWidget {
@@ -1103,7 +1292,7 @@ class _BottomSheetContent extends StatelessWidget {
                 Expanded(
                   child: _StatChip(
                     title: 'Lần cuối cập nhật',
-                    value: 'Ngay bây giờ',
+                    value: selectedMember.lastUpdatedLabel,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1317,3 +1506,4 @@ class _LatLngTween extends Tween<LatLng> {
     );
   }
 }
+
