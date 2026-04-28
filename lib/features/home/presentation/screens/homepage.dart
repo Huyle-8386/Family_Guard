@@ -5,13 +5,22 @@ import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
+import 'package:family_guard/features/location_tracking/domain/entities/user_location.dart';
+import 'package:family_guard/features/location_tracking/presentation/bloc/location_tracking_bloc.dart';
+import 'package:family_guard/features/location_tracking/presentation/bloc/location_tracking_event.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
 
   static const _backgroundColor = Color(0xFFF0F8F7);
   static const _primaryColor = Color(0xFF00ACB2);
@@ -203,6 +212,172 @@ class HomePage extends StatelessWidget {
   static Widget _buildKidDeviceControlScreen() =>
       const KidDeviceControlScreen();
 
+  late final LocationTrackingBloc _locationBloc;
+  UserLocation? _lastSyncedOwnLocation;
+
+  List<_MemberCardData> get _displayMembers {
+    final items = _locationBloc.state.familyLocations;
+    if (items.isEmpty) {
+      return _members;
+    }
+
+    return items.asMap().entries.map((entry) {
+      final index = entry.key;
+      final location = entry.value;
+      final template = _members[index % _members.length];
+      return _buildMemberCardData(location, template);
+    }).toList(growable: false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final dependencies = AppDependencies.instance;
+    _locationBloc = LocationTrackingBloc(
+      getMyLocationUseCase: dependencies.getMyLocationUseCase,
+      getFamilyLocationsUseCase: dependencies.getFamilyLocationsUseCase,
+    )..addListener(_handleLocationStateChanged);
+    dependencies.locationTrackingService.addListener(
+      _handleTrackingServiceChanged,
+    );
+    _locationBloc.dispatch(const StartFamilyLocationPollingEvent());
+    dependencies.locationTrackingService.refreshNow();
+  }
+
+  @override
+  void dispose() {
+    AppDependencies.instance.locationTrackingService.removeListener(
+      _handleTrackingServiceChanged,
+    );
+    _locationBloc
+      ..removeListener(_handleLocationStateChanged)
+      ..dispatch(const StopFamilyLocationPollingEvent())
+      ..dispose();
+    super.dispose();
+  }
+
+  void _handleLocationStateChanged() {
+    if (!mounted) {
+      return;
+    }
+    setState(() {});
+  }
+
+  void _handleTrackingServiceChanged() {
+    final latestLocation = AppDependencies.instance.locationTrackingService.lastLocation;
+    if (latestLocation == null) {
+      return;
+    }
+
+    final hasChanged =
+        _lastSyncedOwnLocation?.updatedAt != latestLocation.updatedAt ||
+        _lastSyncedOwnLocation?.latitude != latestLocation.latitude ||
+        _lastSyncedOwnLocation?.longitude != latestLocation.longitude;
+
+    if (!hasChanged) {
+      return;
+    }
+
+    _lastSyncedOwnLocation = latestLocation;
+    _locationBloc.dispatch(const LoadFamilyLocationsEvent(showLoader: false));
+    if (!mounted) {
+      return;
+    }
+    setState(() {});
+  }
+
+  _MemberCardData _buildMemberCardData(
+    UserLocation item,
+    _MemberCardData template,
+  ) {
+    final name = _normalized(item.name) ?? template.name;
+    final avatarUrl = _normalized(item.avata) ?? template.avatarUrl;
+    final locationLabel =
+        _normalized(item.formattedAddress) ??
+        _normalized(item.coordinateLabel) ??
+        'Vị trí chưa cập nhật';
+    final status = item.hasLocation
+        ? (item.speed != null && item.speed! >= 1.5
+              ? 'Đang di chuyển'
+              : 'Đã kết nối')
+        : 'Chưa cập nhật vị trí';
+
+    final trackingArgs = template.trackingArgs;
+    final mapCenter = item.hasLocation
+        ? LatLng(item.latitude!, item.longitude!)
+        : trackingArgs.mapCenter;
+
+    return _MemberCardData(
+      name: name,
+      status: status,
+      battery: template.battery,
+      location: locationLabel,
+      avatarUrl: avatarUrl,
+      mapImageUrl: template.mapImageUrl,
+      statusDotColor: item.hasLocation
+          ? const Color(0xFF22C55E)
+          : const Color(0xFF94A3B8),
+      statusTextColor: template.statusTextColor,
+      accentColor: template.accentColor,
+      batteryIcon: template.batteryIcon,
+      batteryColor: template.batteryColor,
+      locationIcon: template.locationIcon,
+      locationIconColor: template.locationIconColor,
+      locationIconBackground: template.locationIconBackground,
+      routeName: template.routeName,
+      trackingArgs: MemberTrackingArgs(
+        role: trackingArgs.role,
+        name: name,
+        status: status,
+        avatarUrl: avatarUrl,
+        phoneNumber: _normalized(item.phone) ?? trackingArgs.phoneNumber,
+        relationship: trackingArgs.relationship,
+        battery: trackingArgs.battery,
+        connectionStatus: status,
+        deviceName: trackingArgs.deviceName,
+        lastActive: _formatLastActive(item.updatedAt),
+        timeLabel: trackingArgs.timeLabel,
+        mapCenter: mapCenter,
+        routeHistory: item.hasLocation
+            ? <LatLng>[mapCenter]
+            : trackingArgs.routeHistory,
+        playbackStartLabel: trackingArgs.playbackStartLabel,
+        playbackEndLabel: trackingArgs.playbackEndLabel,
+        totalDistanceLabel: trackingArgs.totalDistanceLabel,
+        totalDurationLabel: trackingArgs.totalDurationLabel,
+        stopCount: trackingArgs.stopCount,
+        averageSpeedLabel: trackingArgs.averageSpeedLabel,
+        timelineItems: trackingArgs.timelineItems,
+      ),
+    );
+  }
+
+  String? _normalized(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    return trimmed;
+  }
+
+  String _formatLastActive(DateTime? updatedAt) {
+    if (updatedAt == null) {
+      return 'Chưa cập nhật';
+    }
+
+    final difference = DateTime.now().difference(updatedAt.toLocal());
+    if (difference.inSeconds < 60) {
+      return 'Vừa cập nhật';
+    }
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} phút trước';
+    }
+    if (difference.inHours < 24) {
+      return '${difference.inHours} giờ trước';
+    }
+    return '${difference.inDays} ngày trước';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,7 +408,7 @@ class HomePage extends StatelessWidget {
                           },
                         ),
                         const SizedBox(height: 26),
-                        _MemberCardsSection(members: _members),
+                        _MemberCardsSection(members: _displayMembers),
                         const SizedBox(height: 22),
                         Text(
                           'Tiện ích',
@@ -344,7 +519,7 @@ class _LegacyHeader extends StatelessWidget {
               child: _AdaptiveImage(
                 source: userView.avatarUrl.isNotEmpty
                     ? userView.avatarUrl
-                    : HomePage._headerAvatarUrl,
+                    : _HomePageState._headerAvatarUrl,
                 fit: BoxFit.cover,
                 fallback: Container(
                   color: const Color(0xFFE5E7EB),
@@ -404,7 +579,7 @@ class _Header extends StatelessWidget {
               child: _AdaptiveImage(
                 source: userView.avatarUrl.isNotEmpty
                     ? userView.avatarUrl
-                    : HomePage._headerAvatarUrl,
+                    : _HomePageState._headerAvatarUrl,
                 fit: BoxFit.cover,
                 fallback: Container(
                   color: const Color(0xFFE5E7EB),
@@ -509,124 +684,135 @@ class _MemberCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Container(
-                                  width: 64,
-                                  height: 64,
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x26000000),
-                                        blurRadius: 6,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipOval(
-                                    child: _AdaptiveImage(
-                                      source: data.avatarUrl,
-                                      fit: BoxFit.cover,
-                                      fallback: Container(
-                                        color: const Color(0xFFE5E7EB),
-                                        alignment: Alignment.center,
-                                        child: const Icon(
-                                          Icons.person_rounded,
-                                          color: Color(0xFF6B7280),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  right: -1,
-                                  bottom: -1,
-                                  child: Container(
-                                    width: 20,
-                                    height: 20,
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    width: 64,
+                                    height: 64,
+                                    padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: data.statusDotColor,
+                                      color: Colors.white,
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
-                                      ),
                                       boxShadow: const [
                                         BoxShadow(
-                                          color: Color(0x6687E4DB),
-                                          blurRadius: 0,
-                                          spreadRadius: 4,
+                                          color: Color(0x26000000),
+                                          blurRadius: 6,
+                                          offset: Offset(0, 2),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data.name,
-                                  style: GoogleFonts.publicSans(
-                                    color: data.accentColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    height: 28 / 20,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.82),
-                                    borderRadius: BorderRadius.circular(999),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0x1A000000),
-                                        blurRadius: 2,
-                                        offset: Offset(0, 1),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: BoxDecoration(
-                                          color: data.statusDotColor,
-                                          shape: BoxShape.circle,
+                                    child: ClipOval(
+                                      child: _AdaptiveImage(
+                                        source: data.avatarUrl,
+                                        fit: BoxFit.cover,
+                                        fallback: Container(
+                                          color: const Color(0xFFE5E7EB),
+                                          alignment: Alignment.center,
+                                          child: const Icon(
+                                            Icons.person_rounded,
+                                            color: Color(0xFF6B7280),
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        data.status,
-                                        style: GoogleFonts.publicSans(
-                                          color: data.statusTextColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          height: 20 / 14,
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
+                                  Positioned(
+                                    right: -1,
+                                    bottom: -1,
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: data.statusDotColor,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 2,
+                                        ),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color(0x6687E4DB),
+                                            blurRadius: 0,
+                                            spreadRadius: 4,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.publicSans(
+                                        color: data.accentColor,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        height: 28 / 20,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.82),
+                                        borderRadius: BorderRadius.circular(999),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Color(0x1A000000),
+                                            blurRadius: 2,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: data.statusDotColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              data.status,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.publicSans(
+                                                color: data.statusTextColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                height: 20 / 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
-                        const Spacer(),
+                        const SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -809,7 +995,7 @@ class _QuickActionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: HomePage._secondaryColor, width: 2),
+          border: Border.all(color: _HomePageState._secondaryColor, width: 2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -820,7 +1006,7 @@ class _QuickActionCard extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
-                border: Border.all(color: HomePage._secondaryColor),
+                border: Border.all(color: _HomePageState._secondaryColor),
                 boxShadow: [
                   BoxShadow(
                     color: data.glowColor,

@@ -1,8 +1,9 @@
-﻿import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_active_screen.dart';
-import 'package:family_guard/features/safe_zone/presentation/screens/safe_zone_screen.dart'
-    as safe_zone_list;
+import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
+import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
+import 'package:family_guard/features/safe_zone/domain/entities/safe_zone.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/legacy_safe_zone_scope.dart';
+import 'package:family_guard/features/safe_zone/presentation/widgets/safe_zone_active_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -17,39 +18,11 @@ class SafeZoneOverviewScreen extends StatefulWidget {
 class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
   final MapController _mapController = MapController();
 
-  static const LatLng _userPosition = LatLng(10.7769, 106.7009);
-
-  static const List<_SafeZoneMember> _members = [
-    _SafeZoneMember(
-      id: 'm1',
-      name: 'Nguyễn Văn A',
-      avatarUrl: 'https://i.pravatar.cc/150?img=15',
-      avatarColor: Color(0xFF80CBC4),
-      zoneCount: 3,
-      updatedLabel: '5 phút trước',
-    ),
-    _SafeZoneMember(
-      id: 'm2',
-      name: 'Trần Thị B',
-      avatarUrl: 'https://i.pravatar.cc/150?img=32',
-      avatarColor: Color(0xFFFFCC80),
-      zoneCount: 2,
-      updatedLabel: '12 phút trước',
-    ),
-  ];
-
-  static const List<_SafeZoneMapItem> _zones = [
-    _SafeZoneMapItem(
-      label: 'Trường học',
-      center: LatLng(10.7794, 106.7036),
-      radiusInMeters: 220,
-    ),
-    _SafeZoneMapItem(
-      label: 'Nhà',
-      center: _userPosition,
-      radiusInMeters: 150,
-    ),
-  ];
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    SafeZoneProvider.of(context).initialize();
+  }
 
   @override
   void dispose() {
@@ -59,34 +32,24 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final topInset = MediaQuery.of(context).padding.top;
+    final service = SafeZoneProvider.of(context);
+    final zones = service.zones;
+    final members = service.members;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF0F8F7),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(72 + topInset),
-        child: SafeArea(
-          bottom: false,
-          child: AppBackHeaderBar(
-            title: 'Quản lý vùng an toàn',
-            trailingAreaWidth: 88,
-            trailing: TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const safe_zone_list.SafeZoneScreen(),
-                  ),
-                );
-              },
-              child: const Text(
-                'Xem tất cả',
-                style: TextStyle(
-                  color: Color(0xCC00ACB2),
-                  fontSize: 14,
-                  fontFamily: 'Lexend',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+      appBar: AppBackHeaderBar(
+        title: 'Quan ly vung an toan',
+        trailingAreaWidth: 88,
+        trailing: TextButton(
+          onPressed: () => Navigator.pushNamed(context, AppRoutes.safeZoneEditActive),
+          child: const Text(
+            'Xem tat ca',
+            style: TextStyle(
+              color: Color(0xCC00ACB2),
+              fontSize: 14,
+              fontFamily: 'Lexend',
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -99,30 +62,36 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
             colors: [Color(0xFFE8F8F7), Color(0xFFF0F8F7)],
           ),
         ),
-        child: SingleChildScrollView(
+        child: ListView(
           padding: const EdgeInsets.only(bottom: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildMapCard(),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'THÀNH VIÊN GIA ĐÌNH',
-                  style: TextStyle(
-                    color: Color(0x9900ACB2),
-                    fontSize: 13,
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.7,
-                  ),
+          children: [
+            _MapCard(mapController: _mapController, zones: zones),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'THANH VIEN GIA DINH',
+                style: TextStyle(
+                  color: Color(0x9900ACB2),
+                  fontSize: 13,
+                  fontFamily: 'Lexend',
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.7,
                 ),
               ),
-              const SizedBox(height: 12),
+            ),
+            const SizedBox(height: 12),
+            if (members.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: _EmptyCard(
+                  message: 'Chua co thanh vien da xac nhan de ap dung vung an toan.',
+                ),
+              )
+            else
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  children: _members
+                  children: members
                       .map(
                         (member) => Padding(
                           padding: const EdgeInsets.only(bottom: 12),
@@ -131,8 +100,19 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => SafeZoneMemberScreen(
-                                    member: member.toLegacyMap(),
+                                  builder: (_) => LegacySafeZoneScope(
+                                    child: SafeZoneMemberScreen(
+                                      member: {
+                                        'id': member.id,
+                                        'name': member.name,
+                                        'role': member.ageGroup,
+                                        'avatar': member.name.isEmpty
+                                            ? 'T'
+                                            : member.name.substring(0, 1).toUpperCase(),
+                                        'activeZones': member.zoneCount,
+                                        'color': member.badgeTextColor,
+                                      },
+                                    ),
                                   ),
                                 ),
                               );
@@ -143,56 +123,82 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
                       .toList(),
                 ),
               ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.08,
-                  children: [
-                    _ActionCard(
-                      icon: Icons.add_location_alt_outlined,
-                      label: 'Thêm vùng mới',
-                      onTap: () =>
-                          Navigator.pushNamed(context, AppRoutes.safeZoneAdd),
-                    ),
-                    _ActionCard(
-                      icon: Icons.history_toggle_off_rounded,
-                      label: 'Lịch sử di chuyển',
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRoutes.activityHistory,
-                      ),
-                    ),
-                    _ActionCard(
-                      icon: Icons.notifications_active_outlined,
-                      label: 'Cảnh báo',
-                      onTap: () =>
-                          Navigator.pushNamed(context, AppRoutes.safeZoneAlert),
-                    ),
-                    _ActionCard(
-                      icon: Icons.settings_outlined,
-                      label: 'Cài đặt',
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRoutes.safeZoneAlertSettings,
-                      ),
-                    ),
-                  ],
-                ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.08,
+                children: [
+                  _ActionCard(
+                    icon: Icons.add_location_alt_outlined,
+                    label: 'Them vung moi',
+                    onTap: () {
+                      if (members.isEmpty) return;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => LegacySafeZoneScope(
+                            child: SafeZoneMemberScreen(
+                              member: {
+                                'id': members.first.id,
+                                'name': members.first.name,
+                                'role': members.first.ageGroup,
+                                'avatar': members.first.name.isEmpty
+                                    ? 'T'
+                                    : members.first.name.substring(0, 1).toUpperCase(),
+                                'activeZones': members.first.zoneCount,
+                                'color': members.first.badgeTextColor,
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _ActionCard(
+                    icon: Icons.history_toggle_off_rounded,
+                    label: 'Lich su di chuyen',
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.activityHistory),
+                  ),
+                  _ActionCard(
+                    icon: Icons.notifications_active_outlined,
+                    label: 'Canh bao',
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.safeZoneAlert),
+                  ),
+                  _ActionCard(
+                    icon: Icons.settings_outlined,
+                    label: 'Cai dat',
+                    onTap: () => Navigator.pushNamed(context, AppRoutes.safeZoneAlertSettings),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildMapCard() {
+class _MapCard extends StatelessWidget {
+  const _MapCard({
+    required this.mapController,
+    required this.zones,
+  });
+
+  final MapController mapController;
+  final List<SafeZone> zones;
+
+  @override
+  Widget build(BuildContext context) {
+    final center = zones.isEmpty
+        ? const LatLng(10.7769, 106.7009)
+        : LatLng(zones.first.latitude, zones.first.longitude);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
       child: Container(
@@ -215,11 +221,11 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
         child: Stack(
           children: [
             FlutterMap(
-              mapController: _mapController,
-              options: const MapOptions(
-                initialCenter: _userPosition,
-                initialZoom: 15.5,
-                interactionOptions: InteractionOptions(
+              mapController: mapController,
+              options: MapOptions(
+                initialCenter: center,
+                initialZoom: 15.0,
+                interactionOptions: const InteractionOptions(
                   flags: InteractiveFlag.all,
                 ),
               ),
@@ -230,11 +236,11 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
                   maxZoom: 19,
                 ),
                 CircleLayer(
-                  circles: _zones
+                  circles: zones
                       .map(
                         (zone) => CircleMarker(
-                          point: zone.center,
-                          radius: zone.radiusInMeters,
+                          point: LatLng(zone.latitude, zone.longitude),
+                          radius: zone.radius,
                           useRadiusInMeter: true,
                           color: const Color(0x3300ACB2),
                           borderColor: const Color(0xFF00ACB2),
@@ -244,67 +250,33 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
                       .toList(),
                 ),
                 MarkerLayer(
-                  markers: [
-                    ..._zones.map(
-                      (zone) => Marker(
-                        point: zone.center,
-                        width: 86,
-                        height: 30,
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.94),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              zone.label,
-                              style: const TextStyle(
-                                color: Color(0xFF00ACB2),
-                                fontSize: 11,
-                                fontFamily: 'Lexend',
-                                fontWeight: FontWeight.w700,
+                  markers: zones
+                      .map(
+                        (zone) => Marker(
+                          point: LatLng(zone.latitude, zone.longitude),
+                          width: 100,
+                          height: 32,
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.94),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                zone.name,
+                                style: const TextStyle(
+                                  color: Color(0xFF00ACB2),
+                                  fontSize: 11,
+                                  fontFamily: 'Lexend',
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Marker(
-                      point: _userPosition,
-                      width: 44,
-                      height: 44,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF00ACB2),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x4400ACB2),
-                              blurRadius: 10,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Image.network(
-                            _members.first.avatarUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                      )
+                      .toList(),
                 ),
               ],
             ),
@@ -313,30 +285,7 @@ class _SafeZoneOverviewScreenState extends State<SafeZoneOverviewScreen> {
               right: 12,
               child: _MapButton(
                 icon: Icons.my_location_rounded,
-                onTap: () => _mapController.move(_userPosition, 15.5),
-              ),
-            ),
-            Positioned(
-              right: 12,
-              bottom: 12,
-              child: Column(
-                children: [
-                  _MapButton(
-                    icon: Icons.add,
-                    onTap: () => _mapController.move(
-                      _mapController.camera.center,
-                      _mapController.camera.zoom + 1,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  _MapButton(
-                    icon: Icons.remove,
-                    onTap: () => _mapController.move(
-                      _mapController.camera.center,
-                      _mapController.camera.zoom - 1,
-                    ),
-                  ),
-                ],
+                onTap: () => mapController.move(center, 15.0),
               ),
             ),
           ],
@@ -352,7 +301,7 @@ class _MemberCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final _SafeZoneMember member;
+  final SafeZoneMember member;
   final VoidCallback onTap;
 
   @override
@@ -383,14 +332,24 @@ class _MemberCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: member.avatarColor,
-                  backgroundImage: NetworkImage(member.avatarUrl),
+                  backgroundColor: member.badgeTextColor.withValues(alpha: 0.18),
+                  backgroundImage: member.avatarUrl.isEmpty ? null : NetworkImage(member.avatarUrl),
+                  child: member.avatarUrl.isEmpty
+                      ? Text(
+                          member.name.isEmpty ? 'T' : member.name.substring(0, 1).toUpperCase(),
+                          style: const TextStyle(
+                            color: Color(0xFF0C1D1A),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      : null,
                 ),
-                const Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: _OnlineDot(size: 13),
-                ),
+                if (member.isOnline)
+                  const Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: _OnlineDot(size: 13),
+                  ),
               ],
             ),
             const SizedBox(width: 14),
@@ -409,7 +368,7 @@ class _MemberCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${member.zoneCount} vùng an toàn',
+                    '${member.zoneCount} vung an toan',
                     style: const TextStyle(
                       color: Color(0xFF00ACB2),
                       fontSize: 12,
@@ -418,7 +377,7 @@ class _MemberCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Cập nhật ${member.updatedLabel}',
+                    member.ageGroup,
                     style: const TextStyle(
                       color: Color(0xFF9CA3AF),
                       fontSize: 10,
@@ -564,48 +523,27 @@ class _OnlineDot extends StatelessWidget {
   }
 }
 
-class _SafeZoneMember {
-  const _SafeZoneMember({
-    required this.id,
-    required this.name,
-    required this.avatarUrl,
-    required this.avatarColor,
-    required this.zoneCount,
-    required this.updatedLabel,
-  });
+class _EmptyCard extends StatelessWidget {
+  const _EmptyCard({required this.message});
 
-  final String id;
-  final String name;
-  final String avatarUrl;
-  final Color avatarColor;
-  final int zoneCount;
-  final String updatedLabel;
+  final String message;
 
-  Map<String, dynamic> toLegacyMap() {
-    final trimmedName = name.trim();
-    final avatarLetter = trimmedName.isEmpty
-        ? 'A'
-        : trimmedName.substring(0, 1).toUpperCase();
-    return {
-      'id': id,
-      'name': name,
-      'role': 'Người cao tuổi',
-      'avatar': avatarLetter,
-      'activeZones': zoneCount,
-      'color': avatarColor,
-    };
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        message,
+        style: const TextStyle(
+          color: Color(0xFF475569),
+          fontSize: 14,
+          fontFamily: 'Lexend',
+        ),
+      ),
+    );
   }
 }
-
-class _SafeZoneMapItem {
-  const _SafeZoneMapItem({
-    required this.label,
-    required this.center,
-    required this.radiusInMeters,
-  });
-
-  final String label;
-  final LatLng center;
-  final double radiusInMeters;
-}
-

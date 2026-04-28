@@ -273,6 +273,8 @@ class SettingsScreen extends StatelessWidget {
     );
 
     if (shouldLogout == true && context.mounted) {
+      await AppDependencies.instance.locationTrackingService.stop();
+      AppDependencies.instance.safeZoneService.reset();
       await AppDependencies.instance.logoutUseCase();
       if (!context.mounted) {
         return;

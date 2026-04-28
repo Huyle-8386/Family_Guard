@@ -1,19 +1,86 @@
-import 'package:flutter/material.dart';
-import 'package:family_guard/features/safe_zone/domain/entities/safe_zone.dart';
+import 'dart:async';
 
-/// Service quản lý dữ liệu vùng an toàn
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/features/member_management/domain/entities/relationship.dart';
+import 'package:family_guard/features/member_management/domain/usecases/get_relationships_usecase.dart';
+import 'package:family_guard/features/safe_zone/domain/entities/safe_zone.dart';
+import 'package:family_guard/features/safe_zone/domain/usecases/create_safe_zone_usecase.dart';
+import 'package:family_guard/features/safe_zone/domain/usecases/delete_safe_zone_usecase.dart';
+import 'package:family_guard/features/safe_zone/domain/usecases/get_safe_zones_usecase.dart';
+import 'package:family_guard/features/safe_zone/domain/usecases/update_safe_zone_usecase.dart';
+import 'package:flutter/material.dart';
+
 class SafeZoneService extends ChangeNotifier {
+  SafeZoneService({
+    required GetSafeZonesUseCase getSafeZonesUseCase,
+    required CreateSafeZoneUseCase createSafeZoneUseCase,
+    required UpdateSafeZoneUseCase updateSafeZoneUseCase,
+    required DeleteSafeZoneUseCase deleteSafeZoneUseCase,
+    required GetRelationshipsUseCase getRelationshipsUseCase,
+  }) : _getSafeZonesUseCase = getSafeZonesUseCase,
+       _createSafeZoneUseCase = createSafeZoneUseCase,
+       _updateSafeZoneUseCase = updateSafeZoneUseCase,
+       _deleteSafeZoneUseCase = deleteSafeZoneUseCase,
+       _getRelationshipsUseCase = getRelationshipsUseCase;
+
+  final GetSafeZonesUseCase _getSafeZonesUseCase;
+  final CreateSafeZoneUseCase _createSafeZoneUseCase;
+  final UpdateSafeZoneUseCase _updateSafeZoneUseCase;
+  final DeleteSafeZoneUseCase _deleteSafeZoneUseCase;
+  final GetRelationshipsUseCase _getRelationshipsUseCase;
+
   final List<SafeZone> _zones = [];
   final List<SafeZoneMember> _members = [];
 
+  bool _initializing = false;
+  bool _initialized = false;
+  String? _lastErrorMessage;
+
   List<SafeZone> get zones => List.unmodifiable(_zones);
   List<SafeZoneMember> get members => List.unmodifiable(_members);
+  String? get lastErrorMessage => _lastErrorMessage;
 
-  SafeZoneService() {
-    _seedData();
+  Future<void> initialize({bool force = false}) async {
+    if (_initializing) {
+      return;
+    }
+    if (_initialized && !force) {
+      return;
+    }
+
+    _initializing = true;
+    try {
+      await refresh();
+      _initialized = true;
+    } finally {
+      _initializing = false;
+    }
   }
 
-  // ─── CRUD Zones ────────────────────────────────────────────
+  Future<void> refresh() async {
+    try {
+      final results = await Future.wait([
+        _getRelationshipsUseCase(),
+        _getSafeZonesUseCase(),
+      ]);
+      final relationships = results[0] as List<Relationship>;
+      final safeZones = results[1] as List<SafeZone>;
+
+      _zones
+        ..clear()
+        ..addAll(safeZones);
+
+      _members
+        ..clear()
+        ..addAll(_buildMembers(relationships, safeZones));
+
+      _lastErrorMessage = null;
+      notifyListeners();
+    } catch (error) {
+      _lastErrorMessage = error.toString();
+      notifyListeners();
+    }
+  }
 
   SafeZone? getZone(String id) {
     final idx = _zones.indexWhere((z) => z.id == id);
@@ -24,118 +91,195 @@ class SafeZoneService extends ChangeNotifier {
     return _zones.where((z) => z.recipientIds.contains(memberId)).toList();
   }
 
-  void addZone(SafeZone zone) {
-    _zones.add(zone);
-    notifyListeners();
+  Future<SafeZone?> addZone(SafeZone zone) async {
+    try {
+      final created = await _createSafeZoneUseCase(_normalizeZone(zone));
+      _zones.insert(0, created);
+      _syncZoneIdsOnMembers();
+      _lastErrorMessage = null;
+      notifyListeners();
+      return created;
+    } catch (error) {
+      _lastErrorMessage = error.toString();
+      notifyListeners();
+      return null;
+    }
   }
 
-  void updateZone(SafeZone zone) {
-    final idx = _zones.indexWhere((z) => z.id == zone.id);
-    if (idx >= 0) {
-      _zones[idx] = zone;
+  Future<SafeZone?> updateZone(SafeZone zone) async {
+    try {
+      final updated = await _updateSafeZoneUseCase(_normalizeZone(zone));
+      final idx = _zones.indexWhere((z) => z.id == updated.id);
+      if (idx >= 0) {
+        _zones[idx] = updated;
+      }
+      _syncZoneIdsOnMembers();
+      _lastErrorMessage = null;
+      notifyListeners();
+      return updated;
+    } catch (error) {
+      _lastErrorMessage = error.toString();
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<void> removeZone(String id) async {
+    try {
+      await _deleteSafeZoneUseCase(id);
+      _zones.removeWhere((z) => z.id == id);
+      _syncZoneIdsOnMembers();
+      _lastErrorMessage = null;
+      notifyListeners();
+    } catch (error) {
+      _lastErrorMessage = error.toString();
       notifyListeners();
     }
   }
 
-  void removeZone(String id) {
-    _zones.removeWhere((z) => z.id == id);
-    notifyListeners();
-  }
-
-  void toggleZone(String id) {
+  Future<void> toggleZone(String id) async {
     final idx = _zones.indexWhere((z) => z.id == id);
-    if (idx >= 0) {
-      _zones[idx].isActive = !_zones[idx].isActive;
+    if (idx < 0) {
+      return;
+    }
+
+    final current = _zones[idx];
+    final optimistic = current.copyWith(isActive: !current.isActive);
+    _zones[idx] = optimistic;
+    notifyListeners();
+
+    final updated = await updateZone(optimistic);
+    if (updated == null) {
+      _zones[idx] = current;
       notifyListeners();
     }
   }
-
-  // ─── Members ───────────────────────────────────────────────
 
   SafeZoneMember? getMember(String id) {
     final idx = _members.indexWhere((m) => m.id == id);
     return idx >= 0 ? _members[idx] : null;
   }
 
-  // ─── ID generation ─────────────────────────────────────────
+  String nextZoneId() => 'pending_${DateTime.now().millisecondsSinceEpoch}';
 
-  String nextZoneId() => 'zone_${DateTime.now().millisecondsSinceEpoch}';
+  void reset() {
+    _zones.clear();
+    _members.clear();
+    _initialized = false;
+    _lastErrorMessage = null;
+    notifyListeners();
+  }
 
-  // ─── Seed data ─────────────────────────────────────────────
+  List<SafeZoneMember> _buildMembers(
+    List<Relationship> relationships,
+    List<SafeZone> safeZones,
+  ) {
+    return relationships
+        .where((relationship) => relationship.processing == 'xacnhan')
+        .map((relationship) {
+          final user = relationship.relationUser;
+          final role = user?.role?.trim() ?? '';
+          final age = _calculateAge(user?.birthday);
+          final ageGroup = _resolveAgeGroup(role, age);
+          final uid = relationship.relationId;
+          final zoneIds = safeZones
+              .where((zone) => zone.recipientIds.contains(uid))
+              .map((zone) => zone.id)
+              .toList();
 
-  void _seedData() {
-    _members.addAll([
-      const SafeZoneMember(
-        id: 'm1',
-        name: 'Bà Nguyễn Thị Lan',
-        ageGroup: '60+ TUỔI',
-        badgeColor: Color(0x14FF6B00),
-        badgeBorderColor: Color(0x33FF6B00),
-        badgeTextColor: Color(0xFFFF6B00),
-        isOnline: true,
-        zoneIds: ['z1', 'z2'],
-      ),
-      const SafeZoneMember(
-        id: 'm2',
-        name: 'Ông Trần Văn Minh',
-        ageGroup: '60+ TUỔI',
-        badgeColor: Color(0x14FF6B00),
-        badgeBorderColor: Color(0x33FF6B00),
-        badgeTextColor: Color(0xFFFF6B00),
-        isOnline: false,
-        zoneIds: ['z1'],
-      ),
-      const SafeZoneMember(
-        id: 'm3',
-        name: 'Nguyễn Hoàng Anh',
-        ageGroup: 'NGƯỜI CHĂM SÓC',
-        badgeColor: Color(0x141EA5FC),
-        badgeBorderColor: Color(0x331EA5FC),
-        badgeTextColor: Color(0xFF1EA5FC),
-        isOnline: true,
-        zoneIds: ['z1', 'z2', 'z3'],
-      ),
-    ]);
+          return SafeZoneMember(
+            id: uid,
+            name: _resolveName(user?.name, user?.email),
+            role: role,
+            ageGroup: ageGroup,
+            badgeColor: _badgeColor(ageGroup).withValues(alpha: 0.12),
+            badgeBorderColor: _badgeColor(ageGroup).withValues(alpha: 0.25),
+            badgeTextColor: _badgeColor(ageGroup),
+            avatarUrl: user?.avata ?? '',
+            isOnline: true,
+            zoneIds: zoneIds,
+          );
+        })
+        .toList();
+  }
 
-    _zones.addAll([
-      SafeZone(
-        id: 'z1',
-        name: 'Nhà riêng',
-        address: '122 Nguyễn Huệ, Q.1, TP.HCM',
-        latitude: 10.7769,
-        longitude: 106.7009,
-        radius: 500,
-        zoneType: SafeZoneType.home,
-        isActive: true,
-        recipientIds: ['m1', 'm2', 'm3'],
-      ),
-      SafeZone(
-        id: 'z2',
-        name: 'Bệnh viện Chợ Rẫy',
-        address: '201B Nguyễn Chí Thanh, Q.5, TP.HCM',
-        latitude: 10.7556,
-        longitude: 106.6595,
-        radius: 300,
-        zoneType: SafeZoneType.hospital,
-        isActive: true,
-        recipientIds: ['m1', 'm3'],
-      ),
-      SafeZone(
-        id: 'z3',
-        name: 'Công viên Tao Đàn',
-        address: 'Công viên Tao Đàn, Q.1, TP.HCM',
-        latitude: 10.7743,
-        longitude: 106.6922,
-        radius: 200,
-        zoneType: SafeZoneType.custom,
-        isActive: false,
-        recipientIds: ['m3'],
-      ),
-    ]);
+  void _syncZoneIdsOnMembers() {
+    for (var index = 0; index < _members.length; index++) {
+      final member = _members[index];
+      _members[index] = member.copyWith(
+        zoneIds: _zones
+            .where((zone) => zone.recipientIds.contains(member.id))
+            .map((zone) => zone.id)
+            .toList(),
+      );
+    }
+  }
+
+  SafeZone _normalizeZone(SafeZone zone) {
+    final targetUid = zone.targetUid ??
+        (zone.recipientIds.isNotEmpty ? zone.recipientIds.first : null);
+
+    return zone.copyWith(
+      targetUid: targetUid,
+      recipientIds: targetUid == null ? const [] : [targetUid],
+      name: zone.name.trim().isEmpty ? 'Vung an toan' : zone.name.trim(),
+    );
+  }
+
+  String _resolveName(String? name, String? email) {
+    final trimmedName = name?.trim() ?? '';
+    if (trimmedName.isNotEmpty) {
+      return trimmedName;
+    }
+    final trimmedEmail = email?.trim() ?? '';
+    if (trimmedEmail.isNotEmpty) {
+      return trimmedEmail;
+    }
+    return 'Thanh vien';
+  }
+
+  int? _calculateAge(String? birthday) {
+    if (birthday == null || birthday.trim().isEmpty) {
+      return null;
+    }
+    final birthDate = DateTime.tryParse(birthday);
+    if (birthDate == null) {
+      return null;
+    }
+    final today = DateTime.now();
+    var age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  String _resolveAgeGroup(String role, int? age) {
+    if (role == 'nguoichamsoc') {
+      return 'NGUOI CHAM SOC';
+    }
+    if (age != null && age < 16) {
+      return 'TRE EM';
+    }
+    if (age != null && age >= 60) {
+      return '60+ TUOI';
+    }
+    return 'NGUOI DUOC CHAM SOC';
+  }
+
+  Color _badgeColor(String ageGroup) {
+    final normalized = ageGroup.toLowerCase();
+    if (normalized.contains('tre')) {
+      return const Color(0xFF2563EB);
+    }
+    if (normalized.contains('60')) {
+      return const Color(0xFFFF6B00);
+    }
+    return const Color(0xFF1EA5FC);
   }
 }
 
-/// InheritedWidget để truyền service xuống widget tree
 class SafeZoneProvider extends InheritedNotifier<SafeZoneService> {
   const SafeZoneProvider({
     super.key,
@@ -143,20 +287,40 @@ class SafeZoneProvider extends InheritedNotifier<SafeZoneService> {
     required super.child,
   }) : super(notifier: service);
 
-  static final SafeZoneService _fallbackService = SafeZoneService();
+  static SafeZoneService? maybeOf(BuildContext context) {
+    final scoped =
+        context.dependOnInheritedWidgetOfExactType<SafeZoneProvider>()?.notifier;
+    if (scoped != null) {
+      return scoped;
+    }
+
+    if (!AppDependencies.instance.isInitializedForSafeZoneFallback) {
+      return null;
+    }
+
+    final fallback = AppDependencies.instance.safeZoneService;
+    unawaited(fallback.initialize());
+    return fallback;
+  }
 
   static SafeZoneService of(BuildContext context) {
-    final provider =
-        context.dependOnInheritedWidgetOfExactType<SafeZoneProvider>();
-    return provider?.notifier ?? _fallbackService;
+    final service = maybeOf(context);
+    if (service == null) {
+      throw FlutterError('SafeZoneProvider khong ton tai trong widget tree.');
+    }
+    return service;
   }
 
-  /// Read-only access – không subscribe rebuild
   static SafeZoneService read(BuildContext context) {
-    final provider = context
-        .getInheritedWidgetOfExactType<SafeZoneProvider>();
-    return provider?.notifier ?? _fallbackService;
+    final service =
+        context.getInheritedWidgetOfExactType<SafeZoneProvider>()?.notifier ??
+        (AppDependencies.instance.isInitializedForSafeZoneFallback
+            ? AppDependencies.instance.safeZoneService
+            : null);
+    if (service == null) {
+      throw FlutterError('SafeZoneProvider khong ton tai trong widget tree.');
+    }
+    unawaited(service.initialize());
+    return service;
   }
 }
-
-

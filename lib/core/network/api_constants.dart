@@ -7,4 +7,5 @@ class ApiConstants {
   static const String androidUsbDebugBaseUrl = localhostBaseUrl;
 
   static const Duration requestTimeout = Duration(seconds: 15);
+  static const Duration locationTrackingInterval = Duration(seconds: 60);
 }

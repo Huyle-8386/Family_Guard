@@ -6,6 +6,8 @@ import authRoutes from './modules/auth/auth.routes';
 import usersRoutes from './modules/users/users.routes';
 import relationshipsRoutes from './modules/relationships/relationships.routes';
 import notificationsRoutes from './modules/notifications/notifications.routes';
+import locationsRoutes from './modules/locations/locations.routes';
+import safeZonesRoutes from './modules/safe-zones/safe-zones.routes';
 
 dotenv.config();
 
@@ -22,5 +24,7 @@ app.use('/api', authRoutes);
 app.use('/api', usersRoutes);
 app.use('/api', relationshipsRoutes);
 app.use('/api', notificationsRoutes);
+app.use('/api', locationsRoutes);
+app.use('/api', safeZonesRoutes);
 
 export default app;
