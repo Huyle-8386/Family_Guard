@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
-import 'safe_zone_add_screen.dart';
 
 /// ============================================================
 /// EMPTY SAFE ZONE SCREEN - ChÆ°a cÃ³ vÃ¹ng an toÃ n
@@ -198,11 +198,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 32),
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const SafeZoneAddScreen(),
-                            ),
-                          );
+                          Navigator.of(context).pushNamed(AppRoutes.safeZoneAdd);
                         },
                         icon: const Icon(Icons.add_location_alt_rounded, size: 20),
                         label: const Text('Thêm vùng an toàn ngay'),

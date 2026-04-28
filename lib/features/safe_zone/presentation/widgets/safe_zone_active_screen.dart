@@ -66,10 +66,12 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => _AddZoneSheet(
-        onSave: (name, lat, lng, radius, address) {
-          SafeZoneProvider.read(context).addZone(SafeZone(
-            id: SafeZoneProvider.read(context).nextZoneId(),
+        onSave: (name, lat, lng, radius, address) async {
+          final service = SafeZoneProvider.read(context);
+          final created = await service.addZone(SafeZone(
+            id: service.nextZoneId(),
             name: name,
+            targetUid: widget.member['id']?.toString(),
             latitude: lat,
             longitude: lng,
             radius: radius,
@@ -78,6 +80,13 @@ class _SafeZoneMemberScreenState extends State<SafeZoneMemberScreen> {
             recipientIds: [widget.member['id']],
           ));
           _toast('Đã thêm "$name"');
+          if (!mounted) {
+            return;
+          }
+          if (created == null) {
+            _toast(service.lastErrorMessage ?? 'Khong tao duoc vung an toan');
+            return;
+          }
         },
       ),
     );

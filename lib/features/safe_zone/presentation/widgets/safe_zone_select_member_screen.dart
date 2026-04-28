@@ -56,6 +56,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
                             children: [
                               for (int i = 0; i < members.length; i++) ...[
                                 _MemberSelectCard(
+                                  memberId: members[i].id,
                                   name: members[i].name,
                                   badgeLabel: members[i].ageGroup,
                                   badgeColor: members[i].badgeColor,
@@ -105,6 +106,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
 // â”€â”€ Widget tháº» chá»n thÃ nh viÃªn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _MemberSelectCard extends StatelessWidget {
   const _MemberSelectCard({
+    required this.memberId,
     required this.name,
     required this.badgeLabel,
     required this.badgeColor,
@@ -115,6 +117,7 @@ class _MemberSelectCard extends StatelessWidget {
     required this.isOnline,
   });
 
+  final String memberId;
   final String name;
   final String badgeLabel;
   final Color badgeColor;
@@ -127,7 +130,10 @@ class _MemberSelectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneEmpty),
+      onTap: () => Navigator.of(context).pushNamed(
+        AppRoutes.safeZoneAdd,
+        arguments: memberId,
+      ),
       child: Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),

@@ -49,7 +49,10 @@ class NotificationBadgeController extends ChangeNotifier {
     try {
       final notifications = await _getNotificationsUseCase();
       final hasPending = notifications.any(
-        (notification) => notification.processing == 'dagui',
+        (notification) =>
+            notification.processing == 'dagui' &&
+            ((notification.senderName ?? '').trim().isNotEmpty ||
+                (notification.senderRelation ?? '').trim().isNotEmpty),
       );
       if (hasPending != _hasPendingNotifications) {
         _hasPendingNotifications = hasPending;
