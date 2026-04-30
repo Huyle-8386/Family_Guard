@@ -12,6 +12,7 @@ class ApiEndpoints {
   static const String relationshipsInvite = '/relationships/invite';
 
   static const String notifications = '/notifications';
+  static const String notificationsFall = '/notifications/fall';
   static const String locationsMe = '/locations/me';
   static const String locationsFamily = '/locations/family';
   static const String safeZones = '/safe-zones';
@@ -19,5 +20,6 @@ class ApiEndpoints {
   static String relationshipById(int id) => '$relationships/$id';
 
   static String notificationRespond(int id) => '$notifications/$id/respond';
+  static String notificationLocation(int id) => '$notifications/$id/location';
   static String safeZoneById(String id) => '$safeZones/$id';
 }

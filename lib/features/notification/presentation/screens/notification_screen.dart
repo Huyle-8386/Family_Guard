@@ -4,11 +4,9 @@ import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/core/routes/app_route_observer.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
-import 'package:family_guard/core/alerts/presentation/screens/child_emergency_alert_screen.dart';
-import 'package:family_guard/core/alerts/presentation/screens/senior_fall_alert_screen.dart';
 import 'package:family_guard/features/notification/domain/entities/app_notification.dart';
 import 'package:family_guard/features/notification/presentation/cubit/notification_cubit.dart';
-import 'package:family_guard/features/notification/presentation/screens/notification_camera_fall_detail_screen.dart';
+import 'package:family_guard/features/tracking/presentation/widgets/senior_fall_alert_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -208,22 +206,30 @@ class _NotificationScreenState extends State<NotificationScreen>
 
     for (final notification in notifications) {
       final isActionable = _isActionableNotification(notification);
+      final isFallAlert = _isFallAlertNotification(notification);
       items.add(const SizedBox(height: 12));
       items.add(
-        _ApiMemberConfirmationCard(
-          title: _buildNotificationTitle(notification),
-          content: _buildNotificationContent(notification),
-          timeLabel: _formatNotificationTime(notification.createdAt),
-          showActions: isActionable && notification.processing != 'done',
-          onConfirm: () => _respondToNotification(
-            notificationId: notification.id,
-            accepted: true,
-          ),
-          onCancel: () => _respondToNotification(
-            notificationId: notification.id,
-            accepted: false,
-          ),
-        ),
+        isFallAlert
+            ? _SeniorFallMapCard(
+                title: _buildNotificationTitle(notification),
+                content: _buildNotificationContent(notification),
+                timeLabel: _formatNotificationTime(notification.createdAt),
+                onOpenMapTap: () => _openFallAlertMap(notification.id),
+              )
+            : _ApiMemberConfirmationCard(
+                title: _buildNotificationTitle(notification),
+                content: _buildNotificationContent(notification),
+                timeLabel: _formatNotificationTime(notification.createdAt),
+                showActions: isActionable && notification.processing != 'done',
+                onConfirm: () => _respondToNotification(
+                  notificationId: notification.id,
+                  accepted: true,
+                ),
+                onCancel: () => _respondToNotification(
+                  notificationId: notification.id,
+                  accepted: false,
+                ),
+              ),
       );
     }
 
@@ -236,7 +242,37 @@ class _NotificationScreenState extends State<NotificationScreen>
     return senderName.isNotEmpty || senderRelation.isNotEmpty;
   }
 
+  bool _isFallAlertNotification(AppNotification notification) {
+    final title = notification.title.toLowerCase();
+    final content = notification.content.toLowerCase();
+    return title.contains('té ngã') || content.contains('té ngã');
+  }
+
+  Future<void> _openFallAlertMap(int notificationId) async {
+    final location = await AppDependencies.instance.getFallAlertLocationUseCase(
+      notificationId,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SeniorFallAlertMapScreen(
+          seniorLocation: location,
+          seniorLabel: location?.name,
+        ),
+      ),
+    );
+  }
+
   String _buildNotificationTitle(AppNotification notification) {
+    if (_isFallAlertNotification(notification)) {
+      final title = notification.title.trim();
+      return title.isEmpty ? 'Cảnh báo té ngã' : title;
+    }
+
     if (_isActionableNotification(notification)) {
       return 'Xác nhận mối quan hệ';
     }
@@ -246,6 +282,13 @@ class _NotificationScreenState extends State<NotificationScreen>
   }
 
   String _buildNotificationContent(AppNotification notification) {
+    if (_isFallAlertNotification(notification)) {
+      final content = notification.content.trim();
+      return content.isNotEmpty
+          ? content
+          : 'Phạm Thị Thư(mechong_condau) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.';
+    }
+
     final senderName = (notification.senderName ?? '').trim();
     final senderRelation = (notification.senderRelation ?? '').trim();
     if (senderName.isNotEmpty && senderRelation.isNotEmpty) {
@@ -287,101 +330,10 @@ class _NotificationScreenState extends State<NotificationScreen>
   }
 
   List<Widget> _buildNotificationItems(BuildContext context) {
-    switch (selectedFilter) {
-      case _NotificationFilter.emergency:
-        return [
-          const _DateDivider(label: 'Hôm nay'),
-          const SizedBox(height: 12),
-          _EmergencyCard(
-            onDetailTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => NotificationCameraFallDetailScreen(
-                  homeRouteName: widget.homeRouteName,
-                  trackingRouteName: widget.trackingRouteName,
-                  notificationsRouteName: widget.notificationsRouteName,
-                  settingsRouteName: widget.settingsRouteName,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          _SeniorFallMapCard(
-            onOpenMapTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SeniorFallAlertScreen(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          _WarningCard(
-            onCheckTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const ChildEmergencyAlertScreen(),
-              ),
-            ),
-          ),
-        ];
-      case _NotificationFilter.activity:
-        return const [
-          _DateDivider(label: 'Hôm nay'),
-          SizedBox(height: 12),
-          _SafeZoneCard(),
-        ];
-      case _NotificationFilter.mood:
-        return [
-          const _DateDivider(label: 'Hôm nay'),
-          const SizedBox(height: 12),
-          _MoodCard(
-            onCheckTap: () =>
-                Navigator.pushNamed(context, AppRoutes.emotionJournal),
-          ),
-        ];
-      case _NotificationFilter.all:
-        return [
-          const _DateDivider(label: 'Hôm nay'),
-          ..._buildApiNotificationItems(),
-          const SizedBox(height: 12),
-          _EmergencyCard(
-            onDetailTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => NotificationCameraFallDetailScreen(
-                  homeRouteName: widget.homeRouteName,
-                  trackingRouteName: widget.trackingRouteName,
-                  notificationsRouteName: widget.notificationsRouteName,
-                  settingsRouteName: widget.settingsRouteName,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          _SeniorFallMapCard(
-            onOpenMapTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SeniorFallAlertScreen(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          _WarningCard(
-            onCheckTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const ChildEmergencyAlertScreen(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          const _SafeZoneCard(),
-          const SizedBox(height: 14),
-          _MoodCard(
-            onCheckTap: () =>
-                Navigator.pushNamed(context, AppRoutes.emotionJournal),
-          ),
-          const SizedBox(height: 12),
-          const _DateDivider(label: 'Hôm qua'),
-          const SizedBox(height: 12),
-          const _OlderNotificationCard(),
-        ];
-    }
+    return [
+      const _DateDivider(label: 'Hôm nay'),
+      ..._buildApiNotificationItems(),
+    ];
   }
 }
 
@@ -859,8 +811,17 @@ class _WarningCard extends StatelessWidget {
 }
 
 class _SeniorFallMapCard extends StatelessWidget {
-  const _SeniorFallMapCard({required this.onOpenMapTap});
+  const _SeniorFallMapCard({
+    this.title = 'Bà nội có thể đang bị té',
+    this.content =
+        'Tín hiệu té ngã đang được theo dõi theo thời gian thực. Mở bản đồ để xem vị trí hiện tại của bà.',
+    this.timeLabel = 'Vừa xong',
+    required this.onOpenMapTap,
+  });
 
+  final String title;
+  final String content;
+  final String timeLabel;
   final VoidCallback onOpenMapTap;
 
   @override
@@ -868,9 +829,9 @@ class _SeniorFallMapCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(21),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF2F2),
+        color: const Color(0xFFFFF5F5),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFFEE2E2)),
+        border: Border.all(color: const Color(0xFFFECACA)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0D000000),
@@ -905,7 +866,7 @@ class _SeniorFallMapCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        'Bà nội có thể đang bị té',
+                        title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(
@@ -916,21 +877,31 @@ class _SeniorFallMapCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      'Vừa xong',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF64748B),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFE4E6),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        timeLabel,
+                        style: GoogleFonts.inter(
+                          color: const Color(0xFFB91C1C),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Hệ thống phát hiện tín hiệu té ngã gần vị trí của bà. Mở bản đồ để kiểm tra vùng đỏ nhấp nháy.',
+                  content,
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF475569),
+                    color: const Color(0xFF7F1D1D),
                     fontSize: 14,
                     height: 1.45,
                   ),
@@ -938,24 +909,35 @@ class _SeniorFallMapCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 InkWell(
                   onTap: onOpenMapTap,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Mở bản đồ',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFFDC2626),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                  borderRadius: BorderRadius.circular(999),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDC2626),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Mở bản đồ realtime',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 14,
-                        color: Color(0xFFDC2626),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

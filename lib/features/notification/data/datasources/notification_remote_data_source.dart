@@ -1,5 +1,6 @@
 import 'package:family_guard/core/network/api_client.dart';
 import 'package:family_guard/core/network/api_endpoints.dart';
+import 'package:family_guard/features/location_tracking/data/models/user_location_model.dart';
 import 'package:family_guard/features/notification/data/models/notification_model.dart';
 import 'package:family_guard/features/notification/data/models/respond_notification_request_model.dart';
 
@@ -9,6 +10,8 @@ abstract class NotificationRemoteDataSource {
     required int id,
     required RespondNotificationRequestModel request,
   });
+  Future<void> createFallNotification();
+  Future<UserLocationModel?> getFallAlertLocation(int id);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -42,5 +45,25 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         ? response
         : Map<String, dynamic>.from(response as Map);
     return NotificationModel.fromJson(json);
+  }
+
+  @override
+  Future<void> createFallNotification() async {
+    await _apiClient.post(ApiEndpoints.notificationsFall);
+  }
+
+  @override
+  Future<UserLocationModel?> getFallAlertLocation(int id) async {
+    final response = await _apiClient.get(
+      ApiEndpoints.notificationLocation(id),
+    );
+    if (response == null) {
+      return null;
+    }
+
+    final json = response is Map<String, dynamic>
+        ? response
+        : Map<String, dynamic>.from(response as Map);
+    return UserLocationModel.fromJson(json);
   }
 }
