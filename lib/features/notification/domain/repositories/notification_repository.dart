@@ -7,6 +7,5 @@ abstract class NotificationRepository {
     required int id,
     required String action,
   });
-  Future<void> createFallNotification();
-  Future<UserLocation?> getFallAlertLocation(int id);
+  Future<void> createFallNotification({UserLocation? location});
 }

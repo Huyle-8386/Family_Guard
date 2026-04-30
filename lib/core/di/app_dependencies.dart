@@ -35,7 +35,6 @@ import 'package:family_guard/features/notification/data/repositories_impl/notifi
 import 'package:family_guard/features/notification/domain/repositories/notification_repository.dart';
 import 'package:family_guard/features/notification/domain/usecases/create_fall_notification_usecase.dart';
 import 'package:family_guard/features/notification/domain/usecases/get_notifications_usecase.dart';
-import 'package:family_guard/features/notification/domain/usecases/get_fall_alert_location_usecase.dart';
 import 'package:family_guard/features/notification/domain/usecases/respond_notification_usecase.dart';
 import 'package:family_guard/features/profile_security/data/datasources/profile_remote_data_source.dart';
 import 'package:family_guard/features/profile_security/data/repositories_impl/profile_repository_impl.dart';
@@ -94,7 +93,6 @@ class AppDependencies {
   late final GetNotificationsUseCase getNotificationsUseCase;
   late final RespondNotificationUseCase respondNotificationUseCase;
   late final CreateFallNotificationUseCase createFallNotificationUseCase;
-  late final GetFallAlertLocationUseCase getFallAlertLocationUseCase;
 
   late final LocationRemoteDataSource locationRemoteDataSource;
   late final LocationRepository locationRepository;
@@ -177,9 +175,6 @@ class AppDependencies {
       notificationRepository,
     );
     createFallNotificationUseCase = CreateFallNotificationUseCase(
-      notificationRepository,
-    );
-    getFallAlertLocationUseCase = GetFallAlertLocationUseCase(
       notificationRepository,
     );
 

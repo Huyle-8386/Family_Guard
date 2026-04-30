@@ -6,7 +6,11 @@ const notificationsService = new NotificationsService();
 export class NotificationsController {
   async createFall(req: Request, res: Response) {
     try {
-      const data = await notificationsService.createFallAlert(req.userId!);
+      const location = req.body?.location ?? null;
+      const data = await notificationsService.createFallAlert(
+        req.userId!,
+        location,
+      );
       return res.status(200).json({
         message: 'Đã tạo thông báo té ngã',
         data,
@@ -14,30 +18,6 @@ export class NotificationsController {
     } catch (error: any) {
       return res.status(500).json({
         message: error.message || 'Không tạo được thông báo té ngã',
-        error,
-      });
-    }
-  }
-
-  async getLocation(req: Request, res: Response) {
-    try {
-      const notificationId = Number(req.params.id);
-
-      if (Number.isNaN(notificationId)) {
-        return res.status(400).json({
-          message: 'notificationId không hợp lệ',
-        });
-      }
-
-      const data = await notificationsService.getFallAlertLocation(
-        req.userId!,
-        notificationId,
-      );
-
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      return res.status(400).json({
-        message: error.message || 'Không lấy được vị trí hiện tại',
         error,
       });
     }

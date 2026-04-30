@@ -20,6 +20,5 @@ class ApiEndpoints {
   static String relationshipById(int id) => '$relationships/$id';
 
   static String notificationRespond(int id) => '$notifications/$id/respond';
-  static String notificationLocation(int id) => '$notifications/$id/location';
   static String safeZoneById(String id) => '$safeZones/$id';
 }

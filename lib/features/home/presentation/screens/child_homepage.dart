@@ -1,5 +1,4 @@
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/fall_detection/presentation/fall_detection_debug_panel.dart';
 import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
@@ -155,15 +154,6 @@ class ChildHomePage extends StatelessWidget {
                     _buildMissions(context),
                   ],
                 ),
-              ),
-            ),
-            Positioned(
-              left: 8,
-              right: 8,
-              bottom: 128,
-              child: SizedBox(
-                width: double.maxFinite,
-                child: const FallDetectionDebugPanel(),
               ),
             ),
             const Positioned(

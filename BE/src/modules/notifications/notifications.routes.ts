@@ -7,7 +7,6 @@ const controller = new NotificationsController();
 
 router.post('/notifications/fall', authMiddleware, controller.createFall.bind(controller));
 router.get('/notifications', authMiddleware, controller.listMine.bind(controller));
-router.get('/notifications/:id/location', authMiddleware, controller.getLocation.bind(controller));
 router.post('/notifications/:id/respond', authMiddleware, controller.respond.bind(controller));
 
 export default router;

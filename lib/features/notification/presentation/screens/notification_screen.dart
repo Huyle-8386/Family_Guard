@@ -249,9 +249,13 @@ class _NotificationScreenState extends State<NotificationScreen>
   }
 
   Future<void> _openFallAlertMap(int notificationId) async {
-    final location = await AppDependencies.instance.getFallAlertLocationUseCase(
-      notificationId,
-    );
+    AppNotification? notification;
+    for (final item in _cubit.state.notifications) {
+      if (item.id == notificationId) {
+        notification = item;
+        break;
+      }
+    }
 
     if (!mounted) {
       return;
@@ -260,8 +264,13 @@ class _NotificationScreenState extends State<NotificationScreen>
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => SeniorFallAlertMapScreen(
-          seniorLocation: location,
-          seniorLabel: location?.name,
+          fallLatitude: notification?.fallLatitude,
+          fallLongitude: notification?.fallLongitude,
+          seniorLabel: notification == null
+              ? null
+              : ((notification.senderName ?? '').trim().isNotEmpty
+                    ? notification.senderName!.trim()
+                    : _buildNotificationTitle(notification)),
         ),
       ),
     );
@@ -923,7 +932,7 @@ class _SeniorFallMapCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Mở bản đồ realtime',
+                          'Xem vị trí',
                           style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 12,

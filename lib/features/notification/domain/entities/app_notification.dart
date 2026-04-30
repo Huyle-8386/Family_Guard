@@ -6,6 +6,8 @@ class AppNotification {
     required this.processing,
     required this.uid,
     required this.relationshipId,
+    this.fallLatitude,
+    this.fallLongitude,
     this.senderName,
     this.senderRelation,
     this.createdAt,
@@ -17,6 +19,8 @@ class AppNotification {
   final String processing;
   final String uid;
   final int? relationshipId;
+  final double? fallLatitude;
+  final double? fallLongitude;
   final String? senderName;
   final String? senderRelation;
   final DateTime? createdAt;
@@ -28,6 +32,8 @@ class AppNotification {
     String? processing,
     String? uid,
     int? relationshipId,
+    double? fallLatitude,
+    double? fallLongitude,
     String? senderName,
     String? senderRelation,
     DateTime? createdAt,
@@ -39,6 +45,8 @@ class AppNotification {
       processing: processing ?? this.processing,
       uid: uid ?? this.uid,
       relationshipId: relationshipId ?? this.relationshipId,
+      fallLatitude: fallLatitude ?? this.fallLatitude,
+      fallLongitude: fallLongitude ?? this.fallLongitude,
       senderName: senderName ?? this.senderName,
       senderRelation: senderRelation ?? this.senderRelation,
       createdAt: createdAt ?? this.createdAt,
