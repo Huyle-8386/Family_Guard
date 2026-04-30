@@ -27,12 +27,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
-  Future<void> createFallNotification() {
-    return _remote.createFallNotification();
-  }
-
-  @override
-  Future<UserLocation?> getFallAlertLocation(int id) {
-    return _remote.getFallAlertLocation(id);
+  Future<void> createFallNotification({UserLocation? location}) {
+    return _remote.createFallNotification(location: location);
   }
 }

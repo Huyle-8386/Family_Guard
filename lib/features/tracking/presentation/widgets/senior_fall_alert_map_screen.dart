@@ -1,31 +1,44 @@
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
-import 'package:family_guard/features/location_tracking/domain/entities/user_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 
-class SeniorFallAlertMapScreen extends StatelessWidget {
+class SeniorFallAlertMapScreen extends StatefulWidget {
   const SeniorFallAlertMapScreen({
     super.key,
-    this.seniorLocation,
+    this.fallLatitude,
+    this.fallLongitude,
     this.seniorLabel,
   });
 
-  final UserLocation? seniorLocation;
+  final double? fallLatitude;
+  final double? fallLongitude;
   final String? seniorLabel;
 
   @override
+  State<SeniorFallAlertMapScreen> createState() =>
+      _SeniorFallAlertMapScreenState();
+}
+
+class _SeniorFallAlertMapScreenState extends State<SeniorFallAlertMapScreen> {
+  static const double _navExtentPx = 82;
+  static const double _sheetInitialSize = 0.18;
+  static const double _sheetMinSize = 0.12;
+  static const double _sheetMaxSize = 0.30;
+
+  double _sheetExtent = _sheetInitialSize;
+
+  @override
   Widget build(BuildContext context) {
-    final hasLocation = seniorLocation?.hasLocation ?? false;
+    final hasLocation =
+        widget.fallLatitude != null && widget.fallLongitude != null;
     final focusPoint = hasLocation
-        ? LatLng(seniorLocation!.latitude!, seniorLocation!.longitude!)
-        : const LatLng(40.7539, -73.9880);
-    final displayName = _displayName;
-    final addressText =
-        seniorLocation?.formattedAddress ??
-        (hasLocation ? seniorLocation!.coordinateLabel : null) ??
-        'Đang chờ dữ liệu vị trí từ DB';
+        ? LatLng(widget.fallLatitude!, widget.fallLongitude!)
+        : const LatLng(16.0544, 108.2022);
+    final displayName = _displayName(widget.seniorLabel);
+    const statusText = 'Phát hiện té ngã';
+    final showBottomNav = _sheetExtent <= (_sheetMinSize + 0.015);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F8F8),
@@ -42,30 +55,42 @@ class SeniorFallAlertMapScreen extends StatelessWidget {
                     hasLocation: hasLocation,
                   ),
                 ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 160),
+                    opacity: showBottomNav ? 1 : 0,
+                    child: const AppBottomMenu(current: AppNavTab.tracking),
+                  ),
+                ),
                 Positioned.fill(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 68),
+                  bottom: showBottomNav ? _navExtentPx : 0,
+                  child: NotificationListener<DraggableScrollableNotification>(
+                    onNotification: (notification) {
+                      if (!mounted) {
+                        return false;
+                      }
+                      setState(() => _sheetExtent = notification.extent);
+                      return false;
+                    },
                     child: DraggableScrollableSheet(
-                      initialChildSize: 0.18,
-                      minChildSize: 0.12,
-                      maxChildSize: 0.48,
+                      initialChildSize: _sheetInitialSize,
+                      minChildSize: _sheetMinSize,
+                      maxChildSize: _sheetMaxSize,
+                      snap: true,
+                      snapSizes: const [_sheetMinSize, _sheetMaxSize],
                       builder: (context, controller) {
                         return _AlertBottomSheet(
                           scrollController: controller,
                           displayName: displayName,
-                          addressText: addressText,
+                          statusText: statusText,
                           hasLocation: hasLocation,
-                          updatedAt: seniorLocation?.updatedAt,
                         );
                       },
                     ),
                   ),
-                ),
-                const Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: AppBottomMenu(current: AppNavTab.tracking),
                 ),
               ],
             ),
@@ -75,15 +100,10 @@ class SeniorFallAlertMapScreen extends StatelessWidget {
     );
   }
 
-  String get _displayName {
+  String _displayName(String? seniorLabel) {
     final label = seniorLabel?.trim();
     if (label != null && label.isNotEmpty) {
       return label;
-    }
-
-    final fallbackName = seniorLocation?.name?.trim();
-    if (fallbackName != null && fallbackName.isNotEmpty) {
-      return fallbackName;
     }
 
     return 'Người thân';
@@ -123,7 +143,7 @@ class _AlertMapLayer extends StatelessWidget {
                   Marker(
                     point: focusPoint,
                     width: 120,
-                    height: 124,
+                    height: 140,
                     alignment: Alignment.topCenter,
                     child: _AlertMarker(label: displayName),
                   ),
@@ -311,23 +331,17 @@ class _AlertBottomSheet extends StatelessWidget {
   const _AlertBottomSheet({
     required this.scrollController,
     required this.displayName,
-    required this.addressText,
+    required this.statusText,
     required this.hasLocation,
-    required this.updatedAt,
   });
 
   final ScrollController scrollController;
   final String displayName;
-  final String addressText;
+  final String statusText;
   final bool hasLocation;
-  final DateTime? updatedAt;
 
   @override
   Widget build(BuildContext context) {
-    final updatedLabel = updatedAt == null
-        ? 'Vừa cập nhật'
-        : 'Cập nhật ${updatedAt!.toLocal().hour.toString().padLeft(2, '0')}:${updatedAt!.toLocal().minute.toString().padLeft(2, '0')}';
-
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFFF1F5F9),
@@ -381,7 +395,7 @@ class _AlertBottomSheet extends StatelessWidget {
                         Text(
                           displayName,
                           style: GoogleFonts.inter(
-                            fontSize: 34,
+                            fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF0F172A),
                             height: 1,
@@ -389,9 +403,7 @@ class _AlertBottomSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          hasLocation
-                              ? 'Phát hiện té ngã'
-                              : 'Đang chờ vị trí live',
+                          statusText,
                           style: GoogleFonts.inter(
                             fontSize: 22,
                             fontWeight: FontWeight.w500,
@@ -400,35 +412,25 @@ class _AlertBottomSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          addressText,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            color: const Color(0xFF475569),
-                            fontSize: 13,
-                            height: 1.4,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFEE2E2),
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          child: Text(
-                            updatedLabel,
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFFB91C1C),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
+                        if (!hasLocation)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFE5E5),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              'Đang chờ tọa độ từ DB',
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFB91C1C),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -439,12 +441,14 @@ class _AlertBottomSheet extends StatelessWidget {
                 width: double.infinity,
                 height: 46,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: hasLocation ? () {} : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFDC2626),
                     foregroundColor: Colors.white,
                     shape: const StadiumBorder(),
                     elevation: 0,
+                    disabledBackgroundColor: const Color(0xFFFCA5A5),
+                    disabledForegroundColor: Colors.white,
                   ),
                   child: Text(
                     'Điều hướng tới vị trí',

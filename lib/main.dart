@@ -65,6 +65,9 @@ class _MyAppState extends State<MyApp> {
     final event = FallDetectionController.instance.value;
     if (event == null || _isSosSheetOpen) return;
 
+    final fallLocation =
+        AppDependencies.instance.locationTrackingService.lastLocation;
+
     final navigatorState = _navigatorKey.currentState;
     final navigatorContext = navigatorState?.context;
     if (navigatorContext == null) {
@@ -85,7 +88,9 @@ class _MyAppState extends State<MyApp> {
         },
         onEmergencyTap: () async {
           try {
-            await AppDependencies.instance.createFallNotificationUseCase();
+            await AppDependencies.instance.createFallNotificationUseCase(
+              location: fallLocation,
+            );
           } catch (_) {
             // The senior alert sheet remains visible even if notification delivery fails.
           }
@@ -103,7 +108,7 @@ class _MyAppState extends State<MyApp> {
       navigatorKey: _navigatorKey,
       scaffoldMessengerKey: _scaffoldMessengerKey,
       theme: AppTheme.light(),
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       routes: AppRouter.routes,
       navigatorObservers: [appRouteObserver],
     );

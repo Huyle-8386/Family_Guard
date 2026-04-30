@@ -1,5 +1,4 @@
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/fall_detection/presentation/fall_detection_debug_panel.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
@@ -246,15 +245,6 @@ class HomePage extends StatelessWidget {
                         _QuickActionsGrid(actions: _quickActions),
                       ],
                     ),
-                  ),
-                ),
-                Positioned(
-                  left: 8,
-                  right: 8,
-                  bottom: 120,
-                  child: SizedBox(
-                    width: double.maxFinite,
-                    child: const FallDetectionDebugPanel(),
                   ),
                 ),
                 const Positioned(
@@ -719,7 +709,7 @@ class _QuickActionsGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 24,
         mainAxisSpacing: 24,
-        childAspectRatio: 165 / 172,
+        childAspectRatio: 165 / 188,
       ),
       itemBuilder: (context, index) {
         final item = actions[index];
@@ -790,7 +780,7 @@ class _QuickActionCard extends StatelessWidget {
                 children: [
                   Text(
                     data.title,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.publicSans(
                       color: const Color(0xFF1F2937),
@@ -802,7 +792,7 @@ class _QuickActionCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     data.subtitle,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.publicSans(
                       color: const Color(0xFF6B7280),

@@ -34,6 +34,8 @@ export class NotificationsService {
           processing,
           uid,
           relationship_id,
+          fall_latitude,
+          fall_longitude,
           created_at,
           relationship:relationship_id(
             relation_type,
@@ -61,8 +63,10 @@ export class NotificationsService {
         processing: item.processing,
         uid: item.uid,
         relationship_id: item.relationship_id,
+        fall_latitude: item.fall_latitude ?? null,
+        fall_longitude: item.fall_longitude ?? null,
         created_at: item.created_at,
-        sender_name: isPendingInvite ? item.relationship?.inviter?.name ?? null : null,
+        sender_name: item.relationship?.inviter?.name ?? null,
         sender_relation: isPendingInvite
           ? item.relationship?.reverse_relation_type ??
             item.relationship?.relation_type ??
@@ -72,7 +76,13 @@ export class NotificationsService {
     });
   }
 
-  async createFallAlert(uid: string) {
+  async createFallAlert(
+    uid: string,
+    locationSnapshot?: {
+      latitude?: number | null;
+      longitude?: number | null;
+    },
+  ) {
     const seniorName = await this.getUserDisplayName(uid);
 
     const { data: relationships, error } = await supabaseAdmin
@@ -122,6 +132,8 @@ export class NotificationsService {
           title: 'Cảnh báo té ngã',
           content: `${seniorName}(${recipient.relationLabel}) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.`,
           processing: 'done',
+          fall_latitude: locationSnapshot?.latitude ?? null,
+          fall_longitude: locationSnapshot?.longitude ?? null,
         })
         .select('*')
         .single();
@@ -134,89 +146,6 @@ export class NotificationsService {
     }
 
     return createdNotifications;
-  }
-
-  async getFallAlertLocation(uid: string, notificationId: number) {
-    const { data: notification, error: notificationError } = await supabaseAdmin
-      .from('notification')
-      .select('id, uid, relationship_id, title, content, processing')
-      .eq('id', notificationId)
-      .eq('uid', uid)
-      .maybeSingle();
-
-    if (notificationError) {
-      throw notificationError;
-    }
-
-    if (!notification) {
-      throw new Error('Không tìm thấy notification');
-    }
-
-    const isFallAlert = [notification.title, notification.content]
-      .filter(Boolean)
-      .some((value) => value.toString().toLowerCase().includes('té ngã'));
-
-    if (!isFallAlert) {
-      throw new Error('Notification không phải cảnh báo té ngã');
-    }
-
-    if (!notification.relationship_id) {
-      throw new Error('Notification không gắn với relationship');
-    }
-
-    const { data: relationship, error: relationshipError } = await supabaseAdmin
-      .from('relationship')
-      .select('uid, relation_id, relation_type, reverse_relation_type')
-      .eq('id', notification.relationship_id)
-      .single();
-
-    if (relationshipError || !relationship) {
-      throw new Error('Không tìm thấy relationship');
-    }
-
-    const seniorUid = relationship.uid as string;
-
-    const { data: seniorProfile, error: profileError } = await supabaseAdmin
-      .from('user_info')
-      .select('uid, name, email, phone, role, avata, birthday')
-      .eq('uid', seniorUid)
-      .maybeSingle();
-
-    if (profileError) {
-      throw profileError;
-    }
-
-    const { data: location, error: locationError } = await supabaseAdmin
-      .from('user_locations')
-      .select('*')
-      .eq('uid', seniorUid)
-      .maybeSingle();
-
-    if (locationError) {
-      throw locationError;
-    }
-
-    return {
-      uid: seniorUid,
-      name: seniorProfile?.name ?? seniorProfile?.email ?? 'Thanh vien',
-      email: seniorProfile?.email ?? null,
-      phone: seniorProfile?.phone ?? null,
-      role: seniorProfile?.role ?? null,
-      avata: seniorProfile?.avata ?? null,
-      birthday: seniorProfile?.birthday ?? null,
-      latitude: location?.latitude ?? null,
-      longitude: location?.longitude ?? null,
-      accuracy: location?.accuracy ?? null,
-      speed: location?.speed ?? null,
-      address: location?.address ?? null,
-      street: location?.street ?? null,
-      ward: location?.ward ?? null,
-      district: location?.district ?? null,
-      city: location?.city ?? null,
-      country: location?.country ?? null,
-      place_name: location?.place_name ?? null,
-      updated_at: location?.updated_at ?? null,
-    };
   }
 
   async respond(
