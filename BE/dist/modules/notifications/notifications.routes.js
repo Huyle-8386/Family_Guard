@@ -5,6 +5,7 @@ const auth_middleware_1 = require("../../middlewares/auth.middleware");
 const notifications_controller_1 = require("./notifications.controller");
 const router = (0, express_1.Router)();
 const controller = new notifications_controller_1.NotificationsController();
+router.post('/notifications/fall', auth_middleware_1.authMiddleware, controller.createFall.bind(controller));
 router.get('/notifications', auth_middleware_1.authMiddleware, controller.listMine.bind(controller));
 router.post('/notifications/:id/respond', auth_middleware_1.authMiddleware, controller.respond.bind(controller));
 exports.default = router;

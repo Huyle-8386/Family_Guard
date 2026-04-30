@@ -4,6 +4,25 @@ import { NotificationsService } from './notifications.service';
 const notificationsService = new NotificationsService();
 
 export class NotificationsController {
+  async createFall(req: Request, res: Response) {
+    try {
+      const location = req.body?.location ?? null;
+      const data = await notificationsService.createFallAlert(
+        req.userId!,
+        location,
+      );
+      return res.status(200).json({
+        message: 'Đã tạo thông báo té ngã',
+        data,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || 'Không tạo được thông báo té ngã',
+        error,
+      });
+    }
+  }
+
   async listMine(req: Request, res: Response) {
     try {
       const data = await notificationsService.listMine(req.userId!);

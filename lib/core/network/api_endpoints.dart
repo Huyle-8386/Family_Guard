@@ -12,6 +12,7 @@ class ApiEndpoints {
   static const String relationshipsInvite = '/relationships/invite';
 
   static const String notifications = '/notifications';
+  static const String notificationsFall = '/notifications/fall';
   static const String locationsMe = '/locations/me';
   static const String locationsFamily = '/locations/family';
   static const String safeZones = '/safe-zones';

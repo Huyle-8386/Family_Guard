@@ -64,6 +64,54 @@ class NotificationsService {
             };
         });
     }
+    async createFallAlert(uid) {
+        const seniorName = await this.getUserDisplayName(uid);
+        const { data: relationships, error } = await supabase_1.supabaseAdmin
+            .from('relationship')
+            .select(`
+          id,
+          relation_id,
+          relation_type,
+          reverse_relation_type,
+          relation_user:user_info!relationship_relation_id_fkey(
+            role
+          )
+        `)
+            .eq('uid', uid)
+            .eq('processing', 'xacnhan');
+        if (error) {
+            throw error;
+        }
+        const recipients = (relationships ?? [])
+            .map((relationship) => ({
+            relationshipId: relationship.id,
+            recipientUid: relationship.relation_id,
+            recipientRole: relationship.relation_user?.role ?? null,
+            relationLabel: this.normalizeRelationLabel(relationship.reverse_relation_type ?? relationship.relation_type),
+        }))
+            .filter((item) => item.recipientUid &&
+            item.recipientUid.trim().length > 0 &&
+            item.recipientRole === 'nguoichamsoc');
+        const createdNotifications = [];
+        for (const recipient of recipients) {
+            const { data: notification, error: notificationError } = await supabase_1.supabaseAdmin
+                .from('notification')
+                .insert({
+                uid: recipient.recipientUid,
+                relationship_id: recipient.relationshipId,
+                title: 'Cảnh báo té ngã',
+                content: `${seniorName}(${recipient.relationLabel}) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.`,
+                processing: 'done',
+            })
+                .select('*')
+                .single();
+            if (notificationError) {
+                throw notificationError;
+            }
+            createdNotifications.push(notification);
+        }
+        return createdNotifications;
+    }
     async respond(uid, notificationId, action) {
         const { data: notification, error: notificationError } = await supabase_1.supabaseAdmin
             .from('notification')
