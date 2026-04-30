@@ -1,7 +1,13 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+<<<<<<< HEAD
 import 'package:family_guard/core/fall_detection/presentation/fall_detection_debug_panel.dart';
+=======
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
+>>>>>>> origin/main
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
+import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -133,7 +139,15 @@ class ChildHomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHero(context),
+                    FutureBuilder(
+                      future: AppDependencies.instance.getSavedSessionUseCase(),
+                      builder: (context, snapshot) {
+                        return _buildHero(
+                          context,
+                          CurrentUserViewData.fromSession(snapshot.data),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 20),
                     _buildTodayCard(),
                     const SizedBox(height: 20),
@@ -182,7 +196,7 @@ class ChildHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHero(BuildContext context) {
+  Widget _buildHero(BuildContext context, CurrentUserViewData userView) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -216,7 +230,7 @@ class ChildHomePage extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'A',
+                  userView.initials,
                   style: GoogleFonts.lexend(
                     color: _blueDark,
                     fontSize: 30,
@@ -230,7 +244,7 @@ class ChildHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Xin ch\u00E0o An',
+                      'Xin chào ${userView.shortName}',
                       style: GoogleFonts.lexend(
                         color: _blueDark,
                         fontSize: 24,
@@ -239,7 +253,7 @@ class ChildHomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Nguy\u1EC5n Minh An',
+                      userView.fullName,
                       style: GoogleFonts.beVietnamPro(
                         color: _muted,
                         fontSize: 14,
@@ -337,8 +351,7 @@ class ChildHomePage extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AppRoutes.kidLocation),
+                  onPressed: () => _openFamilyMap(context),
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
                     backgroundColor: const Color(0xFFE6F6FF),
@@ -734,9 +747,26 @@ class ChildHomePage extends StatelessWidget {
       _showSosSheet(context);
       return;
     }
+    if (action.routeName == AppRoutes.kidLocation) {
+      _openFamilyMap(context);
+      return;
+    }
     if (action.routeName != null) {
       Navigator.pushNamed(context, action.routeName!);
     }
+  }
+
+  static void _openFamilyMap(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const FamilyMapScreen(
+          homeRouteName: AppRoutes.kidHome,
+          notificationsRouteName: AppRoutes.notifications,
+          settingsRouteName: AppRoutes.kidProfile,
+          showBottomNav: false,
+        ),
+      ),
+    );
   }
 
   static void _showSosSheet(BuildContext context) {

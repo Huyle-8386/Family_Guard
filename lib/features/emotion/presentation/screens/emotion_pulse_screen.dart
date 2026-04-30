@@ -542,7 +542,7 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 128,
+      constraints: const BoxConstraints(minHeight: 128),
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -551,7 +551,7 @@ class _StatCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 40,
@@ -562,6 +562,7 @@ class _StatCard extends StatelessWidget {
             ),
             child: Icon(icon, color: iconColor, size: 20),
           ),
+          const SizedBox(height: 10),
           Text(
             value,
             style: GoogleFonts.inter(
@@ -571,8 +572,11 @@ class _StatCard extends StatelessWidget {
               height: 32 / 24,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
               color: const Color(0xFF5D7A7D),
               fontSize: 12,

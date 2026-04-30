@@ -1,6 +1,10 @@
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/routes/app_route_observer.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
+import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
+import 'package:family_guard/features/profile_security/domain/entities/profile.dart';
+import 'package:family_guard/features/profile_security/presentation/cubit/profile_cubit.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/edit_emergency_contact_name_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/edit_emergency_contact_phone_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/edit_emergency_contact_relationship_screen.dart';
@@ -33,14 +37,57 @@ class PersonalInfoScreen extends StatefulWidget {
   State<PersonalInfoScreen> createState() => _PersonalInfoScreenState();
 }
 
-class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
-  String name = 'Mẹ Xôi';
-  String email = 'lakhon.vcl@email.com';
+class _PersonalInfoScreenState extends State<PersonalInfoScreen>
+    with RouteAware {
+  String name = 'Nguyễn Thị Loan';
+  String email = 'loan@email.com';
   String phone = '0123 456 789';
   String role = 'Người chăm sóc';
-  String emergencyName = 'Bố Xôi';
-  String emergencyRelation = 'Vợ/Chồng';
+  String avatarUrl = '';
+  String emergencyName = 'Lê Văn Huy';
+  String emergencyRelation = 'Chồng';
   String emergencyPhone = '0123 456 789';
+  DateTime? createdAt;
+  String? _lastErrorMessage;
+  String? _lastSuccessMessage;
+  late final ProfileCubit _profileCubit;
+  ModalRoute<dynamic>? _route;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileCubit = ProfileCubit(
+      getProfileUseCase: AppDependencies.instance.getProfileUseCase,
+      updateProfileUseCase: AppDependencies.instance.updateProfileUseCase,
+    )..addListener(_handleProfileStateChanged);
+    _profileCubit.loadProfile();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && route != _route) {
+      if (_route is PageRoute) {
+        appRouteObserver.unsubscribe(this);
+      }
+      _route = route;
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    _profileCubit.removeListener(_handleProfileStateChanged);
+    _profileCubit.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _profileCubit.loadProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,55 +102,43 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppBackHeaderBar(
-                    title: 'Thông Tin Cá Nhân',
+                    title: 'Thông tin cá nhân',
                     onBack: () => Navigator.maybePop(context),
                     showLeading: widget.showBackButton,
                     padding: EdgeInsets.zero,
                     titleFontSize: 20,
                   ),
                   const SizedBox(height: 16),
-                  const _AvatarEditor(),
+                  _AvatarEditor(avatarUrl: avatarUrl),
                   const SizedBox(height: 24),
                   _InfoCard(
                     name: name,
                     email: email,
                     phone: phone,
                     role: role,
-                    onTapName: () => _editString(
-                      EditPersonalNameScreen(initialValue: name),
-                      (value) => name = value,
-                    ),
-                    onTapEmail: () => _editString(
-                      EditPersonalEmailScreen(initialValue: email),
-                      (value) => email = value,
-                    ),
-                    onTapPhone: () => _editString(
-                      EditPersonalPhoneScreen(initialValue: phone),
-                      (value) => phone = value,
-                    ),
-                    onTapRole: () => _editString(
-                      EditPersonalRoleScreen(initialValue: role),
-                      (value) => role = value,
-                    ),
+                    onTapName: _editName,
+                    onTapEmail: _editEmail,
+                    onTapPhone: _editPhone,
+                    onTapRole: _editRole,
                   ),
                   const SizedBox(height: 24),
                   _EmergencyContactSection(
                     name: emergencyName,
                     relationship: emergencyRelation,
                     phone: emergencyPhone,
-                    onTapName: () => _editString(
+                    onTapName: () => _editLocalOnly(
                       EditEmergencyContactNameScreen(
                         initialValue: emergencyName,
                       ),
                       (value) => emergencyName = value,
                     ),
-                    onTapRelationship: () => _editString(
+                    onTapRelationship: () => _editLocalOnly(
                       EditEmergencyContactRelationshipScreen(
                         initialValue: emergencyRelation,
                       ),
                       (value) => emergencyRelation = value,
                     ),
-                    onTapPhone: () => _editString(
+                    onTapPhone: () => _editLocalOnly(
                       EditEmergencyContactPhoneScreen(
                         initialValue: emergencyPhone,
                       ),
@@ -111,7 +146,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const _MetaInfo(),
+                  _MetaInfo(createdAt: createdAt),
                   const SizedBox(height: 16),
                 ],
               ),
@@ -135,22 +170,180 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  Future<void> _editString(Widget screen, ValueChanged<String> onSaved) async {
-    final result = await Navigator.of(
-      context,
-    ).push<String>(MaterialPageRoute(builder: (_) => screen));
+  void _handleProfileStateChanged() {
+    final state = _profileCubit.state;
+    final profile = state.profile;
 
+    if (profile != null && mounted) {
+      setState(() {
+        name = _readableValue(profile.name, fallback: name);
+        email = _readableValue(profile.email, fallback: email);
+        phone = _readableValue(profile.phone, fallback: phone);
+        role = _roleLabelFromApi(profile.role) ?? role;
+        avatarUrl = profile.avata ?? avatarUrl;
+        createdAt = profile.createdAt ?? createdAt;
+      });
+    }
+
+    if (state.errorMessage != null &&
+        state.errorMessage!.isNotEmpty &&
+        state.errorMessage != _lastErrorMessage &&
+        mounted) {
+      _lastErrorMessage = state.errorMessage;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(state.errorMessage!),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
+
+    if (state.successMessage != null &&
+        state.successMessage!.isNotEmpty &&
+        state.successMessage != _lastSuccessMessage &&
+        mounted) {
+      _lastSuccessMessage = state.successMessage;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(state.successMessage!),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
+  }
+
+  Future<void> _editName() async {
+    await _editProfileField(
+      screen: EditPersonalNameScreen(initialValue: name),
+      currentValue: name,
+      onLocalSaved: (value) => name = value,
+      onRemoteSaved: _profileCubit.updateName,
+    );
+  }
+
+  Future<void> _editEmail() async {
+    await _editProfileField(
+      screen: EditPersonalEmailScreen(initialValue: email),
+      currentValue: email,
+      onLocalSaved: (value) => email = value,
+      onRemoteSaved: _profileCubit.updateEmail,
+    );
+  }
+
+  Future<void> _editPhone() async {
+    await _editProfileField(
+      screen: EditPersonalPhoneScreen(initialValue: phone),
+      currentValue: phone,
+      onLocalSaved: (value) => phone = value,
+      onRemoteSaved: _profileCubit.updatePhone,
+    );
+  }
+
+  Future<void> _editRole() async {
+    final result = await _openEditScreen(
+      EditPersonalRoleScreen(initialValue: role),
+    );
+    if (result == null || result.isEmpty || result == role) {
+      return;
+    }
+
+    final previous = role;
+    setState(() {
+      role = result;
+    });
+
+    final updated = await _profileCubit.updateRole(
+      _roleApiValueFromLabel(result),
+    );
+    if (updated == null && mounted) {
+      setState(() {
+        role = previous;
+      });
+    }
+  }
+
+  Future<void> _editProfileField({
+    required Widget screen,
+    required String currentValue,
+    required ValueChanged<String> onLocalSaved,
+    required Future<Profile?> Function(String value) onRemoteSaved,
+  }) async {
+    final result = await _openEditScreen(screen);
+    if (result == null || result.isEmpty || result == currentValue) {
+      return;
+    }
+
+    final previous = currentValue;
+    setState(() {
+      onLocalSaved(result);
+    });
+
+    final updated = await onRemoteSaved(result);
+    if (updated == null && mounted) {
+      setState(() {
+        onLocalSaved(previous);
+      });
+    }
+  }
+
+  Future<void> _editLocalOnly(
+    Widget screen,
+    ValueChanged<String> onSaved,
+  ) async {
+    final result = await _openEditScreen(screen);
     if (result != null && result.isNotEmpty) {
       setState(() => onSaved(result));
+    }
+  }
+
+  Future<String?> _openEditScreen(Widget screen) {
+    return Navigator.of(
+      context,
+    ).push<String>(MaterialPageRoute(builder: (_) => screen));
+  }
+
+  String _readableValue(String? value, {required String fallback}) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return fallback;
+    }
+    return trimmed;
+  }
+
+  String _roleApiValueFromLabel(String value) {
+    switch (value.trim()) {
+      case 'Người được chăm sóc':
+        return 'nguoiduocchamsoc';
+      case 'Người chăm sóc':
+      default:
+        return 'nguoichamsoc';
+    }
+  }
+
+  String? _roleLabelFromApi(String? value) {
+    switch (value?.trim()) {
+      case 'nguoiduocchamsoc':
+        return 'Người được chăm sóc';
+      case 'nguoichamsoc':
+        return 'Người chăm sóc';
+      default:
+        return null;
     }
   }
 }
 
 class _AvatarEditor extends StatelessWidget {
-  const _AvatarEditor();
+  const _AvatarEditor({required this.avatarUrl});
+
+  final String avatarUrl;
 
   @override
   Widget build(BuildContext context) {
+    final hasAvatar = avatarUrl.trim().isNotEmpty;
     return Center(
       child: Column(
         children: [
@@ -172,12 +365,14 @@ class _AvatarEditor extends StatelessWidget {
                   ],
                 ),
                 child: ClipOval(
-                  child: Image.network(
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Container(color: const Color(0xFFE5E7EB)),
-                  ),
+                  child: hasAvatar
+                      ? Image.network(
+                          avatarUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(color: const Color(0xFFE5E7EB)),
+                        )
+                      : Container(color: const Color(0xFFE5E7EB)),
                 ),
               ),
               Positioned(
@@ -312,16 +507,21 @@ class _EmergencyContactSection extends StatelessWidget {
 }
 
 class _MetaInfo extends StatelessWidget {
-  const _MetaInfo();
+  const _MetaInfo({required this.createdAt});
+
+  final DateTime? createdAt;
 
   @override
   Widget build(BuildContext context) {
+    final createdText = createdAt == null
+        ? 'Tài khoản tạo ngày 27/10/2025'
+        : 'Tài khoản tạo ngày ${_formatDate(createdAt!)}';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           Text(
-            'Tài khoản tạo ngày 27/10/2025',
+            createdText,
             textAlign: TextAlign.center,
             style: GoogleFonts.beVietnamPro(
               color: const Color(0xFF638888),
@@ -343,6 +543,14 @@ class _MetaInfo extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatDate(DateTime value) {
+    final local = value.toLocal();
+    final day = local.day.toString().padLeft(2, '0');
+    final month = local.month.toString().padLeft(2, '0');
+    final year = local.year.toString();
+    return '$day/$month/$year';
   }
 }
 

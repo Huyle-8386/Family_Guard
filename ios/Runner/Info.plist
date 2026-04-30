@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Family Guard cần quyền vị trí để cập nhật vị trí hiện tại và theo dõi an toàn gia đình.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Family Guard dùng vị trí để hỗ trợ vùng an toàn và cập nhật theo thời gian thực khi ứng dụng đang hoạt động.</string>
 </dict>
 </plist>

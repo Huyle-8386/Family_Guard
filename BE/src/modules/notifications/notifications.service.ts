@@ -1,10 +1,49 @@
 import { supabaseAdmin } from '../../config/supabase';
 
 export class NotificationsService {
+  private normalizeRelationLabel(value?: string | null): string {
+    const normalized = value?.toString().trim();
+    return normalized && normalized.length > 0 ? normalized : 'Người thân';
+  }
+
+  private async getUserDisplayName(uid: string): Promise<string> {
+    const { data: userProfile, error } = await supabaseAdmin
+      .from('user_info')
+      .select('name')
+      .eq('uid', uid)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    const displayName = userProfile?.name?.toString().trim();
+    return displayName && displayName.length > 0
+      ? displayName
+      : 'Một thành viên gia đình';
+  }
+
   async listMine(uid: string) {
     const { data, error } = await supabaseAdmin
       .from('notification')
-      .select('*')
+      .select(
+        `
+          id,
+          title,
+          content,
+          processing,
+          uid,
+          relationship_id,
+          created_at,
+          relationship:relationship_id(
+            relation_type,
+            reverse_relation_type,
+            inviter:user_info!relationship_uid_fkey(
+              name
+            )
+          )
+        `,
+      )
       .eq('uid', uid)
       .order('created_at', { ascending: false });
 
@@ -12,7 +51,25 @@ export class NotificationsService {
       throw error;
     }
 
-    return data;
+    return (data ?? []).map((item: any) => {
+      const isPendingInvite = item.processing === 'dagui';
+
+      return {
+        id: item.id,
+        title: item.title,
+        content: item.content,
+        processing: item.processing,
+        uid: item.uid,
+        relationship_id: item.relationship_id,
+        created_at: item.created_at,
+        sender_name: isPendingInvite ? item.relationship?.inviter?.name ?? null : null,
+        sender_relation: isPendingInvite
+          ? item.relationship?.reverse_relation_type ??
+            item.relationship?.relation_type ??
+            null
+          : null,
+      };
+    });
   }
 
   async respond(
@@ -72,8 +129,7 @@ export class NotificationsService {
           {
             uid: relationship.relation_id,
             relation_id: relationship.uid,
-            relation_type:
-              relationship.reverse_relation_type ?? 'Người thân',
+            relation_type: relationship.reverse_relation_type ?? 'Người thân',
             reverse_relation_type: relationship.relation_type,
             processing: 'xacnhan',
           },
@@ -93,6 +149,25 @@ export class NotificationsService {
         .update({ processing: 'huy' })
         .eq('uid', relationship.relation_id)
         .eq('relation_id', relationship.uid);
+    }
+
+    if (action === 'xacnhan') {
+      try {
+        const responderName = await this.getUserDisplayName(uid);
+        const responderRelation = this.normalizeRelationLabel(
+          relationship.relation_type,
+        );
+
+        await supabaseAdmin.from('notification').insert({
+          uid: relationship.uid,
+          relationship_id: relationship.id,
+          title: 'Mối quan hệ đã được xác nhận',
+          content: `${responderName}(${responderRelation}) đã xác nhận lời mời kết nối gia đình của bạn. Hai người hiện đã được liên kết.`,
+          processing: 'done',
+        });
+      } catch (error) {
+        console.error('Không thể tạo thông báo xác nhận cho người gửi lời mời', error);
+      }
     }
 
     const { data: updatedNotification, error: updateNotificationError } =
