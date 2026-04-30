@@ -51,8 +51,9 @@ class NotificationBadgeController extends ChangeNotifier {
       final hasPending = notifications.any(
         (notification) =>
             notification.processing == 'dagui' &&
-            ((notification.senderName ?? '').trim().isNotEmpty ||
-                (notification.senderRelation ?? '').trim().isNotEmpty),
+                ((notification.senderName ?? '').trim().isNotEmpty ||
+                    (notification.senderRelation ?? '').trim().isNotEmpty) ||
+            _isFallAlertNotification(notification),
       );
       if (hasPending != _hasPendingNotifications) {
         _hasPendingNotifications = hasPending;
@@ -63,6 +64,12 @@ class NotificationBadgeController extends ChangeNotifier {
     } finally {
       _isRefreshing = false;
     }
+  }
+
+  bool _isFallAlertNotification(dynamic notification) {
+    final title = (notification.title ?? '').toString().toLowerCase();
+    final content = (notification.content ?? '').toString().toLowerCase();
+    return title.contains('té ngã') || content.contains('té ngã');
   }
 
   void _scheduleRefresh() {

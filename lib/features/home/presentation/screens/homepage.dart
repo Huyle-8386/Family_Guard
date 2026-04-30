@@ -1,32 +1,19 @@
-// ignore_for_file: unused_element
-
 import 'package:family_guard/core/constants/app_routes.dart';
-import 'package:family_guard/core/di/app_dependencies.dart';
-import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
-import 'package:family_guard/features/location_tracking/domain/entities/user_location.dart';
-import 'package:family_guard/features/location_tracking/presentation/bloc/location_tracking_bloc.dart';
-import 'package:family_guard/features/location_tracking/presentation/bloc/location_tracking_event.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
 
   static const _backgroundColor = Color(0xFFF0F8F7);
   static const _primaryColor = Color(0xFF00ACB2);
   static const _secondaryColor = Color(0xFF87E4DB);
   static const _headerAvatarUrl =
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop';
+      'https://www.figma.com/api/mcp/asset/2f585926-b307-4889-9fd8-50f79d086344';
 
   static final List<_MemberCardData> _members = [
     _MemberCardData(
@@ -35,9 +22,9 @@ class _HomePageState extends State<HomePage> {
       battery: '85%',
       location: '123 Đường Nguyễn Huệ...',
       avatarUrl:
-          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
+          'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e',
       mapImageUrl:
-          'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+          'https://www.figma.com/api/mcp/asset/377b4370-a162-4432-b61e-7545f1fb1039',
       statusDotColor: const Color(0xFF22C55E),
       statusTextColor: const Color(0xFF008A8E),
       accentColor: const Color(0xFF00ACB2),
@@ -51,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         name: 'Mẹ',
         status: 'Đang ở nhà',
         avatarUrl:
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
+            'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e',
         phoneNumber: '+84 909 123 456',
         relationship: 'Mẹ',
         battery: 85,
@@ -90,9 +77,9 @@ class _HomePageState extends State<HomePage> {
       battery: '24%',
       location: 'Công viên Tao Đàn',
       avatarUrl:
-          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
+          'https://www.figma.com/api/mcp/asset/5e8718f5-141a-45c5-9a6f-b47576bb2bc4',
       mapImageUrl:
-          'https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80',
+          'https://www.figma.com/api/mcp/asset/5ecd790f-6840-4bcd-aef9-7210007ea537',
       statusDotColor: const Color(0xFFEAB308),
       statusTextColor: const Color(0xFF374151),
       accentColor: const Color(0xFF111827),
@@ -107,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         name: 'Bố',
         status: 'Đang đi dạo',
         avatarUrl:
-            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
+            'https://www.figma.com/api/mcp/asset/5e8718f5-141a-45c5-9a6f-b47576bb2bc4',
         phoneNumber: '+84 909 456 123',
         relationship: 'Bố',
         battery: 24,
@@ -181,7 +168,7 @@ class _HomePageState extends State<HomePage> {
       icon: Icons.videocam_rounded,
       iconColor: const Color(0xFF10B981),
       glowColor: const Color(0x33A7F3D0),
-      onTapRouteName: AppRoutes.cameraList,
+      onTap: _showCameraComingSoon,
     ),
     _QuickActionData(
       title: 'Nhịp tim',
@@ -212,170 +199,15 @@ class _HomePageState extends State<HomePage> {
   static Widget _buildKidDeviceControlScreen() =>
       const KidDeviceControlScreen();
 
-  late final LocationTrackingBloc _locationBloc;
-  UserLocation? _lastSyncedOwnLocation;
-
-  List<_MemberCardData> get _displayMembers {
-    final items = _locationBloc.state.familyLocations;
-    if (items.isEmpty) {
-      return _members;
-    }
-
-    return items.asMap().entries.map((entry) {
-      final index = entry.key;
-      final location = entry.value;
-      final template = _members[index % _members.length];
-      return _buildMemberCardData(location, template);
-    }).toList(growable: false);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final dependencies = AppDependencies.instance;
-    _locationBloc = LocationTrackingBloc(
-      getMyLocationUseCase: dependencies.getMyLocationUseCase,
-      getFamilyLocationsUseCase: dependencies.getFamilyLocationsUseCase,
-    )..addListener(_handleLocationStateChanged);
-    dependencies.locationTrackingService.addListener(
-      _handleTrackingServiceChanged,
-    );
-    _locationBloc.dispatch(const StartFamilyLocationPollingEvent());
-    dependencies.locationTrackingService.refreshNow();
-  }
-
-  @override
-  void dispose() {
-    AppDependencies.instance.locationTrackingService.removeListener(
-      _handleTrackingServiceChanged,
-    );
-    _locationBloc
-      ..removeListener(_handleLocationStateChanged)
-      ..dispatch(const StopFamilyLocationPollingEvent())
-      ..dispose();
-    super.dispose();
-  }
-
-  void _handleLocationStateChanged() {
-    if (!mounted) {
-      return;
-    }
-    setState(() {});
-  }
-
-  void _handleTrackingServiceChanged() {
-    final latestLocation = AppDependencies.instance.locationTrackingService.lastLocation;
-    if (latestLocation == null) {
-      return;
-    }
-
-    final hasChanged =
-        _lastSyncedOwnLocation?.updatedAt != latestLocation.updatedAt ||
-        _lastSyncedOwnLocation?.latitude != latestLocation.latitude ||
-        _lastSyncedOwnLocation?.longitude != latestLocation.longitude;
-
-    if (!hasChanged) {
-      return;
-    }
-
-    _lastSyncedOwnLocation = latestLocation;
-    _locationBloc.dispatch(const LoadFamilyLocationsEvent(showLoader: false));
-    if (!mounted) {
-      return;
-    }
-    setState(() {});
-  }
-
-  _MemberCardData _buildMemberCardData(
-    UserLocation item,
-    _MemberCardData template,
-  ) {
-    final name = _normalized(item.name) ?? template.name;
-    final avatarUrl = _normalized(item.avata) ?? template.avatarUrl;
-    final locationLabel =
-        _normalized(item.formattedAddress) ??
-        _normalized(item.coordinateLabel) ??
-        'Vị trí chưa cập nhật';
-    final status = item.hasLocation
-        ? (item.speed != null && item.speed! >= 1.5
-              ? 'Đang di chuyển'
-              : 'Đã kết nối')
-        : 'Chưa cập nhật vị trí';
-
-    final trackingArgs = template.trackingArgs;
-    final mapCenter = item.hasLocation
-        ? LatLng(item.latitude!, item.longitude!)
-        : trackingArgs.mapCenter;
-
-    return _MemberCardData(
-      name: name,
-      status: status,
-      battery: template.battery,
-      location: locationLabel,
-      avatarUrl: avatarUrl,
-      mapImageUrl: template.mapImageUrl,
-      statusDotColor: item.hasLocation
-          ? const Color(0xFF22C55E)
-          : const Color(0xFF94A3B8),
-      statusTextColor: template.statusTextColor,
-      accentColor: template.accentColor,
-      batteryIcon: template.batteryIcon,
-      batteryColor: template.batteryColor,
-      locationIcon: template.locationIcon,
-      locationIconColor: template.locationIconColor,
-      locationIconBackground: template.locationIconBackground,
-      routeName: template.routeName,
-      trackingArgs: MemberTrackingArgs(
-        role: trackingArgs.role,
-        name: name,
-        status: status,
-        avatarUrl: avatarUrl,
-        phoneNumber: _normalized(item.phone) ?? trackingArgs.phoneNumber,
-        relationship: trackingArgs.relationship,
-        battery: trackingArgs.battery,
-        connectionStatus: status,
-        deviceName: trackingArgs.deviceName,
-        lastActive: _formatLastActive(item.updatedAt),
-        timeLabel: trackingArgs.timeLabel,
-        mapCenter: mapCenter,
-        routeHistory: item.hasLocation
-            ? <LatLng>[mapCenter]
-            : trackingArgs.routeHistory,
-        playbackStartLabel: trackingArgs.playbackStartLabel,
-        playbackEndLabel: trackingArgs.playbackEndLabel,
-        totalDistanceLabel: trackingArgs.totalDistanceLabel,
-        totalDurationLabel: trackingArgs.totalDurationLabel,
-        stopCount: trackingArgs.stopCount,
-        averageSpeedLabel: trackingArgs.averageSpeedLabel,
-        timelineItems: trackingArgs.timelineItems,
-      ),
-    );
-  }
-
-  String? _normalized(String? value) {
-    final trimmed = value?.trim();
-    if (trimmed == null || trimmed.isEmpty) {
-      return null;
-    }
-    return trimmed;
-  }
-
-  String _formatLastActive(DateTime? updatedAt) {
-    if (updatedAt == null) {
-      return 'Chưa cập nhật';
-    }
-
-    final difference = DateTime.now().difference(updatedAt.toLocal());
-    if (difference.inSeconds < 60) {
-      return 'Vừa cập nhật';
-    }
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} phút trước';
-    }
-    if (difference.inHours < 24) {
-      return '${difference.inHours} giờ trước';
-    }
-    return '${difference.inDays} ngày trước';
+  static void _showCameraComingSoon(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Chức năng camera đang được phát triển.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
   }
 
   @override
@@ -396,19 +228,9 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 8),
-                        FutureBuilder(
-                          future: AppDependencies.instance
-                              .getSavedSessionUseCase(),
-                          builder: (context, snapshot) {
-                            return _Header(
-                              userView: CurrentUserViewData.fromSession(
-                                snapshot.data,
-                              ),
-                            );
-                          },
-                        ),
+                        const _Header(),
                         const SizedBox(height: 26),
-                        _MemberCardsSection(members: _displayMembers),
+                        _MemberCardsSection(members: _members),
                         const SizedBox(height: 22),
                         Text(
                           'Tiện ích',
@@ -478,10 +300,8 @@ class _TopDecoration extends StatelessWidget {
   }
 }
 
-class _LegacyHeader extends StatelessWidget {
-  const _LegacyHeader({required this.userView});
-
-  final CurrentUserViewData userView;
+class _Header extends StatelessWidget {
+  const _Header();
 
   @override
   Widget build(BuildContext context) {
@@ -516,83 +336,19 @@ class _LegacyHeader extends StatelessWidget {
               ],
             ),
             child: ClipOval(
-              child: _AdaptiveImage(
-                source: userView.avatarUrl.isNotEmpty
-                    ? userView.avatarUrl
-                    : _HomePageState._headerAvatarUrl,
+              child: Image.network(
+                HomePage._headerAvatarUrl,
                 fit: BoxFit.cover,
-                fallback: Container(
-                  color: const Color(0xFFE5E7EB),
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.person_rounded,
-                    color: Color(0xFF4B5563),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.userView});
-
-  final CurrentUserViewData userView;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Chào buổi tối,\n${userView.shortName}',
-          style: GoogleFonts.beVietnamPro(
-            color: const Color(0xFF00ACB2),
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            height: 32 / 24,
-          ),
-        ),
-        GestureDetector(
-          onTap: () => Navigator.pushNamed(context, AppRoutes.profile),
-          child: Container(
-            width: 48,
-            height: 48,
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x1A000000),
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-            child: ClipOval(
-              child: _AdaptiveImage(
-                source: userView.avatarUrl.isNotEmpty
-                    ? userView.avatarUrl
-                    : _HomePageState._headerAvatarUrl,
-                fit: BoxFit.cover,
-                fallback: Container(
-                  color: const Color(0xFFE5E7EB),
-                  alignment: Alignment.center,
-                  child: Text(
-                    userView.initials,
-                    style: GoogleFonts.beVietnamPro(
-                      color: const Color(0xFF4B5563),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: const Color(0xFFE5E7EB),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: Color(0xFF4B5563),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
           ),
@@ -654,11 +410,13 @@ class _MemberCard extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: _AdaptiveImage(
-                  source: data.mapImageUrl,
+                child: Image.network(
+                  data.mapImageUrl,
                   fit: BoxFit.cover,
                   opacity: const AlwaysStoppedAnimation(0.6),
-                  fallback: Container(color: const Color(0xFFF4F8F7)),
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: const Color(0xFFF4F8F7));
+                  },
                 ),
               ),
               Positioned.fill(
@@ -684,135 +442,127 @@ class _MemberCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Container(
-                                    width: 64,
-                                    height: 64,
-                                    padding: const EdgeInsets.all(4),
+                        Row(
+                          children: [
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Container(
+                                  width: 64,
+                                  height: 64,
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x26000000),
+                                        blurRadius: 6,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipOval(
+                                    child: Image.network(
+                                      data.avatarUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return Container(
+                                              color: const Color(0xFFE5E7EB),
+                                              alignment: Alignment.center,
+                                              child: const Icon(
+                                                Icons.person_rounded,
+                                                color: Color(0xFF6B7280),
+                                              ),
+                                            );
+                                          },
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: -1,
+                                  bottom: -1,
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: data.statusDotColor,
                                       shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2,
+                                      ),
                                       boxShadow: const [
                                         BoxShadow(
-                                          color: Color(0x26000000),
-                                          blurRadius: 6,
-                                          offset: Offset(0, 2),
+                                          color: Color(0x6687E4DB),
+                                          blurRadius: 0,
+                                          spreadRadius: 4,
                                         ),
                                       ],
                                     ),
-                                    child: ClipOval(
-                                      child: _AdaptiveImage(
-                                        source: data.avatarUrl,
-                                        fit: BoxFit.cover,
-                                        fallback: Container(
-                                          color: const Color(0xFFE5E7EB),
-                                          alignment: Alignment.center,
-                                          child: const Icon(
-                                            Icons.person_rounded,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                                   ),
-                                  Positioned(
-                                    right: -1,
-                                    bottom: -1,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      decoration: BoxDecoration(
-                                        color: data.statusDotColor,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        ),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Color(0x6687E4DB),
-                                            blurRadius: 0,
-                                            spreadRadius: 4,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      data.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.publicSans(
-                                        color: data.accentColor,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        height: 28 / 20,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.82),
-                                        borderRadius: BorderRadius.circular(999),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Color(0x1A000000),
-                                            blurRadius: 2,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            width: 8,
-                                            height: 8,
-                                            decoration: BoxDecoration(
-                                              color: data.statusDotColor,
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Flexible(
-                                            child: Text(
-                                              data.status,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.publicSans(
-                                                color: data.statusTextColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                height: 20 / 14,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  data.name,
+                                  style: GoogleFonts.publicSans(
+                                    color: data.accentColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    height: 28 / 20,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.82),
+                                    borderRadius: BorderRadius.circular(999),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x1A000000),
+                                        blurRadius: 2,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: BoxDecoration(
+                                          color: data.statusDotColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        data.status,
+                                        style: GoogleFonts.publicSans(
+                                          color: data.statusTextColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          height: 20 / 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 12),
+                        const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -959,7 +709,7 @@ class _QuickActionsGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 24,
         mainAxisSpacing: 24,
-        childAspectRatio: 165 / 172,
+        childAspectRatio: 165 / 188,
       ),
       itemBuilder: (context, index) {
         final item = actions[index];
@@ -979,6 +729,11 @@ class _QuickActionCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(40),
       onTap: () {
+        final onTap = data.onTap;
+        if (onTap != null) {
+          onTap(context);
+          return;
+        }
         if (data.onTapRouteName != null) {
           Navigator.pushNamed(context, data.onTapRouteName!);
           return;
@@ -995,7 +750,7 @@ class _QuickActionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: _HomePageState._secondaryColor, width: 2),
+          border: Border.all(color: HomePage._secondaryColor, width: 2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1006,7 +761,7 @@ class _QuickActionCard extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
-                border: Border.all(color: _HomePageState._secondaryColor),
+                border: Border.all(color: HomePage._secondaryColor),
                 boxShadow: [
                   BoxShadow(
                     color: data.glowColor,
@@ -1018,14 +773,14 @@ class _QuickActionCard extends StatelessWidget {
               child: Icon(data.icon, color: data.iconColor, size: 22),
             ),
             const SizedBox(height: 12),
-            Flexible(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     data.title,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.publicSans(
                       color: const Color(0xFF1F2937),
@@ -1101,6 +856,7 @@ class _QuickActionData {
     required this.icon,
     required this.iconColor,
     required this.glowColor,
+    this.onTap,
     this.onTapRouteName,
     this.builder,
   });
@@ -1110,39 +866,7 @@ class _QuickActionData {
   final IconData icon;
   final Color iconColor;
   final Color glowColor;
+  final void Function(BuildContext context)? onTap;
   final String? onTapRouteName;
   final Widget Function()? builder;
-}
-
-class _AdaptiveImage extends StatelessWidget {
-  const _AdaptiveImage({
-    required this.source,
-    required this.fit,
-    required this.fallback,
-    this.opacity,
-  });
-
-  final String source;
-  final BoxFit fit;
-  final Widget fallback;
-  final Animation<double>? opacity;
-
-  @override
-  Widget build(BuildContext context) {
-    if (source.startsWith('assets/')) {
-      return Image.asset(
-        source,
-        fit: fit,
-        opacity: opacity,
-        errorBuilder: (context, error, stackTrace) => fallback,
-      );
-    }
-
-    return Image.network(
-      source,
-      fit: fit,
-      opacity: opacity,
-      errorBuilder: (context, error, stackTrace) => fallback,
-    );
-  }
 }

@@ -8,6 +8,8 @@ class NotificationModel extends AppNotification {
     required super.processing,
     required super.uid,
     required super.relationshipId,
+    super.fallLatitude,
+    super.fallLongitude,
     super.senderName,
     super.senderRelation,
     super.createdAt,
@@ -21,6 +23,8 @@ class NotificationModel extends AppNotification {
       processing: json['processing']?.toString() ?? '',
       uid: json['uid']?.toString() ?? '',
       relationshipId: _nullableInt(json['relationship_id']),
+      fallLatitude: _nullableDouble(json['fall_latitude']),
+      fallLongitude: _nullableDouble(json['fall_longitude']),
       senderName: json['sender_name']?.toString(),
       senderRelation: json['sender_relation']?.toString(),
       createdAt: _nullableDateTime(json['created_at']),
@@ -39,5 +43,12 @@ class NotificationModel extends AppNotification {
       return null;
     }
     return DateTime.tryParse(value.toString());
+  }
+
+  static double? _nullableDouble(Object? value) {
+    if (value == null) {
+      return null;
+    }
+    return double.tryParse(value.toString());
   }
 }

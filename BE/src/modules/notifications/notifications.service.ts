@@ -34,6 +34,8 @@ export class NotificationsService {
           processing,
           uid,
           relationship_id,
+          fall_latitude,
+          fall_longitude,
           created_at,
           relationship:relationship_id(
             relation_type,
@@ -61,8 +63,10 @@ export class NotificationsService {
         processing: item.processing,
         uid: item.uid,
         relationship_id: item.relationship_id,
+        fall_latitude: item.fall_latitude ?? null,
+        fall_longitude: item.fall_longitude ?? null,
         created_at: item.created_at,
-        sender_name: isPendingInvite ? item.relationship?.inviter?.name ?? null : null,
+        sender_name: item.relationship?.inviter?.name ?? null,
         sender_relation: isPendingInvite
           ? item.relationship?.reverse_relation_type ??
             item.relationship?.relation_type ??
@@ -70,6 +74,78 @@ export class NotificationsService {
           : null,
       };
     });
+  }
+
+  async createFallAlert(
+    uid: string,
+    locationSnapshot?: {
+      latitude?: number | null;
+      longitude?: number | null;
+    },
+  ) {
+    const seniorName = await this.getUserDisplayName(uid);
+
+    const { data: relationships, error } = await supabaseAdmin
+      .from('relationship')
+      .select(
+        `
+          id,
+          relation_id,
+          relation_type,
+          reverse_relation_type,
+          relation_user:user_info!relationship_relation_id_fkey(
+            role
+          )
+        `,
+      )
+      .eq('uid', uid)
+      .eq('processing', 'xacnhan');
+
+    if (error) {
+      throw error;
+    }
+
+    const recipients = (relationships ?? [])
+      .map((relationship: any) => ({
+        relationshipId: relationship.id,
+        recipientUid: relationship.relation_id as string,
+        recipientRole: relationship.relation_user?.role ?? null,
+        relationLabel: this.normalizeRelationLabel(
+          relationship.reverse_relation_type ?? relationship.relation_type,
+        ),
+      }))
+      .filter(
+        (item) =>
+          item.recipientUid &&
+          item.recipientUid.trim().length > 0 &&
+          item.recipientRole === 'nguoichamsoc',
+      );
+
+    const createdNotifications: any[] = [];
+
+    for (const recipient of recipients) {
+      const { data: notification, error: notificationError } = await supabaseAdmin
+        .from('notification')
+        .insert({
+          uid: recipient.recipientUid,
+          relationship_id: recipient.relationshipId,
+          title: 'Cảnh báo té ngã',
+          content: `${seniorName}(${recipient.relationLabel}) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.`,
+          processing: 'done',
+          fall_latitude: locationSnapshot?.latitude ?? null,
+          fall_longitude: locationSnapshot?.longitude ?? null,
+        })
+        .select('*')
+        .single();
+
+      if (notificationError) {
+        throw notificationError;
+      }
+
+      createdNotifications.push(notification);
+    }
+
+    return createdNotifications;
   }
 
   async respond(

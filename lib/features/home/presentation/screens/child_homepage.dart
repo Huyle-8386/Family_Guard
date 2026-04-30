@@ -135,15 +135,7 @@ class ChildHomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FutureBuilder(
-                      future: AppDependencies.instance.getSavedSessionUseCase(),
-                      builder: (context, snapshot) {
-                        return _buildHero(
-                          context,
-                          CurrentUserViewData.fromSession(snapshot.data),
-                        );
-                      },
-                    ),
+                    _buildHero(context),
                     const SizedBox(height: 20),
                     _buildTodayCard(),
                     const SizedBox(height: 20),
@@ -183,7 +175,7 @@ class ChildHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHero(BuildContext context, CurrentUserViewData userView) {
+  Widget _buildHero(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -217,7 +209,7 @@ class ChildHomePage extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  userView.initials,
+                  'A',
                   style: GoogleFonts.lexend(
                     color: _blueDark,
                     fontSize: 30,
@@ -231,7 +223,7 @@ class ChildHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Xin chào ${userView.shortName}',
+                      'Xin ch\u00E0o An',
                       style: GoogleFonts.lexend(
                         color: _blueDark,
                         fontSize: 24,
@@ -240,7 +232,7 @@ class ChildHomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      userView.fullName,
+                      'Nguy\u1EC5n Minh An',
                       style: GoogleFonts.beVietnamPro(
                         color: _muted,
                         fontSize: 14,
@@ -338,7 +330,8 @@ class ChildHomePage extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => _openFamilyMap(context),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, AppRoutes.kidLocation),
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
                     backgroundColor: const Color(0xFFE6F6FF),
@@ -734,26 +727,9 @@ class ChildHomePage extends StatelessWidget {
       _showSosSheet(context);
       return;
     }
-    if (action.routeName == AppRoutes.kidLocation) {
-      _openFamilyMap(context);
-      return;
-    }
     if (action.routeName != null) {
       Navigator.pushNamed(context, action.routeName!);
     }
-  }
-
-  static void _openFamilyMap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => const FamilyMapScreen(
-          homeRouteName: AppRoutes.kidHome,
-          notificationsRouteName: AppRoutes.notifications,
-          settingsRouteName: AppRoutes.kidProfile,
-          showBottomNav: false,
-        ),
-      ),
-    );
   }
 
   static void _showSosSheet(BuildContext context) {
