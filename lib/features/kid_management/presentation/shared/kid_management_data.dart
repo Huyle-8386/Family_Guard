@@ -1,6 +1,7 @@
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_models.dart';
+import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -97,7 +98,16 @@ void openChatList(BuildContext context) {
 }
 
 void openFamilyMap(BuildContext context) {
-  Navigator.pushNamed(context, AppRoutes.tracking);
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => const FamilyMapScreen(
+        homeRouteName: AppRoutes.kidHome,
+        notificationsRouteName: AppRoutes.notifications,
+        settingsRouteName: AppRoutes.settings,
+        showBottomNav: false,
+      ),
+    ),
+  );
 }
 
 void openRoutePlayback(BuildContext context) {

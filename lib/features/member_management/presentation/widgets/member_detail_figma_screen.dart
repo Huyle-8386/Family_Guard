@@ -1,30 +1,327 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/features/member_management/presentation/cubit/member_management_cubit.dart';
 import 'package:family_guard/features/member_management/presentation/models/member_management_demo_data.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MemberDetailFigmaScreen extends StatelessWidget {
-  const MemberDetailFigmaScreen({
-    super.key,
-    required this.member,
-  });
+class MemberDetailFigmaScreen extends StatefulWidget {
+  const MemberDetailFigmaScreen({super.key, required this.member});
 
   final MemberManagementMember member;
 
   @override
+  State<MemberDetailFigmaScreen> createState() =>
+      _MemberDetailFigmaScreenState();
+
+  static void openLocation(
+    BuildContext context,
+    MemberManagementMember member,
+  ) {
+    switch (member.role) {
+      case MemberRole.child:
+        Navigator.pushNamed(context, AppRoutes.kidManagement);
+        return;
+      case MemberRole.adult:
+        Navigator.pushNamed(
+          context,
+          AppRoutes.adultMemberDetail,
+          arguments: member.trackingArgs,
+        );
+        return;
+      case MemberRole.senior:
+        Navigator.pushNamed(
+          context,
+          AppRoutes.seniorMemberDetail,
+          arguments: member.trackingArgs,
+        );
+        return;
+    }
+  }
+
+  static Future<void> confirmDelete(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Xóa thành viên'),
+          content: const Text(
+            'Đây là flow mô phỏng. Bạn muốn đóng màn chi tiết này?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Hủy'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Xác nhận'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !context.mounted) {
+      return;
+    }
+
+    Navigator.maybePop(context);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Đã đóng flow xóa thành viên mô phỏng'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+}
+
+class _MemberDetailFigmaScreenState extends State<MemberDetailFigmaScreen> {
+  static const List<String> _defaultRelationshipOptions = [
+    'Chồng',
+    'Vợ',
+    'Bố',
+    'Mẹ',
+    'Anh',
+    'Chị',
+    'Em',
+    'Con',
+    'Ông',
+    'Bà',
+    'Cô',
+    'Chú',
+    'Bác',
+  ];
+
+  late String _relationship;
+  late final MemberManagementCubit _cubit;
+
+  List<String> get _relationshipOptions {
+    if (_defaultRelationshipOptions.contains(_relationship)) {
+      return _defaultRelationshipOptions;
+    }
+
+    return [_relationship, ..._defaultRelationshipOptions];
+  }
+
+  MemberManagementMember get _member => widget.member;
+
+  @override
+  void initState() {
+    super.initState();
+    _relationship = _displayRelation(widget.member.relation);
+    _cubit = MemberManagementCubit(
+      getRelationshipsUseCase: AppDependencies.instance.getRelationshipsUseCase,
+      searchUsersUseCase: AppDependencies.instance.searchUsersUseCase,
+      inviteRelationshipUseCase:
+          AppDependencies.instance.inviteRelationshipUseCase,
+      updateRelationshipUseCase:
+          AppDependencies.instance.updateRelationshipUseCase,
+      deleteRelationshipUseCase:
+          AppDependencies.instance.deleteRelationshipUseCase,
+      realtimeClient: AppDependencies.instance.realtimeClient,
+    );
+  }
+
+  String _displayRelation(String relation) {
+    final trimmed = relation.trim();
+    if (!trimmed.contains('_')) {
+      return trimmed;
+    }
+
+    final parts = trimmed
+        .split('_')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) {
+      return trimmed;
+    }
+
+    switch (parts.last.toLowerCase()) {
+      case 'cha':
+        return 'Cha';
+      case 'bo':
+        return 'Bố';
+      case 'me':
+        return 'Mẹ';
+      case 'con':
+        return 'Con';
+      case 'ong':
+        return 'Ông';
+      case 'ba':
+        return 'Bà';
+      case 'vo':
+        return 'Vợ';
+      case 'chong':
+        return 'Chồng';
+      case 'anh':
+        return 'Anh';
+      case 'chi':
+        return 'Chị';
+      case 'em':
+        return 'Em';
+      case 'chau':
+        return 'Cháu';
+      default:
+        return parts.last;
+    }
+  }
+
+  @override
+  void dispose() {
+    _cubit.dispose();
+    super.dispose();
+  }
+
+  Future<void> _showRelationshipDialog() async {
+    final relation = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return _RelationshipEditDialog(
+          initialValue: _relationship,
+          relationshipOptions: _relationshipOptions,
+        );
+      },
+    );
+
+    if (!mounted || relation == null) {
+      return;
+    }
+
+    final relationshipId = _member.relationshipId;
+    if (relationshipId == null) {
+      setState(() {
+        _relationship = relation;
+      });
+      return;
+    }
+
+    final updated = await _cubit.updateRelationType(
+      relationshipId: relationshipId,
+      relationType: relation,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (updated == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              _cubit.state.errorMessage ?? 'Không thể cập nhật quan hệ.',
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    setState(() {
+      _relationship = relation;
+    });
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Đã cập nhật mối quan hệ.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _handleDeleteMember() async {
+    final relationshipId = _member.relationshipId;
+    if (relationshipId == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Không tìm thấy relationship để xóa.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Xóa thành viên'),
+          content: const Text(
+            'Bạn có chắc muốn xóa thành viên này khỏi gia đình không?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Hủy'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Xác nhận'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    final deleted = await _cubit.deleteMember(relationshipId);
+    if (!mounted) {
+      return;
+    }
+
+    if (deleted == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              _cubit.state.errorMessage ?? 'Không thể xóa thành viên.',
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Đã xóa thành viên thành công.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    Navigator.of(context).pop();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final personalInfo = [
-      _InfoRowData(label: 'Tên', value: member.name),
-      _InfoRowData(label: 'SĐT', value: member.phoneNumber),
-      _InfoRowData(label: 'Quan hệ', value: member.relation),
+      _InfoRowData(label: 'Tên', value: _member.name),
+      _InfoRowData(label: 'SĐT', value: _member.phoneNumber),
+      _InfoRowData(label: 'Quan hệ', value: _relationship),
     ];
 
     final zones = [
       const _ZoneRowData(name: 'Nhà', isSafe: true),
-      _ZoneRowData(name: member.address, isSafe: !member.invitationPending),
-      _ZoneRowData(name: 'Trường học / Điểm đến', isSafe: member.role == MemberRole.child),
+      _ZoneRowData(name: _member.address, isSafe: !_member.invitationPending),
+      _ZoneRowData(
+        name: 'Trường học / Điểm đến',
+        isSafe: _member.role == MemberRole.child,
+      ),
     ];
 
     return Scaffold(
@@ -37,11 +334,7 @@ class MemberDetailFigmaScreen extends StatelessWidget {
               children: [
                 _TopBar(
                   onBack: () => Navigator.maybePop(context),
-                  onEdit: () => Navigator.pushNamed(
-                    context,
-                    AppRoutes.addMember,
-                    arguments: AddMemberFlowArgs.edit(member),
-                  ),
+                  onEdit: _showRelationshipDialog,
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -51,17 +344,21 @@ class MemberDetailFigmaScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: _ProfileCard(
-                            member: member,
-                            onViewLocation: () => _openLocation(context, member),
+                            member: _member,
+                            onViewLocation: () =>
+                                MemberDetailFigmaScreen.openLocation(
+                                  context,
+                                  _member,
+                                ),
                             onCallTap: () => Navigator.pushNamed(
                               context,
                               AppRoutes.inAppCall,
-                              arguments: member.inAppCallArgs,
+                              arguments: _member.inAppCallArgs,
                             ),
                             onChatTap: () => Navigator.pushNamed(
                               context,
                               AppRoutes.chatConversation,
-                              arguments: member.chatThreadArgs,
+                              arguments: _member.chatThreadArgs,
                             ),
                           ),
                         ),
@@ -103,19 +400,23 @@ class MemberDetailFigmaScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: _LocationHistoryCard(
-                            trackingArgs: member.trackingArgs,
+                            trackingArgs: _member.trackingArgs,
                             onReviewTap: () => Navigator.pushNamed(
                               context,
                               AppRoutes.routePlayback,
-                              arguments: member.trackingArgs,
+                              arguments: _member.trackingArgs,
                             ),
-                            onLocateTap: () => _openLocation(context, member),
+                            onLocateTap: () =>
+                                MemberDetailFigmaScreen.openLocation(
+                                  context,
+                                  _member,
+                                ),
                           ),
                         ),
                         const SizedBox(height: 24),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: _DeviceInfoCard(member: member),
+                          child: _DeviceInfoCard(member: _member),
                         ),
                         const SizedBox(height: 24),
                         Padding(
@@ -124,7 +425,7 @@ class MemberDetailFigmaScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: () => _confirmDelete(context),
+                              onPressed: _handleDeleteMember,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFB9DDE0),
                                 elevation: 0,
@@ -154,71 +455,10 @@ class MemberDetailFigmaScreen extends StatelessWidget {
       ),
     );
   }
-
-  static void _openLocation(BuildContext context, MemberManagementMember member) {
-    switch (member.role) {
-      case MemberRole.child:
-        Navigator.pushNamed(context, AppRoutes.kidManagement);
-        return;
-      case MemberRole.adult:
-        Navigator.pushNamed(
-          context,
-          AppRoutes.adultMemberDetail,
-          arguments: member.trackingArgs,
-        );
-        return;
-      case MemberRole.senior:
-        Navigator.pushNamed(
-          context,
-          AppRoutes.seniorMemberDetail,
-          arguments: member.trackingArgs,
-        );
-        return;
-    }
-  }
-
-  static Future<void> _confirmDelete(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Xóa thành viên'),
-          content: const Text('Đây là flow mô phỏng. Bạn muốn đóng màn chi tiết này?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Hủy'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text('Xác nhận'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmed != true || !context.mounted) {
-      return;
-    }
-
-    Navigator.maybePop(context);
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('Đã đóng flow xóa thành viên mô phỏng'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-  }
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({
-    required this.onBack,
-    required this.onEdit,
-  });
+  const _TopBar({required this.onBack, required this.onEdit});
 
   final VoidCallback onBack;
   final VoidCallback onEdit;
@@ -252,7 +492,11 @@ class _TopBar extends StatelessWidget {
                   color: Color(0xFF00AEB3),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.edit_outlined, size: 14, color: Colors.white),
+                child: const Icon(
+                  Icons.edit_outlined,
+                  size: 14,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
@@ -300,7 +544,11 @@ class _ProfileCard extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) => Container(
                   color: const Color(0xFFE2E8F0),
                   alignment: Alignment.center,
-                  child: const Icon(Icons.person, color: Color(0xFF64748B), size: 40),
+                  child: const Icon(
+                    Icons.person,
+                    color: Color(0xFF64748B),
+                    size: 40,
+                  ),
                 ),
               ),
             ),
@@ -324,7 +572,10 @@ class _ProfileCard extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFA8DADC),
                   borderRadius: BorderRadius.circular(999),
@@ -524,9 +775,15 @@ class _ZoneLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chipBg = data.isSafe ? const Color(0xFFE6F7EF) : const Color(0xFFE6E7E8);
-    final dotColor = data.isSafe ? const Color(0xFF10B981) : const Color(0xFF9AA0A6);
-    final textColor = data.isSafe ? const Color(0xFF00895A) : const Color(0xFF7A8087);
+    final chipBg = data.isSafe
+        ? const Color(0xFFE6F7EF)
+        : const Color(0xFFE6E7E8);
+    final dotColor = data.isSafe
+        ? const Color(0xFF10B981)
+        : const Color(0xFF9AA0A6);
+    final textColor = data.isSafe
+        ? const Color(0xFF00895A)
+        : const Color(0xFF7A8087);
 
     return Column(
       children: [
@@ -545,7 +802,10 @@ class _ZoneLine extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: chipBg,
                   borderRadius: BorderRadius.circular(999),
@@ -555,7 +815,10 @@ class _ZoneLine extends StatelessWidget {
                     Container(
                       width: 7,
                       height: 7,
-                      decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: dotColor,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -633,7 +896,8 @@ class _LocationHistoryCard extends StatelessWidget {
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.family_guard.app',
                       ),
                       PolylineLayer(
@@ -655,7 +919,10 @@ class _LocationHistoryCard extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: const Color(0xFF3AC7C7),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 3),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
                                 boxShadow: const [
                                   BoxShadow(
                                     color: Color(0x6642C8CD),
@@ -674,7 +941,10 @@ class _LocationHistoryCard extends StatelessWidget {
                     left: 16,
                     top: 16,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 9),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 17,
+                        vertical: 9,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(999),
@@ -717,7 +987,11 @@ class _LocationHistoryCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: const Icon(Icons.my_location_rounded, color: Colors.white, size: 28),
+                        child: const Icon(
+                          Icons.my_location_rounded,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
                     ),
                   ),
@@ -858,7 +1132,9 @@ class _DeviceTextBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alignment = alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final alignment = alignRight
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start;
     return Column(
       crossAxisAlignment: alignment,
       children: [
@@ -882,6 +1158,214 @@ class _DeviceTextBlock extends StatelessWidget {
           textAlign: alignRight ? TextAlign.right : TextAlign.left,
         ),
       ],
+    );
+  }
+}
+
+class _RelationshipEditDialog extends StatefulWidget {
+  const _RelationshipEditDialog({
+    required this.initialValue,
+    required this.relationshipOptions,
+  });
+
+  final String initialValue;
+  final List<String> relationshipOptions;
+
+  @override
+  State<_RelationshipEditDialog> createState() =>
+      _RelationshipEditDialogState();
+}
+
+class _RelationshipEditDialogState extends State<_RelationshipEditDialog> {
+  late String? _selectedRelation;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedRelation = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 354),
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x40000000),
+              blurRadius: 50,
+              offset: Offset(0, 18),
+              spreadRadius: -12,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Xác nhận',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF0F172A),
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                height: 28 / 20,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Quan hệ với bạn là:',
+                style: GoogleFonts.inter(
+                  color: const Color(0xFF64748B),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 20 / 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            _RelationshipDropdown(
+              value: _selectedRelation,
+              options: widget.relationshipOptions,
+              onChanged: (value) {
+                setState(() {
+                  _selectedRelation = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Xác nhận thành viên trong gia đình của bạn',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF64748B),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                height: 22.75 / 14,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _selectedRelation == null
+                    ? null
+                    : () => Navigator.of(context).pop(_selectedRelation),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color(0xFF4DD1C4),
+                  disabledBackgroundColor: const Color(0xFFB4DFDB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                ),
+                child: Text(
+                  'Xác nhận',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFE2E8F0), width: 2),
+                  foregroundColor: const Color(0xFF334155),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48),
+                  ),
+                ),
+                child: Text(
+                  'Hủy',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RelationshipDropdown extends StatelessWidget {
+  const _RelationshipDropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String? value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3E9E9),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0x1C000000)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isExpanded: true,
+          hint: Text(
+            'Lựa chọn mối quan hệ',
+            style: GoogleFonts.beVietnamPro(
+              color: const Color(0x80171D1D),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Color(0xFF6B7280),
+            size: 24,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          dropdownColor: const Color(0xFFE3E9E9),
+          style: GoogleFonts.beVietnamPro(
+            color: const Color(0xFF171D1D),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          items: options
+              .map(
+                (option) => DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ),
     );
   }
 }

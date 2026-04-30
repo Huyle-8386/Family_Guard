@@ -1,6 +1,47 @@
 import { supabaseAdmin } from '../../config/supabase';
 
 export class RelationshipsService {
+  private normalizeRelationLabel(value?: string | null): string {
+    const normalized = value?.toString().trim();
+    return normalized && normalized.length > 0 ? normalized : 'Người thân';
+  }
+
+  private async getUserDisplayName(uid: string): Promise<string> {
+    const { data: userProfile, error } = await supabaseAdmin
+      .from('user_info')
+      .select('name')
+      .eq('uid', uid)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    const displayName = userProfile?.name?.toString().trim();
+    return displayName && displayName.length > 0
+      ? displayName
+      : 'Một thành viên gia đình';
+  }
+
+  private async createRelationshipNotification(params: {
+    recipientUid: string;
+    relationshipId: number;
+    title: string;
+    content: string;
+  }): Promise<void> {
+    const { error } = await supabaseAdmin.from('notification').insert({
+      uid: params.recipientUid,
+      relationship_id: params.relationshipId,
+      title: params.title,
+      content: params.content,
+      processing: 'done',
+    });
+
+    if (error) {
+      throw error;
+    }
+  }
+
   async invite(
     uid: string,
     targetUid: string,
@@ -17,36 +58,77 @@ export class RelationshipsService {
       .or(
         `and(uid.eq.${uid},relation_id.eq.${targetUid}),and(uid.eq.${targetUid},relation_id.eq.${uid})`,
       )
-      .neq('processing', 'daxoa')
+      .not('processing', 'in', '(daxoa,huy)')
       .maybeSingle();
 
     if (existedError) throw existedError;
 
     if (existed) {
-      throw new Error('Hai người này đã có quan hệ hoặc đang chờ xác nhận');
+      throw new Error(
+        'Hai người này đã có quan hệ hoặc đang chờ xác nhận',
+      );
     }
 
-    const { data: relationship, error: relationshipError } = await supabaseAdmin
-      .from('relationship')
-      .insert({
-        uid,
-        relation_id: targetUid,
-        relation_type: relationType,
-        reverse_relation_type: reverseRelationType,
-        processing: 'chuachapnhan',
-      })
-      .select('*')
-      .single();
+    const { data: archivedRelationship, error: archivedRelationshipError } =
+      await supabaseAdmin
+        .from('relationship')
+        .select('id, processing')
+        .eq('uid', uid)
+        .eq('relation_id', targetUid)
+        .in('processing', ['daxoa', 'huy'])
+        .maybeSingle();
+
+    if (archivedRelationshipError) throw archivedRelationshipError;
+
+    let relationship;
+    let relationshipError;
+
+    if (archivedRelationship) {
+      const result = await supabaseAdmin
+        .from('relationship')
+        .update({
+          uid,
+          relation_id: targetUid,
+          relation_type: relationType,
+          reverse_relation_type: reverseRelationType,
+          processing: 'chuachapnhan',
+        })
+        .eq('id', archivedRelationship.id)
+        .select('*')
+        .single();
+
+      relationship = result.data;
+      relationshipError = result.error;
+    } else {
+      const result = await supabaseAdmin
+        .from('relationship')
+        .insert({
+          uid,
+          relation_id: targetUid,
+          relation_type: relationType,
+          reverse_relation_type: reverseRelationType,
+          processing: 'chuachapnhan',
+        })
+        .select('*')
+        .single();
+
+      relationship = result.data;
+      relationshipError = result.error;
+    }
 
     if (relationshipError) throw relationshipError;
+
+    const inviterName = await this.getUserDisplayName(uid);
+    const inviterRelation =
+      reverseRelationType?.toString().trim() || 'Người thân';
 
     const { data: notification, error: notificationError } = await supabaseAdmin
       .from('notification')
       .insert({
         uid: targetUid,
         relationship_id: relationship.id,
-        title: 'Xác nhận người thân',
-        content: 'Yêu cầu tham gia',
+        title: 'Xác nhận mối quan hệ',
+        content: `Bạn có một lời mời xác nhận mối quan hệ từ ${inviterName}(${inviterRelation}). Xác nhận ngay?`,
         processing: 'dagui',
       })
       .select('*')
@@ -116,9 +198,17 @@ export class RelationshipsService {
     if (relationship.processing === 'daxoa') {
       throw new Error('Relationship này đã bị xóa');
     }
-if (relationship.processing === 'huy') {
+
+    if (relationship.processing === 'huy') {
       throw new Error('Relationship này đã bị hủy');
     }
+
+    const previousRelationType = relationship.relation_type
+      ?.toString()
+      .trim();
+    const previousReverseRelationType = relationship.reverse_relation_type
+      ?.toString()
+      .trim();
 
     const updatePayload: Record<string, any> = {
       relation_type: relationType,
@@ -150,6 +240,36 @@ if (relationship.processing === 'huy') {
         .neq('processing', 'daxoa');
 
       if (reverseError) throw reverseError;
+    }
+
+    try {
+      const actorName = await this.getUserDisplayName(currentUid);
+
+      let relationBefore = this.normalizeRelationLabel(
+        previousReverseRelationType ?? previousRelationType,
+      );
+      let relationAfter = this.normalizeRelationLabel(
+        reverseRelationType ?? previousReverseRelationType ?? relationType,
+      );
+
+      if (relationBefore === relationAfter) {
+        relationBefore = this.normalizeRelationLabel(previousRelationType);
+        relationAfter = this.normalizeRelationLabel(relationType);
+      }
+
+      const content =
+        relationBefore === relationAfter
+          ? `${actorName}(${relationAfter}) đã cập nhật thông tin quan hệ với bạn.`
+          : `${actorName}(${relationAfter}) đã sửa quan hệ với bạn từ ${relationBefore} thành ${relationAfter}.`;
+
+      await this.createRelationshipNotification({
+        recipientUid: relationship.relation_id,
+        relationshipId: relationship.id,
+        title: 'Cập nhật mối quan hệ',
+        content,
+      });
+    } catch (error) {
+      console.error('Không thể tạo thông báo sửa quan hệ', error);
     }
 
     return data;
@@ -193,6 +313,22 @@ if (relationship.processing === 'huy') {
       .eq('uid', relationship.relation_id)
       .eq('relation_id', relationship.uid)
       .neq('processing', 'daxoa');
+
+    try {
+      const actorName = await this.getUserDisplayName(currentUid);
+      const actorRelation = this.normalizeRelationLabel(
+        relationship.reverse_relation_type ?? relationship.relation_type,
+      );
+
+      await this.createRelationshipNotification({
+        recipientUid: relationship.relation_id,
+        relationshipId: relationship.id,
+        title: 'Mối quan hệ đã bị xóa',
+        content: `${actorName}(${actorRelation}) đã xóa quan hệ với bạn.`,
+      });
+    } catch (error) {
+      console.error('Không thể tạo thông báo xóa quan hệ', error);
+    }
 
     return data;
   }

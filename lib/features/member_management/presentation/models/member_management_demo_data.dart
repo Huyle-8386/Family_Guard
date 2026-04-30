@@ -1,3 +1,4 @@
+import 'package:family_guard/features/member_management/domain/entities/search_user.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_models.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
@@ -46,10 +47,12 @@ class MemberManagementMember {
     required this.status,
     required this.address,
     required this.phoneNumber,
+    required this.email,
     required this.avatarUrl,
     required this.batteryPercent,
     required this.deviceName,
     required this.lastActive,
+    this.relationshipId,
     this.invitationPending = false,
   });
 
@@ -60,11 +63,35 @@ class MemberManagementMember {
   final String status;
   final String address;
   final String phoneNumber;
+  final String email;
   final String avatarUrl;
   final int batteryPercent;
   final String deviceName;
   final String lastActive;
+  final int? relationshipId;
   final bool invitationPending;
+
+  factory MemberManagementMember.fromSearchUser(
+    SearchUser user, {
+    required AddMemberEntryMode mode,
+  }) {
+    return MemberManagementMember(
+      id: user.uid,
+      name: user.name.isNotEmpty ? user.name : user.email,
+      relation: 'Người thân',
+      role: user.role == 'nguoiduocchamsoc' ? MemberRole.child : MemberRole.adult,
+      status: mode == AddMemberEntryMode.phone ? user.phone ?? '' : user.email,
+      address: user.phone?.isNotEmpty == true
+          ? user.phone!
+          : (user.email.isNotEmpty ? user.email : 'Chưa cập nhật'),
+      phoneNumber: user.phone ?? '',
+      email: user.email,
+      avatarUrl: user.avata ?? '',
+      batteryPercent: 0,
+      deviceName: 'Chưa cập nhật',
+      lastActive: 'Chưa cập nhật',
+    );
+  }
 
   String get roleChipLabel {
     switch (role) {
@@ -251,6 +278,7 @@ const List<MemberManagementMember> memberManagementMembers = [
     status: 'Đang ở nhà',
     address: '123 Nguyễn Hữu Thọ',
     phoneNumber: '+84 909 100 001',
+    email: 'ba.noi@familyguard.vn',
     avatarUrl:
         'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=300&q=80',
     batteryPercent: 82,
@@ -259,12 +287,13 @@ const List<MemberManagementMember> memberManagementMembers = [
   ),
   MemberManagementMember(
     id: 'adult-bo-xoi',
-    name: 'Bố Xôi',
-    relation: 'Vợ/Chồng',
+    name: 'Lê Văn Huy',
+    relation: 'Chồng',
     role: MemberRole.adult,
     status: 'Đang đi dạo',
     address: 'Công viên Tao Đàn',
     phoneNumber: '+84 909 200 002',
+    email: 'example@family.com',
     avatarUrl:
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80',
     batteryPercent: 24,
@@ -279,6 +308,7 @@ const List<MemberManagementMember> memberManagementMembers = [
     status: 'Đang ở trường',
     address: 'Trường Tiểu Học',
     phoneNumber: '+84 909 300 003',
+    email: 'xoi@familyguard.vn',
     avatarUrl:
         'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?w=300&q=80',
     batteryPercent: 84,
@@ -293,6 +323,7 @@ const List<MemberManagementMember> memberManagementMembers = [
     status: 'Chờ xác nhận',
     address: 'Chưa kết nối',
     phoneNumber: '+84 909 400 004',
+    email: 'suri@familyguard.vn',
     avatarUrl:
         'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=300&q=80',
     batteryPercent: 0,
@@ -311,17 +342,50 @@ MemberManagementMember memberManagementMemberById(String id) {
   return memberManagementMembers.first;
 }
 
-List<MemberManagementMember> filterMemberManagementMembers(String query) {
+List<MemberManagementMember> filterMemberManagementMembers(
+  String query, {
+  AddMemberEntryMode mode = AddMemberEntryMode.phone,
+  bool exact = false,
+}) {
   final normalizedQuery = query.trim().toLowerCase();
   if (normalizedQuery.isEmpty) {
     return memberManagementMembers;
   }
 
+  final normalizedPhoneQuery = _normalizePhoneForSearch(query);
+
   final matches = memberManagementMembers.where((member) {
-    return member.name.toLowerCase().contains(normalizedQuery) ||
-        member.phoneNumber.toLowerCase().contains(normalizedQuery) ||
+    if (mode == AddMemberEntryMode.email) {
+      final memberEmail = member.email.toLowerCase();
+      if (exact) {
+        return memberEmail == normalizedQuery;
+      }
+      return memberEmail.contains(normalizedQuery) ||
+          member.name.toLowerCase().contains(normalizedQuery) ||
+          member.relation.toLowerCase().contains(normalizedQuery);
+    }
+
+    final memberPhone = _normalizePhoneForSearch(member.phoneNumber);
+    if (exact) {
+      return memberPhone == normalizedPhoneQuery;
+    }
+
+    return memberPhone.contains(normalizedPhoneQuery) ||
+        member.name.toLowerCase().contains(normalizedQuery) ||
         member.relation.toLowerCase().contains(normalizedQuery);
   }).toList();
 
+  if (exact) {
+    return matches;
+  }
+
   return matches.isEmpty ? memberManagementMembers : matches;
+}
+
+String _normalizePhoneForSearch(String input) {
+  final digits = input.replaceAll(RegExp(r'[^0-9]'), '');
+  if (digits.startsWith('84') && digits.length == 11) {
+    return '0${digits.substring(2)}';
+  }
+  return digits;
 }

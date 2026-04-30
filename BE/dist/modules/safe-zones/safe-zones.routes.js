@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_middleware_1 = require("../../middlewares/auth.middleware");
+const safe_zones_controller_1 = require("./safe-zones.controller");
+const router = (0, express_1.Router)();
+const controller = new safe_zones_controller_1.SafeZonesController();
+router.post('/safe-zones', auth_middleware_1.authMiddleware, controller.create.bind(controller));
+router.get('/safe-zones', auth_middleware_1.authMiddleware, controller.list.bind(controller));
+router.put('/safe-zones/:id', auth_middleware_1.authMiddleware, controller.update.bind(controller));
+router.delete('/safe-zones/:id', auth_middleware_1.authMiddleware, controller.delete.bind(controller));
+exports.default = router;

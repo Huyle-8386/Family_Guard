@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
 
 enum AppNavTab { home, tracking, notifications, settings }
 enum AppBottomMenuThirdTab { notifications, chat }
@@ -24,6 +25,8 @@ class AppBottomMenu extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
+		AppDependencies.instance.notificationBadgeController.start();
+
 		return Container(
 			margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
 			padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -50,15 +53,28 @@ class AppBottomMenu extends StatelessWidget {
 						),
 					),
 					Expanded(
-						child: _MenuItem(
-							icon: thirdTab == AppBottomMenuThirdTab.chat
-									? Icons.chat_bubble_outline_rounded
-									: Icons.notifications_none_rounded,
-							activeIcon: thirdTab == AppBottomMenuThirdTab.chat
-									? Icons.chat_bubble_rounded
-									: Icons.notifications_rounded,
-							active: current == AppNavTab.notifications,
-							onTap: () => _goToThirdTab(context),
+						child: AnimatedBuilder(
+							animation: AppDependencies.instance.notificationBadgeController,
+							builder: (context, _) {
+								final showBadge =
+										thirdTab == AppBottomMenuThirdTab.notifications &&
+										AppDependencies
+											.instance
+											.notificationBadgeController
+											.hasPendingNotifications;
+
+								return _MenuItem(
+									icon: thirdTab == AppBottomMenuThirdTab.chat
+											? Icons.chat_bubble_outline_rounded
+											: Icons.notifications_none_rounded,
+									activeIcon: thirdTab == AppBottomMenuThirdTab.chat
+											? Icons.chat_bubble_rounded
+											: Icons.notifications_rounded,
+									active: current == AppNavTab.notifications,
+									showBadge: showBadge,
+									onTap: () => _goToThirdTab(context),
+								);
+							},
 						),
 					),
 					Expanded(
@@ -112,12 +128,14 @@ class _MenuItem extends StatelessWidget {
 		required this.icon,
 		required this.activeIcon,
 		required this.active,
+		this.showBadge = false,
 		required this.onTap,
 	});
 
 	final IconData icon;
 	final IconData activeIcon;
 	final bool active;
+	final bool showBadge;
 	final VoidCallback onTap;
 
 	@override
@@ -143,11 +161,40 @@ class _MenuItem extends StatelessWidget {
 								]
 							: null,
 				),
-				child: Icon(
-					active ? activeIcon : icon,
-					color: active ? Colors.white : const Color(0xFF8E96A3),
-					size: 21,
+				child: Stack(
+					clipBehavior: Clip.none,
+					alignment: Alignment.center,
+					children: [
+						Icon(
+							active ? activeIcon : icon,
+							color: active ? Colors.white : const Color(0xFF8E96A3),
+							size: 21,
+						),
+						if (showBadge)
+							const Positioned(
+								top: 10,
+								right: 10,
+								child: _NotificationDot(),
+							),
+					],
 				),
+			),
+		);
+	}
+}
+
+class _NotificationDot extends StatelessWidget {
+	const _NotificationDot();
+
+	@override
+	Widget build(BuildContext context) {
+		return Container(
+			width: 10,
+			height: 10,
+			decoration: BoxDecoration(
+				color: const Color(0xFFEF4444),
+				shape: BoxShape.circle,
+				border: Border.all(color: Colors.white, width: 1.5),
 			),
 		);
 	}

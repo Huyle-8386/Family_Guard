@@ -1,7 +1,13 @@
+// ignore_for_file: unused_element
+
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/home/presentation/screens/kid_flow_models.dart';
+import 'package:family_guard/features/notification/presentation/screens/notification_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
+import 'package:family_guard/features/settings/presentation/screens/settings_app_theme_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,7 +20,6 @@ class KidProfileScreen extends StatelessWidget {
   static const _tealDark = Color(0xFF0D7F7B);
   static const _text = Color(0xFF16304B);
   static const _muted = Color(0xFF73839B);
-  static const _softMint = Color(0xFFE8FAF6);
   static const _softBlue = Color(0xFFEAF4FF);
 
   @override
@@ -32,7 +37,14 @@ class KidProfileScreen extends StatelessWidget {
                   children: [
                     _buildHeader(),
                     const SizedBox(height: 18),
-                    _buildProfileCard(),
+                    FutureBuilder(
+                      future: AppDependencies.instance.getSavedSessionUseCase(),
+                      builder: (context, snapshot) {
+                        return _buildProfileCard(
+                          CurrentUserViewData.fromSession(snapshot.data),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 18),
                     _buildFamilyTrustCard(context),
                     const SizedBox(height: 18),
@@ -79,7 +91,7 @@ class KidProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard() {
+  Widget _legacyBuildProfileCard(CurrentUserViewData userView) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
@@ -104,7 +116,7 @@ class KidProfileScreen extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  'A',
+                  userView.initials,
                   style: GoogleFonts.lexend(
                     color: _text,
                     fontSize: 36,
@@ -150,6 +162,96 @@ class KidProfileScreen extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileCard(CurrentUserViewData userView) {
+    return _buildProfileCardContainer(
+      initials: userView.initials,
+      shortName: userView.shortName,
+      ageLabel: userView.ageLabel,
+    );
+  }
+
+  Widget _buildProfileCardContainer({
+    required String initials,
+    required String shortName,
+    required String ageLabel,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: 98,
+                height: 98,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFFFE7D8), Color(0xFFF7C6B4)],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  initials.isEmpty ? 'U' : initials,
+                  style: GoogleFonts.lexend(
+                    color: _text,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 4,
+                bottom: 4,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: _teal,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                  ),
+                  child: const Icon(
+                    Icons.verified_rounded,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            shortName.isEmpty ? 'Ban' : shortName,
+            style: GoogleFonts.lexend(
+              color: _text,
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          if (ageLabel.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              ageLabel,
+              style: GoogleFonts.beVietnamPro(
+                color: _muted,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -245,42 +347,175 @@ class KidProfileScreen extends StatelessWidget {
   Widget _buildActionList(BuildContext context) {
     return Column(
       children: [
-        _actionTile(
-          title: 'Vùng An Toàn',
-          subtitle: 'Trường học - Nhà',
-          badge: 'Đang bật',
-          icon: Icons.shield_rounded,
-          color: _teal,
+        InkWell(
           onTap: () => Navigator.pushNamed(context, AppRoutes.safeZone),
-        ),
-        const SizedBox(height: 12),
-        _actionTile(
-          title: 'Thay đổi điện thoại',
-          subtitle: 'Xem và cập nhật thông tin cơ bản',
-          icon: Icons.phone_android_rounded,
-          color: const Color(0xFF5F8CFF),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => const PersonalInfoScreen(
-                showBackButton: false,
-                homeRouteName: AppRoutes.kidHome,
-                trackingRouteName: AppRoutes.kidLocation,
-                settingsRouteName: AppRoutes.kidProfile,
-                thirdTab: AppBottomMenuThirdTab.chat,
-                thirdTabRouteName: AppRoutes.kidChatList,
-              ),
+          borderRadius: BorderRadius.circular(32),
+          child: Ink(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(22, 18, 22, 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFC8DEE0),
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.shield_rounded,
+                      size: 20,
+                      color: Color(0xFF0C6E71),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Vùng An Toàn',
+                        style: GoogleFonts.beVietnamPro(
+                          color: const Color(0xFF0A6F74),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0A6F74),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        'Đang Bật',
+                        style: GoogleFonts.beVietnamPro(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [_safeZoneChip('Nhà'), _safeZoneChip('Trường học')],
+                ),
+              ],
             ),
           ),
         ),
         const SizedBox(height: 12),
-        _actionTile(
-          title: 'Màu sắc ứng dụng',
-          subtitle: 'Tùy chỉnh giao diện dễ nhìn hơn',
-          icon: Icons.palette_rounded,
-          color: const Color(0xFFFF9D42),
-          onTap: () => Navigator.pushNamed(context, AppRoutes.settings),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF2F2F2),
+            borderRadius: BorderRadius.circular(32),
+          ),
+          child: Column(
+            children: [
+              _profileMenuRow(
+                icon: Icons.account_circle_outlined,
+                title: 'Thông tin cá nhân',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const PersonalInfoScreen(
+                      showBackButton: false,
+                      homeRouteName: AppRoutes.kidHome,
+                      trackingRouteName: AppRoutes.kidLocation,
+                      settingsRouteName: AppRoutes.kidProfile,
+                      thirdTab: AppBottomMenuThirdTab.chat,
+                      thirdTabRouteName: AppRoutes.kidChatList,
+                    ),
+                  ),
+                ),
+              ),
+              const Divider(height: 1, color: Color(0xFFD7DEE4)),
+              _profileMenuRow(
+                icon: Icons.notifications,
+                title: 'Thông báo',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) =>
+                        const NotificationScreen(showBottomNav: false),
+                  ),
+                ),
+              ),
+              const Divider(height: 1, color: Color(0xFFD7DEE4)),
+              _profileMenuRow(
+                icon: Icons.palette_outlined,
+                title: 'Màu sắc ứng dụng',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SettingsAppThemeScreen(),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _safeZoneChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7FAFA),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.beVietnamPro(
+          color: const Color(0xFF0A6F74),
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          height: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _profileMenuRow({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: const Color(0xFF7B858A), size: 24),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.beVietnamPro(
+                  color: const Color(0xFF23272A),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  height: 1,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 22,
+              color: Color(0xFF747D83),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -383,94 +618,11 @@ class KidProfileScreen extends StatelessWidget {
     );
 
     if (shouldLogout == true && context.mounted) {
+      await AppDependencies.instance.logoutUseCase();
+      if (!context.mounted) {
+        return;
+      }
       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (_) => false);
     }
-  }
-
-  Widget _actionTile({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-    String? badge,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Ink(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: _surface,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(icon, color: color),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          title,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.lexend(
-                            color: _text,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      if (badge != null) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _softMint,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            badge,
-                            style: GoogleFonts.lexend(
-                              color: _tealDark,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.beVietnamPro(
-                      color: _muted,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.chevron_right_rounded, color: Color(0xFFB3C0CF)),
-          ],
-        ),
-      ),
-    );
   }
 }

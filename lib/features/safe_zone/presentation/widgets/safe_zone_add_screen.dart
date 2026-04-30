@@ -15,7 +15,12 @@ import 'package:family_guard/core/widgets/app_back_header.dart';
 /// 3 bÆ°á»›c: Vá»‹ trÃ­ & BÃ¡n kÃ­nh â†’ ThÃ´ng tin vÃ¹ng â†’ Cáº¥u hÃ¬nh cáº£nh bÃ¡o
 /// ============================================================
 class SafeZoneAddScreen extends StatefulWidget {
-  const SafeZoneAddScreen({super.key});
+  const SafeZoneAddScreen({
+    super.key,
+    this.initialMemberId,
+  });
+
+  final String? initialMemberId;
 
   @override
   State<SafeZoneAddScreen> createState() => _SafeZoneAddScreenState();
@@ -48,11 +53,8 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
   bool _leaveAlert = true;
   bool _enterAlert = true;
   bool _stayLongAlert = false;
-  final List<_Contact> _contacts = [
-    _Contact(name: 'Bố', initials: 'B', color: const Color(0xFF3B82F6), checked: true),
-    _Contact(name: 'Mẹ', initials: 'M', color: const Color(0xFFEC4899), checked: true),
-    _Contact(name: 'Anh trai', initials: 'AT', color: const Color(0xFF8B5CF6), checked: false),
-  ];
+  List<_Contact> _contacts = const [];
+  bool _contactsInitialized = false;
 
   String get _radiusLabel {
     if (_radius >= 1000) return '${(_radius / 1000).toStringAsFixed(1)}km';
@@ -67,6 +69,16 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
       duration: const Duration(milliseconds: 200),
       value: _timeBasedEnabled ? 1.0 : 0.0,
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_contactsInitialized) {
+      return;
+    }
+    _contactsInitialized = true;
+    _loadContactsFromService();
   }
 
   @override
@@ -86,7 +98,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
     _timeBasedEnabled ? _toggleCtrl.forward() : _toggleCtrl.reverse();
   }
 
-  void _nextStep() {
+  Future<void> _nextStep() async {
     if (_currentStep < 2) {
       setState(() => _currentStep++);
       _sheetController.animateTo(
@@ -95,15 +107,27 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
         curve: Curves.easeOutCubic,
       );
     } else {
+      final selectedContact = _selectedContact;
+      if (selectedContact == null) {
+        _showMessage('Vui long chon thanh vien de ap dung vung an toan.');
+        return;
+      }
+
       // Map _selectedZoneType index to SafeZoneType enum
       const typeMap = [SafeZoneType.home, SafeZoneType.school, SafeZoneType.hospital, SafeZoneType.custom];
       final service = SafeZoneProvider.read(context);
+      const latitude = 10.7769;
+      const longitude = 106.7009;
+      final address = _searchController.text.trim().isEmpty
+          ? '${latitude.toStringAsFixed(5)}, ${longitude.toStringAsFixed(5)}'
+          : _searchController.text.trim();
       final newZone = SafeZone(
         id: service.nextZoneId(),
         name: _zoneNameCtrl.text.trim().isEmpty ? 'Vùng mới' : _zoneNameCtrl.text.trim(),
-        address: '122 Nguyễn Huệ, Q.1, TP.HCM',
-        latitude: 10.7769,
-        longitude: 106.7009,
+        targetUid: selectedContact.id,
+        address: address,
+        latitude: latitude,
+        longitude: longitude,
         radius: _radius,
         zoneType: typeMap[_selectedZoneType],
         isActive: true,
@@ -113,10 +137,18 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
           enterAlert: _enterAlert,
           stayLongAlert: _stayLongAlert,
         ),
-        recipientIds: _contacts.where((c) => c.checked).map((c) => c.name).toList(),
+        recipientIds: [selectedContact.id],
       );
-      service.addZone(newZone);
-      Navigator.of(context).pushNamed(AppRoutes.safeZoneActive);
+      final created = await service.addZone(newZone);
+      if (!mounted) {
+        return;
+      }
+      if (created == null) {
+        _showMessage(service.lastErrorMessage ?? 'Khong tao duoc vung an toan.');
+        return;
+      }
+      _showMessage('Da them vung an toan "${created.name}".');
+      Navigator.of(context).maybePop();
     }
   }
 
@@ -211,6 +243,70 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
         ),
       ),
     );
+  }
+
+  _Contact? get _selectedContact {
+    for (final contact in _contacts) {
+      if (contact.checked) {
+        return contact;
+      }
+    }
+    return null;
+  }
+
+  void _loadContactsFromService() {
+    final members = SafeZoneProvider.of(context).members;
+    if (members.isEmpty) {
+      _contacts = const [];
+      return;
+    }
+
+    final preferredId = widget.initialMemberId;
+    final contacts = <_Contact>[];
+    var hasPreferred = false;
+    for (var index = 0; index < members.length; index++) {
+      final member = members[index];
+      final isPreferred = preferredId != null && member.id == preferredId;
+      if (isPreferred) {
+        hasPreferred = true;
+      }
+      contacts.add(
+        _Contact(
+          id: member.id,
+          name: member.name,
+          initials: _initialsOf(member.name),
+          color: member.badgeTextColor,
+          checked: isPreferred || (preferredId == null && index == 0),
+        ),
+      );
+    }
+
+    if (!hasPreferred && preferredId != null && contacts.isNotEmpty) {
+      contacts[0] = contacts[0].copyWith(checked: true);
+    }
+
+    _contacts = contacts;
+  }
+
+  String _initialsOf(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) {
+      return 'TV';
+    }
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    }
+    return '${parts.first.substring(0, 1)}${parts.last.substring(0, 1)}'.toUpperCase();
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   // == COMMON WIDGETS ==
@@ -1223,6 +1319,28 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
   }
 
   Widget _buildRecipientsCard() {
+    if (_contacts.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(width: 1, color: Color(0x0C00ACB2)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text(
+          'Chua co thanh vien da xac nhan de ap dung vung an toan.',
+          style: TextStyle(
+            color: Color(0xFF6B7280),
+            fontSize: 14,
+            fontFamily: 'Lexend',
+          ),
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
@@ -1238,7 +1356,10 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
           final c = _contacts[i];
           return GestureDetector(
             onTap: () => setState(() {
-              _contacts[i] = _Contact(name: c.name, initials: c.initials, color: c.color, checked: !c.checked);
+              _contacts = [
+                for (var index = 0; index < _contacts.length; index++)
+                  _contacts[index].copyWith(checked: index == i),
+              ];
             }),
             child: Container(
               padding: const EdgeInsets.all(16),
@@ -1294,11 +1415,35 @@ class _ZoneType {
 }
 
 class _Contact {
+  final String id;
   final String name;
   final String initials;
   final Color color;
   final bool checked;
-  const _Contact({required this.name, required this.initials, required this.color, required this.checked});
+
+  const _Contact({
+    required this.id,
+    required this.name,
+    required this.initials,
+    required this.color,
+    required this.checked,
+  });
+
+  _Contact copyWith({
+    String? id,
+    String? name,
+    String? initials,
+    Color? color,
+    bool? checked,
+  }) {
+    return _Contact(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      initials: initials ?? this.initials,
+      color: color ?? this.color,
+      checked: checked ?? this.checked,
+    );
+  }
 }
 
 // == CUSTOM PAINTERS ==

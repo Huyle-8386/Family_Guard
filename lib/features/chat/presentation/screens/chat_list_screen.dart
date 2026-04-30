@@ -55,19 +55,22 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Tạo cuộc trò chuyện mới sẽ được cập nhật sau.'),
-            ),
-          );
-        },
-        backgroundColor: const Color(0xFF19A7A8),
-        foregroundColor: Colors.white,
-        elevation: 8,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add_rounded, size: 34),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: widget.showBottomNav ? 56 : 0),
+        child: FloatingActionButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Tạo cuộc trò chuyện mới sẽ được cập nhật sau.'),
+              ),
+            );
+          },
+          backgroundColor: const Color(0xFF19A7A8),
+          foregroundColor: Colors.white,
+          elevation: 8,
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add_rounded, size: 34),
+        ),
       ),
       body: SafeArea(
         child: Stack(

@@ -259,9 +259,11 @@ class KidHubCard extends StatelessWidget {
                 ),
                 child: Icon(icon, color: iconColor, size: 24),
               ),
-              const Spacer(),
+              const SizedBox(height: 12),
               Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: kidTextStyle(
                   size: 18,
                   weight: FontWeight.w700,
@@ -270,13 +272,17 @@ class KidHubCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                description,
-                style: kidTextStyle(
-                  size: 12,
-                  weight: FontWeight.w400,
-                  color: const Color(0xFF3C4949),
-                  height: 16 / 12,
+              Expanded(
+                child: Text(
+                  description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: kidTextStyle(
+                    size: 12,
+                    weight: FontWeight.w400,
+                    color: const Color(0xFF3C4949),
+                    height: 16 / 12,
+                  ),
                 ),
               ),
             ],
