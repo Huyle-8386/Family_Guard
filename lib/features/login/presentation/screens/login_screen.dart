@@ -34,7 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
     await AppDependencies.instance.safeZoneService.initialize(force: true);
     await AppDependencies.instance.locationTrackingService.start();
 
-    FallDetectionService.instance.startMonitoring();
+    if (session.homeType == 'elderly') {
+      FallDetectionService.instance.startMonitoring();
+    } else {
+      await FallDetectionService.instance.stopMonitoring();
+    }
+
+    if (!mounted) return;
 
     Navigator.pushNamedAndRemoveUntil(context, session.homeRoute, (_) => false);
   }

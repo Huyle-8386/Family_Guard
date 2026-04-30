@@ -4,6 +4,21 @@ exports.NotificationsController = void 0;
 const notifications_service_1 = require("./notifications.service");
 const notificationsService = new notifications_service_1.NotificationsService();
 class NotificationsController {
+    async createFall(req, res) {
+        try {
+            const data = await notificationsService.createFallAlert(req.userId);
+            return res.status(200).json({
+                message: 'Đã tạo thông báo té ngã',
+                data,
+            });
+        }
+        catch (error) {
+            return res.status(500).json({
+                message: error.message || 'Không tạo được thông báo té ngã',
+                error,
+            });
+        }
+    }
     async listMine(req, res) {
         try {
             const data = await notificationsService.listMine(req.userId);

@@ -90,7 +90,9 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       getMyLocationUseCase: dependencies.getMyLocationUseCase,
       getFamilyLocationsUseCase: dependencies.getFamilyLocationsUseCase,
     )..addListener(_handleLocationStateChanged);
-    dependencies.locationTrackingService.addListener(_handleTrackingServiceChanged);
+    dependencies.locationTrackingService.addListener(
+      _handleTrackingServiceChanged,
+    );
     _mapAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 650),
@@ -269,7 +271,9 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
   }
 
   LatLng _focusTargetForMembers(List<_MapMember> members) {
-    final locatedMembers = members.where((member) => member.hasLocation).toList();
+    final locatedMembers = members
+        .where((member) => member.hasLocation)
+        .toList();
     if (locatedMembers.isEmpty) {
       return _initialCenter;
     }
@@ -311,7 +315,8 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       return;
     }
 
-    final hasSelectedMember = _selectedMemberId != null &&
+    final hasSelectedMember =
+        _selectedMemberId != null &&
         _members.any((member) => member.id == _selectedMemberId);
 
     setState(() {
@@ -343,7 +348,8 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       return;
     }
 
-    final hasChanged = _lastSyncedOwnLocation?.updatedAt != latestLocation.updatedAt ||
+    final hasChanged =
+        _lastSyncedOwnLocation?.updatedAt != latestLocation.updatedAt ||
         _lastSyncedOwnLocation?.latitude != latestLocation.latitude ||
         _lastSyncedOwnLocation?.longitude != latestLocation.longitude;
 
@@ -373,7 +379,8 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       name: _displayName(location),
       role: _mapRole(location.role),
       battery: 82,
-      subtitle: location.formattedAddress ??
+      subtitle:
+          location.formattedAddress ??
           location.coordinateLabel ??
           'Vi tri chua cap nhat',
       distanceLabel: _formatDistanceFromMe(location, myLocation),
@@ -475,11 +482,16 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     final month = localTime.month.toString().padLeft(2, '0');
     final hour = localTime.hour.toString().padLeft(2, '0');
     final minute = localTime.minute.toString().padLeft(2, '0');
-    return '$day/$month ${hour}:$minute';
+    return '$day/$month $hour:$minute';
   }
 
-  String _formatDistanceFromMe(UserLocation location, UserLocation? myLocation) {
-    if (!location.hasLocation || myLocation == null || !myLocation.hasLocation) {
+  String _formatDistanceFromMe(
+    UserLocation location,
+    UserLocation? myLocation,
+  ) {
+    if (!location.hasLocation ||
+        myLocation == null ||
+        !myLocation.hasLocation) {
       return 'Chua xac dinh';
     }
 
@@ -1506,4 +1518,3 @@ class _LatLngTween extends Tween<LatLng> {
     );
   }
 }
-
