@@ -48,3 +48,4 @@ app.*.map.json
 # Node.js
 node_modules/
 BE/node_modules/
+BE/keys/*.json
