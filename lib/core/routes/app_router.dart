@@ -24,8 +24,8 @@ import 'package:family_guard/features/member_management/presentation/screens/mem
 import 'package:family_guard/features/member_management/presentation/widgets/member_selection_screen.dart';
 import 'package:family_guard/features/notification/presentation/screens/notification_screen.dart';
 import 'package:family_guard/features/physical/presentation/screens/physical_activity_screen.dart';
-import 'package:family_guard/features/priority_contacts/presentation/screens/priority_contacts_screen.dart';
-import 'package:family_guard/features/priority_contacts/presentation/widgets/add_priority_contact_screen.dart';
+// import 'package:family_guard/features/priority_contacts/presentation/screens/priority_contacts_screen.dart';
+// import 'package:family_guard/features/priority_contacts/presentation/widgets/add_priority_contact_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
 import 'package:family_guard/features/profile_security/presentation/widgets/password_security_screen.dart';
 import 'package:family_guard/features/reminder/presentation/widgets/create_reminder_screen.dart';
@@ -180,8 +180,8 @@ class AppRouter {
         _safeZoneRoute(const SafeZoneMemberScreen()),
     AppRoutes.safeZoneEditActive: (context) =>
         _safeZoneRoute(const SafeZoneEditActiveScreen()),
-    AppRoutes.priorityContacts: (context) => const PriorityContactsScreen(),
-    AppRoutes.addPriorityContact: (context) => const AddPriorityContactScreen(),
+    // AppRoutes.priorityContacts: (context) => const PriorityContactsScreen(),
+    // AppRoutes.addPriorityContact: (context) => const AddPriorityContactScreen(),
     AppRoutes.checkinReminder: (context) => const CheckinReminderScreen(),
     AppRoutes.checkinReminderSelected: (context) =>
         const CheckinReminderSelectedScreen(),
