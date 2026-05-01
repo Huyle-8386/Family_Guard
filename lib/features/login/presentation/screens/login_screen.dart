@@ -1,6 +1,7 @@
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/core/fall_detection/data/fall_detection_service.dart';
+import 'package:family_guard/core/push_notification/push_notification_service.dart';
 import 'package:family_guard/features/login/presentation/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     await AppDependencies.instance.safeZoneService.initialize(force: true);
     await AppDependencies.instance.locationTrackingService.start();
+    await PushNotificationService.instance.syncCurrentTokenToServer();
 
     if (session.homeType == 'elderly') {
       FallDetectionService.instance.startMonitoring();

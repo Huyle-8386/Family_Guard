@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .venv/
+
+# Node.js
+node_modules/
+BE/node_modules/
