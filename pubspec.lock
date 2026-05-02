@@ -129,6 +129,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+<<<<<<< HEAD
   dbus:
     dependency: transitive
     description:
@@ -137,6 +138,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.12"
+=======
+>>>>>>> origin/main
   device_info_plus:
     dependency: "direct main"
     description:
@@ -177,6 +180,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+<<<<<<< HEAD
   firebase_core:
     dependency: "direct main"
     description:
@@ -225,6 +229,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.5"
+=======
+>>>>>>> origin/main
   fixnum:
     dependency: transitive
     description:
@@ -472,6 +478,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+<<<<<<< HEAD
   json_annotation:
     dependency: transitive
     description:
@@ -480,6 +487,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.11.0"
+=======
+>>>>>>> origin/main
   jwt_decode:
     dependency: transitive
     description:
@@ -877,6 +886,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.0"
+<<<<<<< HEAD
   timezone:
     dependency: transitive
     description:
@@ -885,6 +895,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.1"
+=======
+>>>>>>> origin/main
   typed_data:
     dependency: transitive
     description:
@@ -981,6 +993,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+<<<<<<< HEAD
   xml:
     dependency: transitive
     description:
@@ -989,6 +1002,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.6.1"
+=======
+>>>>>>> origin/main
   yaml:
     dependency: transitive
     description:

@@ -90,10 +90,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _syncFcmTokenToBackend(String token) async {
     await AppDependencies.instance.apiClient.post(
       ApiEndpoints.devicesFcmToken,
-      body: {
-        'token': token,
-        'platform': defaultTargetPlatform.name,
-      },
+      body: {'token': token, 'platform': defaultTargetPlatform.name},
     );
   }
 
