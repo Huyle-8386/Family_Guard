@@ -6,6 +6,8 @@ import 'package:family_guard/core/notifications/notification_badge_controller.da
 import 'package:family_guard/core/realtime/supabase_realtime_client.dart';
 import 'package:family_guard/core/services/location_tracking_service.dart';
 import 'package:family_guard/core/storage/session_storage.dart';
+import 'package:family_guard/features/chat/data/chat_remote_data_source.dart';
+import 'package:family_guard/features/chat/data/chat_service.dart';
 import 'package:family_guard/features/login/data/datasources/auth_local_data_source.dart';
 import 'package:family_guard/features/login/data/datasources/auth_remote_data_source.dart';
 import 'package:family_guard/features/login/data/repositories_impl/auth_repository_impl.dart';
@@ -107,6 +109,8 @@ class AppDependencies {
   late final UpdateSafeZoneUseCase updateSafeZoneUseCase;
   late final DeleteSafeZoneUseCase deleteSafeZoneUseCase;
   late final SafeZoneService safeZoneService;
+  late final ChatRemoteDataSource chatRemoteDataSource;
+  late final ChatService chatService;
 
   Future<void> initialize() async {
     if (_initialized) {
@@ -208,6 +212,8 @@ class AppDependencies {
       deleteSafeZoneUseCase: deleteSafeZoneUseCase,
       getRelationshipsUseCase: getRelationshipsUseCase,
     );
+    chatRemoteDataSource = ChatRemoteDataSource(apiClient: apiClient);
+    chatService = ChatService(remoteDataSource: chatRemoteDataSource);
 
     notificationBadgeController = NotificationBadgeController(
       getNotificationsUseCase: getNotificationsUseCase,

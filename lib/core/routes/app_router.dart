@@ -7,8 +7,6 @@ import 'package:family_guard/features/checkin_reminder/presentation/screens/chec
 import 'package:family_guard/features/checkin_reminder/presentation/widgets/checkin_reminder_selected_screen.dart';
 import 'package:family_guard/features/emotion/presentation/screens/emotion_pulse_screen.dart';
 import 'package:family_guard/features/emotion/presentation/widgets/emotion_journal_screen.dart';
-import 'package:family_guard/features/home/presentation/screens/kid_chat_conversation_screen.dart';
-import 'package:family_guard/features/home/presentation/screens/kid_chat_list_screen.dart';
 import 'package:family_guard/features/home/presentation/screens/kid_location_screen.dart';
 import 'package:family_guard/features/home/presentation/screens/kid_profile_screen.dart';
 import 'package:family_guard/features/home/presentation/screens/child_homepage.dart';
@@ -101,9 +99,16 @@ class AppRouter {
     ),
     AppRoutes.kidHome: (context) => const ChildHomePage(),
     AppRoutes.kidLocation: (context) => const KidLocationScreen(),
-    AppRoutes.kidChatList: (context) => const KidChatListScreen(),
-    AppRoutes.kidChatConversation: (context) => KidChatConversationScreen(
-      thread: KidChatConversationScreen.fromRoute(context),
+    AppRoutes.kidChatList: (context) => const ChatListScreen(
+      showBottomNav: true,
+      showBackButton: false,
+      homeRouteName: AppRoutes.kidHome,
+      trackingRouteName: AppRoutes.kidLocation,
+      thirdTabRouteName: AppRoutes.kidChatList,
+      settingsRouteName: AppRoutes.kidProfile,
+    ),
+    AppRoutes.kidChatConversation: (context) => ChatConversationScreen(
+      thread: ChatConversationScreen.fromRoute(context),
     ),
     AppRoutes.kidProfile: (context) => const KidProfileScreen(),
     AppRoutes.tracking: (context) => const FamilyMapScreen(),
