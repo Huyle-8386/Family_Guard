@@ -8,6 +8,7 @@ import relationshipsRoutes from './modules/relationships/relationships.routes';
 import notificationsRoutes from './modules/notifications/notifications.routes';
 import locationsRoutes from './modules/locations/locations.routes';
 import safeZonesRoutes from './modules/safe-zones/safe-zones.routes';
+import pushTokensRoutes from './modules/push-tokens/push-tokens.routes';
 
 dotenv.config();
 
@@ -26,5 +27,6 @@ app.use('/api', relationshipsRoutes);
 app.use('/api', notificationsRoutes);
 app.use('/api', locationsRoutes);
 app.use('/api', safeZonesRoutes);
+app.use('/api', pushTokensRoutes);
 
 export default app;

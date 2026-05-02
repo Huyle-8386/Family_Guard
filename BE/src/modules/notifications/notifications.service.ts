@@ -1,6 +1,9 @@
 import { supabaseAdmin } from '../../config/supabase';
+import { PushDeliveryService } from './push-delivery.service';
 
 export class NotificationsService {
+  private readonly pushDeliveryService = new PushDeliveryService();
+
   private normalizeRelationLabel(value?: string | null): string {
     const normalized = value?.toString().trim();
     return normalized && normalized.length > 0 ? normalized : 'Người thân';
@@ -143,6 +146,20 @@ export class NotificationsService {
       }
 
       createdNotifications.push(notification);
+
+      try {
+        await this.pushDeliveryService.sendToUser({
+          uid: recipient.recipientUid,
+          title: 'Cảnh báo té ngã',
+          body: `${seniorName}(${recipient.relationLabel}) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.`,
+          data: {
+            type: 'fall_alert',
+            notification_id: String(notification.id),
+          },
+        });
+      } catch (error) {
+        console.error('Không thể gửi push té ngã', error);
+      }
     }
 
     return createdNotifications;
@@ -240,6 +257,16 @@ export class NotificationsService {
           title: 'Mối quan hệ đã được xác nhận',
           content: `${responderName}(${responderRelation}) đã xác nhận lời mời kết nối gia đình của bạn. Hai người hiện đã được liên kết.`,
           processing: 'done',
+        });
+
+        await this.pushDeliveryService.sendToUser({
+          uid: relationship.uid,
+          title: 'Mối quan hệ đã được xác nhận',
+          body: `${responderName}(${responderRelation}) đã xác nhận lời mời kết nối gia đình của bạn.`,
+          data: {
+            type: 'relationship_confirmed',
+            relationship_id: String(relationship.id),
+          },
         });
       } catch (error) {
         console.error('Không thể tạo thông báo xác nhận cho người gửi lời mời', error);

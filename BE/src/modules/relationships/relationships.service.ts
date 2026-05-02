@@ -1,6 +1,9 @@
 import { supabaseAdmin } from '../../config/supabase';
+import { PushDeliveryService } from '../notifications/push-delivery.service';
 
 export class RelationshipsService {
+  private readonly pushDeliveryService = new PushDeliveryService();
+
   private normalizeRelationLabel(value?: string | null): string {
     const normalized = value?.toString().trim();
     return normalized && normalized.length > 0 ? normalized : 'Người thân';
@@ -136,6 +139,21 @@ export class RelationshipsService {
 
     if (notificationError) throw notificationError;
 
+    try {
+      await this.pushDeliveryService.sendToUser({
+        uid: targetUid,
+        title: 'Xác nhận mối quan hệ',
+        body: `Bạn có một lời mời xác nhận mối quan hệ từ ${inviterName}(${inviterRelation}).`,
+        data: {
+          type: 'relationship_invite',
+          notification_id: String(notification.id),
+          relationship_id: String(relationship.id),
+        },
+      });
+    } catch (error) {
+      console.error('Không thể gửi push lời mời quan hệ', error);
+    }
+
     return {
       relationship,
       notification,
@@ -268,6 +286,16 @@ export class RelationshipsService {
         title: 'Cập nhật mối quan hệ',
         content,
       });
+
+      await this.pushDeliveryService.sendToUser({
+        uid: relationship.relation_id,
+        title: 'Cập nhật mối quan hệ',
+        body: content,
+        data: {
+          type: 'relationship_updated',
+          relationship_id: String(relationship.id),
+        },
+      });
     } catch (error) {
       console.error('Không thể tạo thông báo sửa quan hệ', error);
     }
@@ -325,6 +353,16 @@ export class RelationshipsService {
         relationshipId: relationship.id,
         title: 'Mối quan hệ đã bị xóa',
         content: `${actorName}(${actorRelation}) đã xóa quan hệ với bạn.`,
+      });
+
+      await this.pushDeliveryService.sendToUser({
+        uid: relationship.relation_id,
+        title: 'Mối quan hệ đã bị xóa',
+        body: `${actorName}(${actorRelation}) đã xóa quan hệ với bạn.`,
+        data: {
+          type: 'relationship_deleted',
+          relationship_id: String(relationship.id),
+        },
       });
     } catch (error) {
       console.error('Không thể tạo thông báo xóa quan hệ', error);
