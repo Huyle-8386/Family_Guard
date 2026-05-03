@@ -43,6 +43,8 @@ class ChatThreadArgs {
     required this.messages,
     this.hasUnread = false,
     this.isOnline = true,
+    this.lastMessageAt,
+    this.hasStartedConversation = true,
   });
 
   final String id;
@@ -56,6 +58,8 @@ class ChatThreadArgs {
   final List<ChatMessage> messages;
   final bool hasUnread;
   final bool isOnline;
+  final DateTime? lastMessageAt;
+  final bool hasStartedConversation;
 
   String get roleLabel {
     switch (role) {

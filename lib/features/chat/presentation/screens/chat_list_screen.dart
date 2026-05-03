@@ -1,10 +1,11 @@
-﻿import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_models.dart';
+import 'package:family_guard/features/member_management/domain/entities/relationship.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({
@@ -29,137 +30,292 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
+  static const _background = Color(0xFFF0F8F7);
+  bool _loading = true;
   String _query = '';
+  List<ChatThreadArgs> _threads = const [];
 
-  List<ChatThreadArgs> get _filteredThreads {
-    if (_query.trim().isEmpty) {
-      return ChatThreadArgs.demoThreads;
+  @override
+  void initState() {
+    super.initState();
+    _loadThreads();
+  }
+
+  List<ChatThreadArgs> get _filtered {
+    if (_query.trim().isEmpty) return _threads;
+    final keyword = _query.trim().toLowerCase();
+    return _threads.where((thread) {
+      return thread.memberName.toLowerCase().contains(keyword) ||
+          thread.previewText.toLowerCase().contains(keyword);
+    }).toList();
+  }
+
+  Future<void> _loadThreads() async {
+    setState(() => _loading = true);
+    List<ChatThreadArgs> threads = const [];
+    List<Relationship> relationships = const [];
+    String myUid = '';
+
+    try {
+      threads = await AppDependencies.instance.chatService.getThreads();
+    } catch (_) {}
+
+    try {
+      final all = await AppDependencies.instance.getRelationshipsUseCase();
+      relationships = all.where((item) {
+        final status = item.processing.trim().toLowerCase();
+        return status == 'xacnhan';
+      }).toList();
+    } catch (_) {}
+
+    try {
+      final session = await AppDependencies.instance.getSavedSessionUseCase();
+      myUid = session?.userId ?? '';
+    } catch (_) {}
+
+    // Fallback: nếu backend threads chưa trả latest message đúng, tự build từ lịch sử chat
+    // để đảm bảo cuộc hội thoại đã có tin nhắn không bị hiện "Bắt đầu trò chuyện mới".
+    if (threads.isEmpty && relationships.isNotEmpty && myUid.isNotEmpty) {
+      final recovered = <ChatThreadArgs>[];
+      for (final relation in relationships) {
+        final peerUid = relation.relationId.trim();
+        if (peerUid.isEmpty) {
+          continue;
+        }
+        try {
+          final messages = await AppDependencies.instance.chatService
+              .getMessages(myUid: myUid, peerUid: peerUid);
+          final last = messages.isNotEmpty ? messages.last : null;
+          final text = (last?.text ?? '').trim();
+          recovered.add(
+            ChatThreadArgs(
+              id: peerUid,
+              memberName: (relation.relationUser?.name ?? '').trim().isNotEmpty
+                  ? relation.relationUser!.name.trim()
+                  : 'Thành viên gia đình',
+              avatarUrl: relation.relationUser?.avata ?? '',
+              role: _toRole(relation.relationUser?.role),
+              presenceLabel: '',
+              previewText: text.isNotEmpty ? text : 'Bắt đầu trò chuyện mới',
+              lastActivityLabel: last?.timeLabel ?? '',
+              section: ChatThreadSection.today,
+              messages: const [],
+              hasStartedConversation: text.isNotEmpty,
+              lastMessageAt: DateTime.now(),
+            ),
+          );
+        } catch (_) {
+          recovered.add(
+            ChatThreadArgs(
+              id: peerUid,
+              memberName: (relation.relationUser?.name ?? '').trim().isNotEmpty
+                  ? relation.relationUser!.name.trim()
+                  : 'Thành viên gia đình',
+              avatarUrl: relation.relationUser?.avata ?? '',
+              role: _toRole(relation.relationUser?.role),
+              presenceLabel: '',
+              previewText: 'Bắt đầu trò chuyện mới',
+              lastActivityLabel: '',
+              section: ChatThreadSection.today,
+              messages: const [],
+              hasStartedConversation: false,
+              lastMessageAt: null,
+            ),
+          );
+        }
+      }
+      threads = recovered;
     }
 
-    final normalized = _query.trim().toLowerCase();
-    return ChatThreadArgs.demoThreads.where((thread) {
-      return thread.memberName.toLowerCase().contains(normalized) ||
-          thread.previewText.toLowerCase().contains(normalized) ||
-          thread.roleLabel.toLowerCase().contains(normalized);
-    }).toList();
+    if (!mounted) return;
+    try {
+      setState(() {
+        _threads = _mergeThreadsWithLinkedMembers(threads, relationships);
+      });
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  List<ChatThreadArgs> _mergeThreadsWithLinkedMembers(
+    List<ChatThreadArgs> threads,
+    List<Relationship> relationships,
+  ) {
+    final byPeer = <String, ChatThreadArgs>{};
+    for (final thread in threads) {
+      byPeer[thread.id] = thread;
+    }
+
+    for (final relation in relationships) {
+      final peerUid = relation.relationId.trim();
+      if (peerUid.isEmpty || byPeer.containsKey(peerUid)) {
+        continue;
+      }
+
+      final name = (relation.relationUser?.name ?? '').trim();
+      byPeer[peerUid] = ChatThreadArgs(
+        id: peerUid,
+        memberName: name.isEmpty ? 'Thành viên gia đình' : name,
+        avatarUrl: relation.relationUser?.avata ?? '',
+        role: _toRole(relation.relationUser?.role),
+        presenceLabel: '',
+        previewText: 'Bắt đầu trò chuyện mới',
+        lastActivityLabel: '',
+        section: ChatThreadSection.today,
+        messages: const [],
+        hasStartedConversation: false,
+        lastMessageAt: null,
+      );
+    }
+
+    final merged = byPeer.values.toList();
+    merged.sort((a, b) {
+      if (a.hasStartedConversation != b.hasStartedConversation) {
+        return a.hasStartedConversation ? -1 : 1;
+      }
+      if (!a.hasStartedConversation && !b.hasStartedConversation) {
+        return a.memberName.toLowerCase().compareTo(b.memberName.toLowerCase());
+      }
+      final aMillis = a.lastMessageAt?.millisecondsSinceEpoch ?? 0;
+      final bMillis = b.lastMessageAt?.millisecondsSinceEpoch ?? 0;
+      return bMillis.compareTo(aMillis);
+    });
+
+    return merged;
+  }
+
+  MemberRole _toRole(String? rawRole) {
+    switch ((rawRole ?? '').toLowerCase()) {
+      case 'treem':
+      case 'child':
+        return MemberRole.child;
+      case 'nguoigia':
+      case 'elderly':
+      case 'senior':
+        return MemberRole.senior;
+      default:
+        return MemberRole.adult;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final todayThreads = _filteredThreads
-        .where((thread) => thread.section == ChatThreadSection.today)
-        .toList();
-    final yesterdayThreads = _filteredThreads
-        .where((thread) => thread.section == ChatThreadSection.yesterday)
-        .toList();
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: widget.showBottomNav ? 56 : 0),
-        child: FloatingActionButton(
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Tạo cuộc trò chuyện mới sẽ được cập nhật sau.'),
-              ),
-            );
-          },
-          backgroundColor: const Color(0xFF19A7A8),
-          foregroundColor: Colors.white,
-          elevation: 8,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add_rounded, size: 34),
-        ),
-      ),
+      backgroundColor: _background,
       body: SafeArea(
         child: Stack(
           children: [
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 430),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _ChatListHeader(
-                        showBackButton: widget.showBackButton,
-                        onBack: () => Navigator.maybePop(context),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: _SearchField(
-                          onChanged: (value) => setState(() => _query = value),
+            Column(
+              children: [
+                AppBackHeaderBar(
+                  title: 'Tin nhắn',
+                  showLeading: widget.showBackButton,
+                  onBack: widget.showBackButton
+                      ? () => Navigator.maybePop(context)
+                      : null,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: Container(
+                    height: 56,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(9999),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x14000000),
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
                         ),
-                      ),
-                      const SizedBox(height: 28),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.fromLTRB(
-                            28,
-                            0,
-                            28,
-                            widget.showBottomNav ? 128 : 120,
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.search_rounded,
+                          color: Color(0xFF4B5563),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Center(
+                            // 👈 giúp căn giữa đẹp
+                            child: TextField(
+                              onChanged: (value) =>
+                                  setState(() => _query = value),
+                              decoration: const InputDecoration(
+                                hintText: 'Tìm kiếm',
+
+                                // ❌ remove toàn bộ border
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+
+                                // 🔥 quan trọng để không bị nền đè
+                                filled: false,
+                                fillColor: Colors.transparent,
+
+                                isCollapsed: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              maxLines: 1,
+                              textAlignVertical: TextAlignVertical.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF1F2937),
+                              ),
+                            ),
                           ),
-                          children: [
-                            if (todayThreads.isNotEmpty) ...[
-                              const _SectionLabel(text: 'HÔM NAY'),
-                              const SizedBox(height: 22),
-                              ...todayThreads.map(
-                                (thread) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: _ChatTile(
-                                    thread: thread,
-                                    onTap: () => Navigator.pushNamed(
-                                      context,
-                                      AppRoutes.chatConversation,
-                                      arguments: thread,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                            if (yesterdayThreads.isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              const _SectionLabel(text: 'HÔM QUA'),
-                              const SizedBox(height: 22),
-                              ...yesterdayThreads.map(
-                                (thread) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: _ChatTile(
-                                    thread: thread,
-                                    onTap: () => Navigator.pushNamed(
-                                      context,
-                                      AppRoutes.chatConversation,
-                                      arguments: thread,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                            if (_filteredThreads.isEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 96),
-                                child: Center(
-                                  child: Text(
-                                    'Không tìm thấy đoạn chat phù hợp.',
-                                    style: GoogleFonts.beVietnamPro(
-                                      color: const Color(0xFF64748B),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: _loadThreads,
+                    child: _loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _filtered.isEmpty
+                        ? ListView(
+                            children: const [
+                              SizedBox(height: 160),
+                              Center(
+                                child: Text(
+                                  'Chưa có thành viên liên kết để trò chuyện',
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.fromLTRB(
+                              16,
+                              0,
+                              16,
+                              widget.showBottomNav ? 96 : 16,
+                            ),
+                            itemCount: _filtered.length,
+                            itemBuilder: (context, index) {
+                              final thread = _filtered[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: _ThreadCard(
+                                  thread: thread,
+                                  onTap: () => Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.chatConversation,
+                                    arguments: thread,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ),
+              ],
             ),
             if (widget.showBottomNav)
               Positioned(
@@ -182,238 +338,88 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 }
 
-class _ChatListHeader extends StatelessWidget {
-  const _ChatListHeader({
-    required this.onBack,
-    required this.showBackButton,
-  });
-
-  final VoidCallback onBack;
-  final bool showBackButton;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBackHeaderBar(
-      title: 'Tin nhắn',
-      onBack: showBackButton ? onBack : null,
-      showLeading: showBackButton,
-      trailing: const SizedBox(width: 24),
-    );
-  }
-}
-
-class _SearchField extends StatelessWidget {
-  const _SearchField({required this.onChanged});
-
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 42,
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE6E8EA),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.search_rounded, color: Color(0xFF3D4949), size: 21),
-          const SizedBox(width: 12),
-          Expanded(
-            child: TextField(
-              onChanged: onChanged,
-              decoration: InputDecoration(
-                hintText: 'Tìm kiếm tin nhắn',
-                hintStyle: GoogleFonts.beVietnamPro(
-                  color: const Color(0x993D4949),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                filled: false,
-                fillColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                isCollapsed: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              style: GoogleFonts.beVietnamPro(
-                color: const Color(0xFF191C1E),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: GoogleFonts.beVietnamPro(
-        color: const Color(0x993D4949),
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.4,
-      ),
-    );
-  }
-}
-
-class _ChatTile extends StatelessWidget {
-  const _ChatTile({required this.thread, required this.onTap});
+class _ThreadCard extends StatelessWidget {
+  const _ThreadCard({required this.thread, required this.onTap});
 
   final ChatThreadArgs thread;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = thread.hasUnread
-        ? Colors.white
-        : const Color(0xFFF2F4F6);
-
     return Material(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(32),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(24),
       child: InkWell(
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
-        borderRadius: BorderRadius.circular(32),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: thread.hasUnread
-                ? const [
-                    BoxShadow(
-                      color: Color(0x0D000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ClipOval(
-                    child: Image.network(
-                      thread.avatarUrl,
-                      width: 56,
-                      height: 56,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: 56,
-                        height: 56,
-                        color: const Color(0xFFD8E2E2),
-                        alignment: Alignment.center,
-                        child: const Icon(
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0x1F19A7A8)),
+                ),
+                child: ClipOval(
+                  child: thread.avatarUrl.trim().isNotEmpty
+                      ? Image.network(
+                          thread.avatarUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.person_rounded,
+                            color: Color(0xFF64748B),
+                          ),
+                        )
+                      : const Icon(
                           Icons.person_rounded,
                           color: Color(0xFF64748B),
                         ),
-                      ),
-                    ),
-                  ),
-                  if (thread.isOnline)
-                    Positioned(
-                      right: -1,
-                      bottom: -1,
-                      child: Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF006A6A),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                      ),
-                    ),
-                ],
+                ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            thread.memberName,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.beVietnamPro(
-                              color: const Color(0xFF191C1E),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        _RoleBadge(label: thread.roleLabel, role: thread.role),
-                        const Spacer(),
-                        Text(
-                          thread.lastActivityLabel,
-                          style: GoogleFonts.beVietnamPro(
-                            color: thread.hasUnread
-                                ? const Color(0xFF006A6A)
-                                : const Color(0x993D4949),
-                            fontSize: 12,
-                            fontWeight: thread.hasUnread
-                                ? FontWeight.w700
-                                : FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      thread.memberName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1F2937),
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            thread.previewText,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.beVietnamPro(
-                              color: const Color(0xCC3D4949),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              height: 1.43,
-                            ),
-                          ),
-                        ),
-                        if (thread.hasUnread) ...[
-                          const SizedBox(width: 12),
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF19A7A8),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ],
-                      ],
+                    Text(
+                      thread.hasStartedConversation
+                          ? thread.previewText
+                          : 'Bắt đầu trò chuyện mới',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF4B5563),
+                      ),
                     ),
                   ],
                 ),
               ),
+              if (thread.hasUnread)
+                const Icon(
+                  Icons.brightness_1,
+                  size: 10,
+                  color: Color(0xFF19A7A8),
+                )
+              else if (thread.lastActivityLabel.trim().isNotEmpty)
+                Text(
+                  thread.lastActivityLabel,
+                  style: const TextStyle(color: Color(0xFF6B7280)),
+                ),
             ],
           ),
         ),
@@ -421,51 +427,3 @@ class _ChatTile extends StatelessWidget {
     );
   }
 }
-
-class _RoleBadge extends StatelessWidget {
-  const _RoleBadge({required this.label, required this.role});
-
-  final String label;
-  final MemberRole role;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color bgColor;
-    final Color textColor;
-
-    switch (role) {
-      case MemberRole.child:
-        bgColor = const Color(0xFFB8E9EA);
-        textColor = const Color(0xFF3C6A6B);
-        break;
-      case MemberRole.adult:
-        bgColor = const Color(0x3319A7A8);
-        textColor = const Color(0xFF006A6A);
-        break;
-      case MemberRole.senior:
-        bgColor = const Color(0xFFBBEBEC);
-        textColor = const Color(0xFF1D4E4F);
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.beVietnamPro(
-          color: textColor,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.5,
-          height: 1.5,
-        ),
-      ),
-    );
-  }
-}
-
-
