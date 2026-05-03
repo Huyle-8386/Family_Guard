@@ -32,6 +32,9 @@ class ChatService {
         messages: const [],
         hasUnread: item['has_unread'] == true,
         isOnline: true,
+        lastMessageAt: latestAt,
+        hasStartedConversation:
+            (item['latest_message']?.toString().trim().isNotEmpty ?? false),
       );
     }).toList();
   }

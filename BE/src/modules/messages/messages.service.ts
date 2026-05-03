@@ -160,11 +160,13 @@ export class MessagesService {
 
     if (error) throw error;
 
+    const senderName = await this.getUserDisplayName(uid);
+
     await this.pushIncomingIfNeeded({
       senderUid: uid,
       receiverUid: peerUid,
       body: message,
-      senderName: relationship.relation_user?.name ?? 'Thành viên gia đình',
+      senderName,
     });
 
     return data;
@@ -207,5 +209,16 @@ export class MessagesService {
     } catch (pushError) {
       console.error('Không gửi được push tin nhắn', pushError);
     }
+  }
+
+  private async getUserDisplayName(uid: string): Promise<string> {
+    const { data, error } = await supabaseAdmin
+      .from('user_info')
+      .select('name')
+      .eq('uid', uid)
+      .maybeSingle();
+    if (error) throw error;
+    const value = data?.name?.toString().trim();
+    return value && value.isNotEmpty ? value : 'Thành viên gia đình';
   }
 }
