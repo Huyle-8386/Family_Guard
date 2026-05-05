@@ -5,8 +5,11 @@ import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
 import 'package:family_guard/features/login/domain/entities/auth_session.dart';
+import 'package:family_guard/features/location_tracking/domain/entities/user_location.dart';
+import 'package:family_guard/features/member_management/domain/entities/relationship.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -18,120 +21,8 @@ class HomePage extends StatelessWidget {
   static const _secondaryColor = Color(0xFF87E4DB);
   static const _headerAvatarUrl =
       'https://www.figma.com/api/mcp/asset/2f585926-b307-4889-9fd8-50f79d086344';
-
-  static final List<_MemberCardData> _members = [
-    _MemberCardData(
-      name: 'Mẹ',
-      status: 'Đang ở nhà',
-      battery: '85%',
-      location: '123 Đường Nguyễn Huệ...',
-      avatarUrl:
-          'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e',
-      mapImageUrl:
-          'https://www.figma.com/api/mcp/asset/377b4370-a162-4432-b61e-7545f1fb1039',
-      statusDotColor: const Color(0xFF22C55E),
-      statusTextColor: const Color(0xFF008A8E),
-      accentColor: const Color(0xFF00ACB2),
-      batteryIcon: Icons.battery_full_rounded,
-      locationIcon: Icons.location_on_rounded,
-      locationIconColor: const Color(0xFF008A8E),
-      locationIconBackground: const Color(0x4D87E4DB),
-      routeName: AppRoutes.adultMemberDetail,
-      trackingArgs: MemberTrackingArgs(
-        role: MemberRole.adult,
-        name: 'Mẹ',
-        status: 'Đang ở nhà',
-        avatarUrl:
-            'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e',
-        phoneNumber: '+84 909 123 456',
-        relationship: 'Mẹ',
-        battery: 85,
-        connectionStatus: 'Trực tuyến',
-        deviceName: 'iPhone 13',
-        lastActive: '1 phút trước',
-        timeLabel: '08:42 AM',
-        mapCenter: const LatLng(16.0544, 108.2022),
-        routeHistory: const [
-          LatLng(16.0528, 108.1988),
-          LatLng(16.0533, 108.1998),
-          LatLng(16.0539, 108.2007),
-          LatLng(16.0544, 108.2015),
-          LatLng(16.0544, 108.2022),
-        ],
-        playbackStartLabel: '08:00 AM',
-        playbackEndLabel: '04:30 PM',
-        totalDistanceLabel: '1.8 km',
-        totalDurationLabel: '1h 20m',
-        stopCount: 2,
-        averageSpeedLabel: '1.5 km/h',
-        timelineItems: const [
-          TrackingTimelineItem(timeLabel: '08:00 AM', title: 'Ở nhà'),
-          TrackingTimelineItem(timeLabel: '09:10 AM', title: 'Ra chợ gần nhà'),
-          TrackingTimelineItem(
-            timeLabel: '10:20 AM',
-            title: 'Đã về nhà',
-            highlighted: true,
-          ),
-        ],
-      ),
-    ),
-    _MemberCardData(
-      name: 'Bố',
-      status: 'Đang đi dạo',
-      battery: '24%',
-      location: 'Công viên Tao Đàn',
-      avatarUrl:
-          'https://www.figma.com/api/mcp/asset/5e8718f5-141a-45c5-9a6f-b47576bb2bc4',
-      mapImageUrl:
-          'https://www.figma.com/api/mcp/asset/5ecd790f-6840-4bcd-aef9-7210007ea537',
-      statusDotColor: const Color(0xFFEAB308),
-      statusTextColor: const Color(0xFF374151),
-      accentColor: const Color(0xFF111827),
-      batteryIcon: Icons.battery_alert_rounded,
-      batteryColor: const Color(0xFFCA8A04),
-      locationIcon: Icons.park_rounded,
-      locationIconColor: const Color(0xFF2563EB),
-      locationIconBackground: const Color(0xFFDBEAFE),
-      routeName: AppRoutes.adultMemberDetail,
-      trackingArgs: MemberTrackingArgs(
-        role: MemberRole.adult,
-        name: 'Bố',
-        status: 'Đang đi dạo',
-        avatarUrl:
-            'https://www.figma.com/api/mcp/asset/5e8718f5-141a-45c5-9a6f-b47576bb2bc4',
-        phoneNumber: '+84 909 456 123',
-        relationship: 'Bố',
-        battery: 24,
-        connectionStatus: 'Trực tuyến',
-        deviceName: 'iPhone 15 Pro',
-        lastActive: '3 phút trước',
-        timeLabel: '08:42 AM',
-        mapCenter: const LatLng(16.0560, 108.2040),
-        routeHistory: const [
-          LatLng(16.0581, 108.2062),
-          LatLng(16.0574, 108.2056),
-          LatLng(16.0569, 108.2050),
-          LatLng(16.0564, 108.2044),
-          LatLng(16.0560, 108.2040),
-        ],
-        playbackStartLabel: '08:00 AM',
-        playbackEndLabel: '04:30 PM',
-        totalDistanceLabel: '3.2 km',
-        totalDurationLabel: '2h 15m',
-        stopCount: 1,
-        averageSpeedLabel: '2.8 km/h',
-        timelineItems: const [
-          TrackingTimelineItem(timeLabel: '08:00 AM', title: 'Rời nhà'),
-          TrackingTimelineItem(timeLabel: '08:45 AM', title: 'Đến công viên'),
-          TrackingTimelineItem(
-            timeLabel: '09:30 AM',
-            title: 'Đang đi dạo',
-            highlighted: true,
-          ),
-        ],
-      ),
-    ),
-  ];
+  static const _fallbackMemberAvatarUrl =
+      'https://www.figma.com/api/mcp/asset/09129163-8902-4a06-b810-2bec557a806e';
 
   static final List<_QuickActionData> _quickActions = [
     _QuickActionData(
@@ -234,7 +125,7 @@ class HomePage extends StatelessWidget {
                         const SizedBox(height: 8),
                         const _Header(),
                         const SizedBox(height: 26),
-                        _MemberCardsSection(members: _members),
+                        _buildMembersSection(),
                         const SizedBox(height: 22),
                         Text(
                           'Tiện ích',
@@ -262,6 +153,585 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMembersSection() {
+    return FutureBuilder<_MembersPayload>(
+      future: _loadMembersPayload(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 244,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return const _MemberCardsEmpty(
+            message: 'Không thể tải danh sách thành viên.',
+          );
+        }
+
+        final payload = snapshot.data ?? _MembersPayload.empty();
+        final members = _mapMemberCards(
+          payload.relationships,
+          payload.locations,
+          payload.currentUserBirthday,
+          payload.currentUserAge,
+        );
+        if (members.isEmpty) {
+          return const _MemberCardsEmpty(
+            message: 'Chưa có thành viên đã liên kết.',
+          );
+        }
+
+        return _MemberCardsSection(members: members);
+      },
+    );
+  }
+
+  Future<_MembersPayload> _loadMembersPayload() async {
+    final results = await Future.wait([
+      AppDependencies.instance.getRelationshipsUseCase(),
+      AppDependencies.instance.getFamilyLocationsUseCase(),
+      AppDependencies.instance.getSavedSessionUseCase(),
+    ]);
+
+    final session = results[2] as AuthSession?;
+    final currentUser = CurrentUserViewData.fromSession(session);
+    final currentUserBirthday = _parseDate(session?.profile.birthday);
+
+    return _MembersPayload(
+      relationships: (results[0] as List<Relationship>?) ?? const [],
+      locations: (results[1] as List<UserLocation>?) ?? const [],
+      currentUserBirthday: currentUserBirthday,
+      currentUserAge: currentUser.age,
+    );
+  }
+
+  static List<_MemberCardData> _mapMemberCards(
+    List<Relationship> relationships,
+    List<UserLocation> locations,
+    DateTime? currentUserBirthday,
+    int? currentUserAge,
+  ) {
+    final filtered = relationships
+        .where((item) => item.processing == 'xacnhan')
+        .toList();
+    final locationMap = {
+      for (final item in locations) item.uid: item,
+    };
+
+    final members = filtered
+        .map(
+          (relationship) => _memberCardFromRelationship(
+            relationship,
+            locationMap[relationship.relationId],
+            currentUserBirthday,
+            currentUserAge,
+          ),
+        )
+        .toList();
+    members.sort((a, b) {
+      final roleOrder = _rolePriority(a.role).compareTo(_rolePriority(b.role));
+      if (roleOrder != 0) {
+        return roleOrder;
+      }
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    return members;
+  }
+
+  static int _rolePriority(MemberRole role) {
+    switch (role) {
+      case MemberRole.senior:
+        return 0;
+      case MemberRole.child:
+        return 1;
+      case MemberRole.adult:
+        return 2;
+    }
+  }
+
+  static _MemberCardData _memberCardFromRelationship(
+    Relationship relationship,
+    UserLocation? location,
+    DateTime? currentUserBirthday,
+    int? currentUserAge,
+  ) {
+    final user = relationship.relationUser;
+    final relationBirthday = _parseDate(user?.birthday);
+    final relationLabel = _relationLabelFor(
+      relationship.relationType,
+      relationBirthday,
+      currentUserBirthday,
+      _calculateAge(user?.birthday),
+      currentUserAge,
+    );
+    final fullName = _resolveName(user?.name, user?.email);
+    final shortName = _lastNamePart(fullName);
+    final name = relationLabel == null ? shortName : '$shortName ($relationLabel)';
+    final role = _resolveRole(user?.birthday, user?.role);
+    final avatarUrl = _avatarUrlFor(user?.avata);
+    final address = location?.addressOrCoordinates ??
+        _resolveAddress(user?.address, user?.phone, user?.email);
+    final status = _resolveStatus(relationship.processing);
+    final lastActive = _resolveLastActive(relationship.createdAt);
+    final routeName = _routeForRole(role);
+    final trackingArgs = _trackingArgsFor(
+      role: role,
+      name: name,
+      status: status,
+      avatarUrl: avatarUrl,
+      phoneNumber: user?.phone ?? '',
+      relationship: relationLabel ?? relationship.relationType,
+      lastActive: lastActive,
+    );
+
+    return _MemberCardData(
+      name: name,
+      role: role,
+      status: status,
+      battery: '—',
+      location: address,
+      avatarUrl: avatarUrl,
+      currentLocation: location,
+      statusDotColor: const Color(0xFF22C55E),
+      statusTextColor: const Color(0xFF008A8E),
+      accentColor: _accentColorFor(role),
+      batteryIcon: Icons.battery_unknown_rounded,
+      locationIcon: Icons.location_on_rounded,
+      locationIconColor: const Color(0xFF008A8E),
+      locationIconBackground: const Color(0x4D87E4DB),
+      routeName: routeName,
+      trackingArgs: trackingArgs,
+    );
+  }
+
+  static String _resolveName(String? name, String? email) {
+    final trimmedName = name?.trim() ?? '';
+    if (trimmedName.isNotEmpty) {
+      return trimmedName;
+    }
+
+    final trimmedEmail = email?.trim() ?? '';
+    if (trimmedEmail.isNotEmpty) {
+      return trimmedEmail;
+    }
+
+    return 'Thành viên';
+  }
+
+  static String _lastNamePart(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      return 'Thành viên';
+    }
+
+    final parts = trimmed.split(RegExp(r'\s+'));
+    return parts.isNotEmpty ? parts.last : trimmed;
+  }
+
+  static String? _relationLabelFor(
+    String raw,
+    DateTime? relationBirthday,
+    DateTime? currentUserBirthday,
+    int? relationAge,
+    int? currentUserAge,
+  ) {
+    final normalized = raw.trim();
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    final rawLower = normalized.toLowerCase().replaceAll('-', '_');
+    final parts = rawLower
+        .split('_')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+
+    final parentKey = parts.firstWhere(
+      _isParentKey,
+      orElse: () => '',
+    );
+    final childKey = parts.firstWhere(
+      _isChildKey,
+      orElse: () => '',
+    );
+
+    if (parentKey.isNotEmpty && childKey.isNotEmpty) {
+      final parentLabel = _parentLabelForKey(parentKey) ?? 'Người thân';
+      final childLabel = _childLabelForKey(childKey) ?? 'Con';
+
+      if (relationBirthday != null && currentUserBirthday != null) {
+        if (relationBirthday.isBefore(currentUserBirthday)) {
+          return parentLabel;
+        }
+        return childLabel;
+      }
+
+      if (relationAge != null && currentUserAge != null) {
+        if (relationAge > currentUserAge) {
+          return parentLabel;
+        }
+        return childLabel;
+      }
+
+      return parentLabel;
+    }
+
+    final key = _normalizeRelationKey(normalized);
+
+    var label = _relationLabelFromKey(key) ?? _relationLabelFromKey(normalized);
+    label ??= _titleCaseRelation(normalized);
+
+    if ((key == 'anh' || key == 'chi' || key == 'em') &&
+        relationAge != null &&
+        currentUserAge != null) {
+      if (relationAge > currentUserAge) {
+        return key == 'em' ? 'Anh/Chị' : label;
+      }
+      if (relationAge < currentUserAge) {
+        return key == 'em' ? 'Em' : 'Em';
+      }
+    }
+
+    return label;
+  }
+
+  static bool _isParentKey(String value) {
+    switch (value) {
+      case 'me':
+      case 'mẹ':
+      case 'cha':
+      case 'bo':
+      case 'bố':
+      case 'ba':
+      case 'ong':
+      case 'ông':
+      case 'ba_noi':
+      case 'ba_ngoai':
+      case 'bà':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  static bool _isChildKey(String value) {
+    switch (value) {
+      case 'con':
+      case 'chau':
+      case 'cháu':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  static String _normalizeRelationKey(String value) {
+    final lower = value.toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
+    final compact = lower.replaceAll('__', '_');
+
+    if (compact.contains('ba_noi')) {
+      return 'ba_noi';
+    }
+    if (compact.contains('ba_ngoai')) {
+      return 'ba_ngoai';
+    }
+
+    return compact.contains('_') ? compact.split('_').first : compact;
+  }
+
+  static String? _relationLabelFromKey(String key) {
+    switch (key.trim().toLowerCase()) {
+      case 'me':
+      case 'mẹ':
+        return 'Mẹ';
+      case 'cha':
+        return 'Cha';
+      case 'bo':
+      case 'bố':
+        return 'Bố';
+      case 'ba':
+        return 'Ba';
+      case 'ong':
+      case 'ông':
+        return 'Ông';
+      case 'ba_noi':
+      case 'ba_ngoai':
+      case 'bà':
+        return 'Bà';
+      case 'vo':
+      case 'vợ':
+        return 'Vợ';
+      case 'chong':
+      case 'chồng':
+        return 'Chồng';
+      case 'anh':
+        return 'Anh';
+      case 'chi':
+      case 'chị':
+        return 'Chị';
+      case 'em':
+        return 'Em';
+      case 'con':
+        return 'Con';
+      case 'chau':
+      case 'cháu':
+        return 'Cháu';
+      default:
+        return null;
+    }
+  }
+
+  static String? _parentLabelForKey(String key) {
+    switch (key.trim().toLowerCase()) {
+      case 'me':
+      case 'mẹ':
+        return 'Mẹ';
+      case 'cha':
+        return 'Cha';
+      case 'bo':
+      case 'bố':
+        return 'Bố';
+      case 'ba':
+        return 'Ba';
+      case 'ong':
+      case 'ông':
+        return 'Ông';
+      case 'ba_noi':
+      case 'ba_ngoai':
+      case 'bà':
+        return 'Bà';
+      default:
+        return null;
+    }
+  }
+
+  static String? _childLabelForKey(String key) {
+    switch (key.trim().toLowerCase()) {
+      case 'con':
+        return 'Con';
+      case 'chau':
+      case 'cháu':
+        return 'Cháu';
+      default:
+        return null;
+    }
+  }
+
+  static String _titleCaseRelation(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return 'Người thân';
+    }
+
+    final words = trimmed.split(RegExp(r'[_\s]+'));
+    final titled = words
+        .where((word) => word.isNotEmpty)
+        .map((word) {
+          final lower = word.toLowerCase();
+          return '${lower[0].toUpperCase()}${lower.substring(1)}';
+        })
+        .toList();
+    return titled.join(' ');
+  }
+
+  static String _resolveAddress(String? address, String? phone, String? email) {
+    final trimmedAddress = address?.trim() ?? '';
+    if (trimmedAddress.isNotEmpty) {
+      return trimmedAddress;
+    }
+
+    final trimmedPhone = phone?.trim() ?? '';
+    if (trimmedPhone.isNotEmpty) {
+      return trimmedPhone;
+    }
+
+    final trimmedEmail = email?.trim() ?? '';
+    if (trimmedEmail.isNotEmpty) {
+      return trimmedEmail;
+    }
+
+    return 'Chưa cập nhật';
+  }
+
+  static MemberRole _resolveRole(String? birthday, String? rawRole) {
+    final age = _calculateAge(birthday);
+    if (age != null) {
+      if (age < 16) {
+        return MemberRole.child;
+      }
+      if (age >= 60) {
+        return MemberRole.senior;
+      }
+    }
+
+    switch ((rawRole ?? '').toLowerCase()) {
+      case 'treem':
+      case 'child':
+        return MemberRole.child;
+      case 'nguoigia':
+      case 'elderly':
+      case 'senior':
+        return MemberRole.senior;
+      default:
+        return MemberRole.adult;
+    }
+  }
+
+  static int? _calculateAge(String? birthday) {
+    final birthDate = _parseDate(birthday);
+    if (birthDate == null) {
+      return null;
+    }
+
+    final today = DateTime.now();
+    var age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  static String _resolveStatus(String processing) {
+    switch (processing) {
+      case 'chuachapnhan':
+        return 'Chờ xác nhận';
+      case 'xacnhan':
+        return 'Đã kết nối';
+      case 'huy':
+        return 'Đã hủy';
+      default:
+        return 'Chưa cập nhật';
+    }
+  }
+
+  static String _resolveLastActive(DateTime? createdAt) {
+    if (createdAt == null) {
+      return 'Chưa cập nhật';
+    }
+
+    final difference = DateTime.now().difference(createdAt);
+    if (difference.inMinutes < 1) {
+      return 'Vừa xong';
+    }
+    if (difference.inHours < 1) {
+      return '${difference.inMinutes} phút trước';
+    }
+    if (difference.inDays < 1) {
+      return '${difference.inHours} giờ trước';
+    }
+    return '${difference.inDays} ngày trước';
+  }
+
+  static DateTime? _parseDate(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    final direct = DateTime.tryParse(trimmed);
+    if (direct != null) {
+      return direct;
+    }
+
+    if (RegExp(r'^\d{4}$').hasMatch(trimmed)) {
+      final year = int.tryParse(trimmed);
+      return year == null ? null : DateTime(year, 1, 1);
+    }
+
+    final normalized = trimmed.replaceAll('.', '-').replaceAll('/', '-');
+    final parts = normalized.split('-').where((part) => part.isNotEmpty).toList();
+    if (parts.length != 3) {
+      return null;
+    }
+
+    final first = int.tryParse(parts[0]);
+    final second = int.tryParse(parts[1]);
+    final third = int.tryParse(parts[2]);
+    if (first == null || second == null || third == null) {
+      return null;
+    }
+
+    if (parts[0].length == 4) {
+      return DateTime(first, second, third);
+    }
+
+    return DateTime(third, second, first);
+  }
+
+  static String _avatarUrlFor(String? avatarUrl) {
+    final trimmed = avatarUrl?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return _fallbackMemberAvatarUrl;
+    }
+    return trimmed;
+  }
+
+  static Color _accentColorFor(MemberRole role) {
+    switch (role) {
+      case MemberRole.senior:
+        return const Color(0xFF0F766E);
+      case MemberRole.child:
+        return const Color(0xFF2563EB);
+      case MemberRole.adult:
+        return _primaryColor;
+    }
+  }
+
+  static String _routeForRole(MemberRole role) {
+    switch (role) {
+      case MemberRole.child:
+        return AppRoutes.kidManagement;
+      case MemberRole.senior:
+        return AppRoutes.seniorMemberDetail;
+      case MemberRole.adult:
+        return AppRoutes.adultMemberDetail;
+    }
+  }
+
+  static MemberTrackingArgs? _trackingArgsFor({
+    required MemberRole role,
+    required String name,
+    required String status,
+    required String avatarUrl,
+    required String phoneNumber,
+    required String relationship,
+    required String lastActive,
+  }) {
+    if (role == MemberRole.child) {
+      return null;
+    }
+
+    final fallback = role == MemberRole.senior
+        ? const MemberTrackingArgs.seniorFallback()
+        : const MemberTrackingArgs.adultFallback();
+
+    return MemberTrackingArgs(
+      role: role,
+      name: name,
+      status: status,
+      avatarUrl: avatarUrl,
+      phoneNumber: phoneNumber,
+      relationship: relationship,
+      battery: 0,
+      connectionStatus: status,
+      deviceName: fallback.deviceName,
+      lastActive: lastActive,
+      timeLabel: fallback.timeLabel,
+      mapCenter: fallback.mapCenter,
+      routeHistory: fallback.routeHistory,
+      playbackStartLabel: fallback.playbackStartLabel,
+      playbackEndLabel: fallback.playbackEndLabel,
+      totalDistanceLabel: fallback.totalDistanceLabel,
+      totalDurationLabel: fallback.totalDurationLabel,
+      stopCount: fallback.stopCount,
+      averageSpeedLabel: fallback.averageSpeedLabel,
+      timelineItems: fallback.timelineItems,
     );
   }
 }
@@ -445,6 +915,29 @@ class _MemberCardsSection extends StatelessWidget {
   }
 }
 
+class _MemberCardsEmpty extends StatelessWidget {
+  const _MemberCardsEmpty({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 244,
+      child: Center(
+        child: Text(
+          message,
+          style: GoogleFonts.publicSans(
+            color: const Color(0xFF6B7280),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _MemberCard extends StatelessWidget {
   const _MemberCard({required this.data, required this.faded});
 
@@ -474,16 +967,7 @@ class _MemberCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
-              Positioned.fill(
-                child: Image.network(
-                  data.mapImageUrl,
-                  fit: BoxFit.cover,
-                  opacity: const AlwaysStoppedAnimation(0.6),
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: const Color(0xFFF4F8F7));
-                  },
-                ),
-              ),
+              Positioned.fill(child: _MapBackground(location: data.currentLocation)),
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -642,7 +1126,7 @@ class _MemberCard extends StatelessWidget {
                               Icon(
                                 data.batteryIcon,
                                 size: 18,
-                                color: data.batteryColor ?? data.accentColor,
+                                color: data.accentColor,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -663,6 +1147,10 @@ class _MemberCard extends StatelessWidget {
                     InkWell(
                       borderRadius: BorderRadius.circular(40),
                       onTap: () {
+                        if (data.trackingArgs == null) {
+                          Navigator.pushNamed(context, data.routeName);
+                          return;
+                        }
                         Navigator.pushNamed(
                           context,
                           data.routeName,
@@ -879,11 +1367,12 @@ class _QuickActionCard extends StatelessWidget {
 class _MemberCardData {
   const _MemberCardData({
     required this.name,
+    required this.role,
     required this.status,
     required this.battery,
     required this.location,
     required this.avatarUrl,
-    required this.mapImageUrl,
+    required this.currentLocation,
     required this.statusDotColor,
     required this.statusTextColor,
     required this.accentColor,
@@ -893,25 +1382,97 @@ class _MemberCardData {
     required this.locationIconBackground,
     required this.routeName,
     required this.trackingArgs,
-    this.batteryColor,
   });
 
   final String name;
+  final MemberRole role;
   final String status;
   final String battery;
   final String location;
   final String avatarUrl;
-  final String mapImageUrl;
+  final UserLocation? currentLocation;
   final Color statusDotColor;
   final Color statusTextColor;
   final Color accentColor;
   final IconData batteryIcon;
-  final Color? batteryColor;
   final IconData locationIcon;
   final Color locationIconColor;
   final Color locationIconBackground;
   final String routeName;
-  final MemberTrackingArgs trackingArgs;
+  final MemberTrackingArgs? trackingArgs;
+}
+
+class _MembersPayload {
+  const _MembersPayload({
+    required this.relationships,
+    required this.locations,
+    required this.currentUserBirthday,
+    required this.currentUserAge,
+  });
+
+  final List<Relationship> relationships;
+  final List<UserLocation> locations;
+  final DateTime? currentUserBirthday;
+  final int? currentUserAge;
+
+  factory _MembersPayload.empty() => const _MembersPayload(
+        relationships: <Relationship>[],
+        locations: <UserLocation>[],
+        currentUserBirthday: null,
+        currentUserAge: null,
+      );
+}
+
+class _MapBackground extends StatelessWidget {
+  const _MapBackground({required this.location});
+
+  final UserLocation? location;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasLocation = location?.hasLocation == true;
+    if (!hasLocation) {
+      return Container(color: const Color(0xFFF4F8F7));
+    }
+
+    final center = LatLng(location!.latitude!, location!.longitude!);
+    return FlutterMap(
+      options: MapOptions(
+        initialCenter: center,
+        initialZoom: 15,
+        interactionOptions: const InteractionOptions(flags: InteractiveFlag.none),
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          userAgentPackageName: 'family_guard',
+        ),
+        MarkerLayer(
+          markers: [
+            Marker(
+              point: center,
+              width: 28,
+              height: 28,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00ACB2).withValues(alpha: 0.85),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x3322C55E),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 class _QuickActionData {

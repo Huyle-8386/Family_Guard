@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '../../config/supabase';
+import { PushDeliveryService } from '../notifications/push-delivery.service';
 import { CreateSafeZoneInput, SafeZoneRecord, UpdateSafeZoneInput } from './safe-zones.types';
 
 type UserRole = 'nguoichamsoc' | 'nguoiduocchamsoc' | null;
@@ -13,6 +14,8 @@ interface SafeZoneStateRecord {
 }
 
 export class SafeZonesService {
+  private readonly pushDeliveryService = new PushDeliveryService();
+
   async createSafeZone(ownerUid: string, input: CreateSafeZoneInput) {
     await this.ensureCaregiver(ownerUid);
     await this.ensureConfirmedRelationship(ownerUid, input.target_uid);
@@ -203,13 +206,13 @@ export class SafeZonesService {
 
       const relationshipId = await this.findRelationshipId(zone.owner_uid, zone.target_uid);
       const title = isInside
-        ? 'Thanh vien da quay lai vung an toan'
-        : 'Canh bao vung an toan';
+        ? 'Da vao vung an toan'
+        : 'Da roi khoi vung an toan';
       const content = isInside
-        ? `${memberName} da quay lai vung an toan ${zone.name}`
+        ? `${memberName} da vao vung an toan ${zone.name}`
         : `${memberName} da roi khoi vung an toan ${zone.name}`;
 
-      const { error: notificationError } = await supabaseAdmin
+      const { data: notification, error: notificationError } = await supabaseAdmin
         .from('notification')
         .insert({
           title,
@@ -217,10 +220,29 @@ export class SafeZonesService {
           processing: 'dagui',
           uid: zone.owner_uid,
           relationship_id: relationshipId,
-        });
+        })
+        .select('*')
+        .single();
 
       if (notificationError) {
         throw new Error(notificationError.message || 'Khong tao duoc notification safe zone');
+      }
+
+      try {
+        const notificationId = notification?.id;
+        await this.pushDeliveryService.sendToUser({
+          uid: zone.owner_uid,
+          title,
+          body: content,
+          data: {
+            type: isInside ? 'safe_zone_entered' : 'safe_zone_exited',
+            notification_id: notificationId != null ? String(notificationId) : '',
+            safe_zone_id: String(zone.id),
+            target_uid: uid,
+          },
+        });
+      } catch (error) {
+        console.error('Khong the gui push safe zone', error);
       }
     }
   }

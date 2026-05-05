@@ -1,4 +1,5 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/camera/presentation/screens/camera_add_flow_screens.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_conversation_screen.dart';
 import 'package:family_guard/features/chat/presentation/screens/chat_list_screen.dart';
@@ -7,7 +8,6 @@ import 'package:family_guard/features/checkin_reminder/presentation/screens/chec
 import 'package:family_guard/features/checkin_reminder/presentation/widgets/checkin_reminder_selected_screen.dart';
 import 'package:family_guard/features/emotion/presentation/screens/emotion_pulse_screen.dart';
 import 'package:family_guard/features/emotion/presentation/widgets/emotion_journal_screen.dart';
-import 'package:family_guard/features/home/presentation/screens/kid_location_screen.dart';
 import 'package:family_guard/features/home/presentation/screens/kid_profile_screen.dart';
 import 'package:family_guard/features/home/presentation/screens/child_homepage.dart';
 import 'package:family_guard/features/home/presentation/screens/homepage.dart';
@@ -82,6 +82,7 @@ class AppRouter {
       trackingRouteName: AppRoutes.seniorTracking,
       notificationsRouteName: AppRoutes.seniorNotifications,
       settingsRouteName: AppRoutes.seniorSettings,
+      thirdTab: AppBottomMenuThirdTab.chat,
     ),
     AppRoutes.seniorNotifications: (context) => const ChatListScreen(
       showBottomNav: true,
@@ -98,7 +99,13 @@ class AppRouter {
       settingsRouteName: AppRoutes.seniorSettings,
     ),
     AppRoutes.kidHome: (context) => const ChildHomePage(),
-    AppRoutes.kidLocation: (context) => const KidLocationScreen(),
+    AppRoutes.kidLocation: (context) => const FamilyMapScreen(
+      homeRouteName: AppRoutes.kidHome,
+      trackingRouteName: AppRoutes.kidLocation,
+      notificationsRouteName: AppRoutes.kidChatList,
+      settingsRouteName: AppRoutes.kidProfile,
+      thirdTab: AppBottomMenuThirdTab.chat,
+    ),
     AppRoutes.kidChatList: (context) => const ChatListScreen(
       showBottomNav: true,
       showBackButton: false,

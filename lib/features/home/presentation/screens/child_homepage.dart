@@ -1,9 +1,7 @@
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/di/app_dependencies.dart';
-import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
-import 'package:family_guard/features/tracking/presentation/screens/family_map_screen.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,46 +21,11 @@ class ChildHomePage extends StatelessWidget {
   static const _muted = Color(0xFF6E7E96);
   static const _danger = Color(0xFFFF5E6A);
 
-  static const _contacts = [
-    _ChildContact(
-      name: 'M\u1EB9 Lan',
-      relation: 'M\u1EB9',
-      initial: 'L',
-      accent: Color(0xFFFFE8E0),
-      chatThreadId: 'me-lan',
-      callArgs: InAppCallArgs(
-        name: 'Tr\u1EA7n Th\u1ECB Lan',
-        avatarUrl:
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop',
-        role: MemberRole.adult,
-      ),
-    ),
-    _ChildContact(
-      name: 'Ba Minh',
-      relation: 'Ba',
-      initial: 'M',
-      accent: Color(0xFFE3F4FF),
-      chatThreadId: 'ba-minh',
-      callArgs: InAppCallArgs(
-        name: 'Nguy\u1EC5n V\u0103n Minh',
-        avatarUrl:
-            'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=400&auto=format&fit=crop',
-        role: MemberRole.adult,
-      ),
-    ),
-    _ChildContact(
-      name: 'B\u00E0 n\u1ED9i',
-      relation: 'B\u00E0',
-      initial: 'H',
-      accent: Color(0xFFEAF8F1),
-      chatThreadId: 'ba-noi',
-      callArgs: InAppCallArgs(
-        name: 'L\u00EA Th\u1ECB Hoa',
-        avatarUrl:
-            'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop',
-        role: MemberRole.senior,
-      ),
-    ),
+  static const _contactAccents = [
+    Color(0xFFFFE8E0),
+    Color(0xFFE3F4FF),
+    Color(0xFFEAF8F1),
+    Color(0xFFFFF1D6),
   ];
 
   static const _actions = [
@@ -538,91 +501,121 @@ class ChildHomePage extends StatelessWidget {
   }
 
   Widget _buildContacts(BuildContext context) {
-    return Column(
-      children: _contacts.map((contact) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Container(
+    return FutureBuilder<List<_ChildContact>>(
+      future: _loadContacts(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final contacts = snapshot.data ?? const <_ChildContact>[];
+        if (contacts.isEmpty) {
+          return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _surface,
               borderRadius: BorderRadius.circular(22),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x121FA5FF),
-                  blurRadius: 20,
-                  offset: Offset(0, 8),
-                  spreadRadius: -12,
-                ),
-              ],
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    color: contact.accent,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    contact.initial,
-                    style: GoogleFonts.lexend(
-                      color: _blueDark,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
+            child: Text(
+              'Ch\u01B0a c\u00F3 ng\u01B0\u1EDDi th\u00E2n \u0111\u00E3 x\u00E1c nh\u1EADn.',
+              style: GoogleFonts.beVietnamPro(
+                color: _muted,
+                fontSize: 14,
+              ),
+            ),
+          );
+        }
+
+        return Column(
+          children: contacts.map((contact) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _surface,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x121FA5FF),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                      spreadRadius: -12,
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        contact.name,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 54,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        color: contact.accent,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        contact.initial,
                         style: GoogleFonts.lexend(
-                          color: _text,
-                          fontSize: 17,
+                          color: _blueDark,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        contact.relation,
-                        style: GoogleFonts.beVietnamPro(
-                          color: _muted,
-                          fontSize: 14,
-                        ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            contact.name,
+                            style: GoogleFonts.lexend(
+                              color: _text,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            contact.relation,
+                            style: GoogleFonts.beVietnamPro(
+                              color: _muted,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    _MiniButton(
+                      icon: Icons.chat_bubble_rounded,
+                      color: _blue,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutes.kidChatConversation,
+                        arguments: contact.chatThreadId,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _MiniButton(
+                      icon: Icons.call_rounded,
+                      color: _green,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutes.inAppCall,
+                        arguments: contact.callArgs,
+                      ),
+                    ),
+                  ],
                 ),
-                _MiniButton(
-                  icon: Icons.chat_bubble_rounded,
-                  color: _blue,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    AppRoutes.kidChatConversation,
-                    arguments: contact.chatThreadId,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                _MiniButton(
-                  icon: Icons.call_rounded,
-                  color: _green,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    AppRoutes.inAppCall,
-                    arguments: contact.callArgs,
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 
@@ -743,84 +736,227 @@ class ChildHomePage extends StatelessWidget {
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE6EDF4),
-                    borderRadius: BorderRadius.circular(999),
+          child: FutureBuilder<List<_ChildContact>>(
+            future: _loadContacts(),
+            builder: (context, snapshot) {
+              final contacts = snapshot.data ?? const <_ChildContact>[];
+              final callableContacts = contacts.take(2).toList();
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE6EDF4),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'SOS kh\u1EA9n c\u1EA5p',
-                style: GoogleFonts.lexend(
-                  color: _text,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'B\u1EA1n c\u00F3 th\u1EC3 g\u1ECDi ngay cho Ba, M\u1EB9 ho\u1EB7c m\u1EDF chat gia \u0111\u00ECnh.',
-                style: GoogleFonts.beVietnamPro(
-                  color: _muted,
-                  fontSize: 15,
-                  height: 1.45,
-                ),
-              ),
-              const SizedBox(height: 18),
-              _BottomActionTile(
-                title: 'G\u1ECDi M\u1EB9 Lan',
-                subtitle: 'Li\u00EAn l\u1EA1c nhanh nh\u1EA5t',
-                icon: Icons.call_rounded,
-                color: _green,
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.inAppCall,
-                    arguments: _contacts.first.callArgs,
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              _BottomActionTile(
-                title: 'G\u1ECDi Ba Minh',
-                subtitle: 'Ba s\u1EBD theo d\u00F5i b\u1EA3n \u0111\u1ED3 ngay',
-                icon: Icons.support_agent_rounded,
-                color: _blue,
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.inAppCall,
-                    arguments: _contacts[1].callArgs,
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              _BottomActionTile(
-                title: 'M\u1EDF chat gia \u0111\u00ECnh',
-                subtitle: 'G\u1EEDi tin nh\u1EAFn cho c\u1EA3 nh\u00E0',
-                icon: Icons.chat_bubble_rounded,
-                color: _pink,
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, AppRoutes.kidChatList);
-                },
-              ),
-            ],
+                  const SizedBox(height: 18),
+                  Text(
+                    'SOS kh\u1EA9n c\u1EA5p',
+                    style: GoogleFonts.lexend(
+                      color: _text,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'B\u1EA1n c\u00F3 th\u1EC3 g\u1ECDi ng\u01B0\u1EDDi th\u00E2n \u0111\u00E3 x\u00E1c nh\u1EADn ho\u1EB7c m\u1EDF chat gia \u0111\u00ECnh.',
+                    style: GoogleFonts.beVietnamPro(
+                      color: _muted,
+                      fontSize: 15,
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  for (final contact in callableContacts) ...[
+                    _BottomActionTile(
+                      title: 'G\u1ECDi ${contact.name}',
+                      subtitle: contact.relation,
+                      icon: Icons.call_rounded,
+                      color: _green,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.inAppCall,
+                          arguments: contact.callArgs,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  _BottomActionTile(
+                    title: 'M\u1EDF chat gia \u0111\u00ECnh',
+                    subtitle: 'G\u1EEDi tin nh\u1EAFn cho c\u1EA3 nh\u00E0',
+                    icon: Icons.chat_bubble_rounded,
+                    color: _pink,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, AppRoutes.kidChatList);
+                    },
+                  ),
+                ],
+              );
+            },
           ),
         );
       },
     );
+  }
+
+  static Future<List<_ChildContact>> _loadContacts() async {
+    final relationships =
+        await AppDependencies.instance.getRelationshipsUseCase();
+    final confirmed = relationships.where((item) {
+      return item.processing.trim().toLowerCase() == 'xacnhan' &&
+          item.relationId.trim().isNotEmpty;
+    }).toList();
+
+    return confirmed.asMap().entries.map((entry) {
+      final index = entry.key;
+      final relation = entry.value;
+      final user = relation.relationUser;
+      final name = _resolveName(user?.name, user?.email);
+
+      return _ChildContact(
+        name: name,
+        relation: _displayRelation(relation.relationType),
+        initial: _initialFromName(name),
+        accent: _contactAccents[index % _contactAccents.length],
+        chatThreadId: relation.relationId.trim(),
+        callArgs: InAppCallArgs(
+          name: name,
+          avatarUrl: user?.avata ?? '',
+          role: _resolveRole(user?.birthday, user?.role),
+        ),
+      );
+    }).toList();
+  }
+
+  static String _resolveName(String? name, String? email) {
+    final trimmedName = name?.trim() ?? '';
+    if (trimmedName.isNotEmpty) {
+      return trimmedName;
+    }
+
+    final trimmedEmail = email?.trim() ?? '';
+    if (trimmedEmail.isNotEmpty) {
+      return trimmedEmail;
+    }
+
+    return 'Ng\u01B0\u1EDDi th\u00E2n';
+  }
+
+  static String _initialFromName(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      return 'N';
+    }
+    return String.fromCharCode(trimmed.runes.first).toUpperCase();
+  }
+
+  static String _displayRelation(String relation) {
+    final trimmed = relation.trim();
+    if (trimmed.isEmpty) {
+      return 'Ng\u01B0\u1EDDi th\u00E2n';
+    }
+
+    final normalized = trimmed.toLowerCase();
+    switch (normalized) {
+      case 'cha':
+      case 'bo':
+      case 'b\u1ED1':
+        return 'B\u1ED1';
+      case 'me':
+      case 'm\u1EB9':
+        return 'M\u1EB9';
+      case 'ong':
+      case '\u00F4ng':
+        return '\u00D4ng';
+      case 'ba':
+      case 'b\u00E0':
+        return 'B\u00E0';
+      case 'con':
+        return 'Con';
+      case 'vo':
+      case 'v\u1EE3':
+        return 'V\u1EE3';
+      case 'chong':
+      case 'ch\u1ED3ng':
+        return 'Ch\u1ED3ng';
+      case 'anh':
+        return 'Anh';
+      case 'chi':
+      case 'ch\u1ECB':
+        return 'Ch\u1ECB';
+      case 'em':
+        return 'Em';
+      case 'chau':
+      case 'ch\u00E1u':
+        return 'Ch\u00E1u';
+    }
+
+    if (trimmed.contains('_')) {
+      return _displayRelation(trimmed.split('_').last);
+    }
+
+    return trimmed;
+  }
+
+  static MemberRole _resolveRole(String? birthday, String? rawRole) {
+    final age = _calculateAge(birthday);
+    if (age != null) {
+      if (age < 16) {
+        return MemberRole.child;
+      }
+      if (age >= 60) {
+        return MemberRole.senior;
+      }
+    }
+
+    switch ((rawRole ?? '').trim().toLowerCase()) {
+      case 'treem':
+      case 'child':
+        return MemberRole.child;
+      case 'nguoigia':
+      case 'elderly':
+      case 'senior':
+        return MemberRole.senior;
+      default:
+        return MemberRole.adult;
+    }
+  }
+
+  static int? _calculateAge(String? birthday) {
+    final trimmed = birthday?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return null;
+    }
+
+    final birthDate = DateTime.tryParse(trimmed);
+    if (birthDate == null) {
+      return null;
+    }
+
+    final today = DateTime.now();
+    var age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
   }
 }
 

@@ -23,6 +23,7 @@ class FamilyMapScreen extends StatefulWidget {
     this.trackingRouteName = AppRoutes.tracking,
     this.notificationsRouteName = AppRoutes.notifications,
     this.settingsRouteName = AppRoutes.settings,
+    this.thirdTab = AppBottomMenuThirdTab.notifications,
     this.showBottomNav = true,
   });
 
@@ -30,6 +31,7 @@ class FamilyMapScreen extends StatefulWidget {
   final String trackingRouteName;
   final String notificationsRouteName;
   final String settingsRouteName;
+  final AppBottomMenuThirdTab thirdTab;
   final bool showBottomNav;
 
   @override
@@ -56,6 +58,10 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
 
   static const String _fallbackAvatarUrl =
       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&auto=format&fit=crop';
+
+  String get _chatRouteName => widget.thirdTab == AppBottomMenuThirdTab.chat
+      ? widget.notificationsRouteName
+      : AppRoutes.chatList;
 
   List<_MapMember> get _members {
     final state = _locationBloc.state;
@@ -149,7 +155,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                         selected: _selectedFilter,
                         topPadding: widget.showBottomNav ? 14 : 72,
                         onChatTap: () =>
-                            Navigator.pushNamed(context, AppRoutes.chatList),
+                            Navigator.pushNamed(context, _chatRouteName),
                         onChanged: (filter) {
                           setState(() {
                             _selectedFilter = filter;
@@ -172,6 +178,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                         trackingRouteName: widget.trackingRouteName,
                         notificationsRouteName: widget.notificationsRouteName,
                         settingsRouteName: widget.settingsRouteName,
+                        thirdTab: widget.thirdTab,
                         selectedMember: selectedMember,
                         onViewDetails: selectedMember == null
                             ? null
@@ -1016,6 +1023,7 @@ class _BottomSheetAndNav extends StatelessWidget {
     required this.trackingRouteName,
     required this.notificationsRouteName,
     required this.settingsRouteName,
+    required this.thirdTab,
     required this.selectedMember,
     required this.onViewDetails,
     required this.onCallTap,
@@ -1027,6 +1035,7 @@ class _BottomSheetAndNav extends StatelessWidget {
   final String trackingRouteName;
   final String notificationsRouteName;
   final String settingsRouteName;
+  final AppBottomMenuThirdTab thirdTab;
   final _MapMember? selectedMember;
   final VoidCallback? onViewDetails;
   final VoidCallback? onCallTap;
@@ -1065,6 +1074,7 @@ class _BottomSheetAndNav extends StatelessWidget {
                 homeRouteName: homeRouteName,
                 trackingRouteName: trackingRouteName,
                 settingsRouteName: settingsRouteName,
+                thirdTab: thirdTab,
                 thirdTabRouteName: notificationsRouteName,
               ),
             ),
