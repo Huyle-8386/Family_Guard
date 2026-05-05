@@ -12,10 +12,12 @@ const relationships_routes_1 = __importDefault(require("./modules/relationships/
 const notifications_routes_1 = __importDefault(require("./modules/notifications/notifications.routes"));
 const locations_routes_1 = __importDefault(require("./modules/locations/locations.routes"));
 const safe_zones_routes_1 = __importDefault(require("./modules/safe-zones/safe-zones.routes"));
+const push_tokens_routes_1 = __importDefault(require("./modules/push-tokens/push-tokens.routes"));
+const messages_routes_1 = __importDefault(require("./modules/messages/messages.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
-app.use(express_1.default.json());
+app.use(express_1.default.json({ limit: '12mb' }));
 app.get('/', (_req, res) => {
     res.json({ message: 'FamilyGuard Backend is running' });
 });
@@ -25,4 +27,6 @@ app.use('/api', relationships_routes_1.default);
 app.use('/api', notifications_routes_1.default);
 app.use('/api', locations_routes_1.default);
 app.use('/api', safe_zones_routes_1.default);
+app.use('/api', push_tokens_routes_1.default);
+app.use('/api', messages_routes_1.default);
 exports.default = app;

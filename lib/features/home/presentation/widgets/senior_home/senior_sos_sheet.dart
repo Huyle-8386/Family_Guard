@@ -92,7 +92,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
               ),
               const SizedBox(height: 18),
               Text(
-                'CẢNH BÁO KHẨN CẤP',
+                'C?NH B�O KH?N C?P',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.lexend(
                   color: const Color(0xFFFF1717),
@@ -103,7 +103,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Phát hiện té\nngã',
+                'Ph�t hi?n t�\nng�',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.lexend(
                   color: const Color(0xFF17233D),
@@ -151,7 +151,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'GIÂY',
+                        'GI�Y',
                         style: GoogleFonts.lexend(
                           color: const Color(0xFFE9154A),
                           fontSize: 11,
@@ -165,7 +165,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Phát hiện chuyển động bất thường. Nếu bạn không phản hồi, chúng tôi sẽ thông báo cho dịch vụ khẩn cấp.',
+                'Ph�t hi?n chuy?n d?ng b?t thu?ng. N?u b?n kh�ng ph?n h?i, ch�ng t�i s? th�ng b�o cho d?ch v? kh?n c?p.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.beVietnamPro(
                   color: const Color(0xFF6D7686),
@@ -197,7 +197,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'TÔI ỔN',
+                        'T�I ?N',
                         style: GoogleFonts.lexend(
                           color: Colors.white,
                           fontSize: 20,
@@ -244,7 +244,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        'GỌI HỖ TRỢ NGAY',
+                        'G?I H? TR? NGAY',
                         style: GoogleFonts.lexend(
                           color: Colors.white,
                           fontSize: 18,
@@ -257,7 +257,7 @@ class _SeniorSosSheetState extends State<SeniorSosSheet> {
               ),
               const SizedBox(height: 16),
               Text(
-                'FamilyGuard đang bảo vệ bạn',
+                'FamilyGuard dang b?o v? b?n',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.beVietnamPro(
                   color: const Color(0xFF7D8695),

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:family_guard/features/login/data/datasources/auth_local_data_source.dart';
 import 'package:family_guard/features/login/data/models/auth_session_model.dart';
 import 'package:family_guard/features/profile_security/data/datasources/profile_remote_data_source.dart';
@@ -27,6 +29,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Profile> updateProfile(UpdateProfileRequest request) async {
     final profile = await _remote.updateProfile(
       UpdateProfileRequestModel.fromEntity(request),
+    );
+    await _syncSession(profile);
+    return profile;
+  }
+
+  @override
+  Future<Profile> uploadAvatar({
+    required Uint8List bytes,
+    required String fileName,
+    String? mimeType,
+  }) async {
+    final profile = await _remote.uploadAvatar(
+      bytes: bytes,
+      fileName: fileName,
+      mimeType: mimeType,
     );
     await _syncSession(profile);
     return profile;

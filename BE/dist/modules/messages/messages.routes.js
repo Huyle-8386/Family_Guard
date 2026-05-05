@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_middleware_1 = require("../../middlewares/auth.middleware");
+const messages_controller_1 = require("./messages.controller");
+const router = (0, express_1.Router)();
+const controller = new messages_controller_1.MessagesController();
+router.get('/messages/threads', auth_middleware_1.authMiddleware, controller.listThreads.bind(controller));
+router.post('/messages/presence', auth_middleware_1.authMiddleware, controller.updatePresence.bind(controller));
+router.get('/messages/:peerUid', auth_middleware_1.authMiddleware, controller.listMessages.bind(controller));
+router.post('/messages/:peerUid', auth_middleware_1.authMiddleware, controller.sendMessage.bind(controller));
+exports.default = router;

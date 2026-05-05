@@ -54,6 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
           sex: profile.sex,
           address: profile.address,
           role: profile.role,
+          userType: profile.userType,
           avata: profile.avata,
           age: profile.age,
           homeType: profile.homeType ?? savedSession.homeType,

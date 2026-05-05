@@ -1,0 +1,67 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MessagesController = void 0;
+const messages_service_1 = require("./messages.service");
+const messagesService = new messages_service_1.MessagesService();
+class MessagesController {
+    async listThreads(req, res) {
+        try {
+            const data = await messagesService.listThreads(req.userId);
+            return res.status(200).json({ data });
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: error.message || 'Không thể tải danh sách đoạn chat',
+                error,
+            });
+        }
+    }
+    async listMessages(req, res) {
+        try {
+            const peerUid = String(req.params.peerUid ?? '').trim();
+            if (!peerUid) {
+                return res.status(400).json({ message: 'Thiếu peerUid' });
+            }
+            const data = await messagesService.listMessages(req.userId, peerUid);
+            return res.status(200).json({ data });
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: error.message || 'Không thể tải nội dung chat',
+                error,
+            });
+        }
+    }
+    async sendMessage(req, res) {
+        try {
+            const peerUid = String(req.params.peerUid ?? '').trim();
+            const content = String(req.body?.content ?? '');
+            if (!peerUid) {
+                return res.status(400).json({ message: 'Thiếu peerUid' });
+            }
+            const data = await messagesService.sendMessage(req.userId, peerUid, content);
+            return res.status(200).json({ data });
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: error.message || 'Không thể gửi tin nhắn',
+                error,
+            });
+        }
+    }
+    async updatePresence(req, res) {
+        try {
+            const activePeerUidRaw = req.body?.active_peer_uid;
+            const activePeerUid = activePeerUidRaw == null ? null : String(activePeerUidRaw).trim();
+            const data = await messagesService.updatePresence(req.userId, activePeerUid?.isEmpty == true ? null : activePeerUid);
+            return res.status(200).json({ data });
+        }
+        catch (error) {
+            return res.status(400).json({
+                message: error.message || 'Không thể cập nhật trạng thái chat',
+                error,
+            });
+        }
+    }
+}
+exports.MessagesController = MessagesController;

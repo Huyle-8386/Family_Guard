@@ -26,6 +26,8 @@
 	<string>$(PRODUCT_COPYRIGHT)</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Family Guard can truy cap anh de ban cap nhat avatar tai khoan.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -7,20 +7,20 @@ import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SAFE ZONE CONFIG SCREEN - Cáº¥u hÃ¬nh vÃ¹ng an toÃ n
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export (class Frame1)
+/// SAFE ZONE CONFIG SCREEN - Cấu hình vùng an toàn
+/// Được dịch và sửa lỗi từ Figma Dev Mode export (class Frame1)
 ///
-/// Lá»—i Figma Ä‘Ã£ sá»­a:
-/// - `children: [,]` rá»—ng (icon back, icon rá»i/vÃ o/lÃ¢u, icon +) â†’ Icon thá»±c táº¿
-/// - `BoxShadow(...) BoxShadow(...)` thiáº¿u `,` (3 chá»—) â†’ thÃªm dáº¥u `,`
-/// - `Expanded` trong Column khÃ´ng cÃ³ chiá»u cao â†’ xÃ³a, dÃ¹ng ClipOval + CustomPainter
-/// - `child: Stack()` rá»—ng (2 chá»— checkbox) â†’ Icon(Icons.check_rounded)
-/// - `NetworkImage("https://placehold.co/...")` â†’ CustomPainter avatar
-/// - Bottom bar táº¡i `top: 908` (ngoÃ i mÃ n hÃ¬nh) â†’ Positioned(bottom:0)
-/// - AppBar dÃ¹ng Container trong Stack â†’ Scaffold.appBar thá»±c sá»±
-/// - `spacing:` property Figma trÃªn Column/Row â†’ SizedBox
-/// - Chip bÃ¡n kÃ­nh dÃ¹ng Positioned absolute tá»a Ä‘á»™ cá»©ng â†’ SingleChildScrollView + Row
-/// - `class Frame1` â†’ SafeZoneConfigScreen
+/// Lỗi Figma đã sửa:
+/// - `children: [,]` rỗng (icon back, icon rời/vào/lâu, icon +) → Icon thực tế
+/// - `BoxShadow(...) BoxShadow(...)` thiếu `,` (3 chỗ) → thêm dấu `,`
+/// - `Expanded` trong Column không có chiều cao → xóa, dùng ClipOval + CustomPainter
+/// - `child: Stack()` rỗng (2 chỗ checkbox) → Icon(Icons.check_rounded)
+/// - `NetworkImage("https://placehold.co/...")` → CustomPainter avatar
+/// - Bottom bar tại `top: 908` (ngoài màn hình) → Positioned(bottom:0)
+/// - AppBar dùng Container trong Stack → Scaffold.appBar thực sự
+/// - `spacing:` property Figma trên Column/Row → SizedBox
+/// - Chip bán kính dùng Positioned absolute tọa độ cứng → SingleChildScrollView + Row
+/// - `class Frame1` → SafeZoneConfigScreen
 /// ============================================================
 
 class SafeZoneConfigScreen extends StatefulWidget {
@@ -31,19 +31,19 @@ class SafeZoneConfigScreen extends StatefulWidget {
 }
 
 class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
-  // â”€â”€ BÃ¡n kÃ­nh Ä‘Ã£ chá»n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Bán kính đã chọn ─────────────────────────────────────────────
   int _selectedRadius = 0; // 0=50m, 1=100m, 2=200m, 3=500m
   final List<String> _radiusOptions = ['50m', '100m', '200m', '500m'];
 
-  // â”€â”€ Toggle thÃ´ng bÃ¡o thÃ´ng minh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Toggle thông báo thông minh ───────────────────────────────────
   bool _leaveAlert = true;
   bool _enterAlert = true;
   bool _stayLongAlert = false;
 
-  // â”€â”€ NgÆ°á»i nháº­n (checked=true) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Người nhận (checked=true) ─────────────────────────────────────
   final List<_Contact> _contacts = [
-    const _Contact(name: 'Bố', initials: 'B', color: Color(0xFF3B82F6), checked: true),
-    const _Contact(name: 'Mẹ', initials: 'M', color: Color(0xFFEC4899), checked: true),
+    const _Contact(name: 'B?', initials: 'B', color: Color(0xFF3B82F6), checked: true),
+    const _Contact(name: 'M?', initials: 'M', color: Color(0xFFEC4899), checked: true),
     const _Contact(name: 'Anh trai', initials: 'AT', color: Color(0xFF8B5CF6), checked: false),
   ];
 
@@ -54,28 +54,28 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
       appBar: _buildAppBar(context),
       body: Stack(
         children: [
-          // â”€â”€ Ná»™i dung cuá»™n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Nội dung cuộn ────────────────────────────────────────
           SingleChildScrollView(
             padding: const EdgeInsets.only(
                 top: 16, left: 16, right: 16, bottom: 120),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // â”€â”€ Card: ThÃ´ng tin vÃ¹ng â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ── Card: Thông tin vùng ──────────────────────────
                 _buildZoneInfoCard(),
                 const SizedBox(height: 24),
 
-                _buildSectionTitle('Bán kính vùng an toàn'),
+                _buildSectionTitle('B�n k�nh v�ng an to�n'),
                 const SizedBox(height: 12),
                 _buildRadiusChips(),
                 const SizedBox(height: 24),
 
-                _buildSectionTitle('Thông báo thông minh'),
+                _buildSectionTitle('Th�ng b�o th�ng minh'),
                 const SizedBox(height: 12),
                 _buildSmartAlertsCard(),
                 const SizedBox(height: 24),
 
-                // â”€â”€ ThÃ nh viÃªn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ── Thành viên ───────────────────────────────────
                 _buildRecipientsHeader(),
                 const SizedBox(height: 12),
                 _buildRecipientsCard(),
@@ -83,7 +83,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             ),
           ),
 
-          // â”€â”€ Bottom bar cá»‘ Ä‘á»‹nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Bottom bar cố định ────────────────────────────────
           Positioned(
             left: 0,
             right: 0,
@@ -95,15 +95,15 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── AppBar ────────────────────────────────────────────────────────
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBackHeaderBar(
-      title: 'Cấu hình vùng an toàn',
+      title: 'C?u h�nh v�ng an to�n',
       onBack: () => Navigator.of(context).maybePop(),
       trailing: TextButton(
         onPressed: () => Navigator.of(context).maybePop(),
         child: Text(
-          'Hủy',
+          'H?y',
           style: TextStyle(
             color: const Color(0xFF00ACB2),
             fontSize: ResponsiveHelper.sp(context, 16),
@@ -116,7 +116,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Section title â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Section title ─────────────────────────────────────────────────
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -133,7 +133,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Card: ThÃ´ng tin vÃ¹ng (thumbnail + tÃªn + Ä‘á»‹a chá»‰) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Card: Thông tin vùng (thumbnail + tên + địa chỉ) ─────────────
   Widget _buildZoneInfoCard() {
     return Container(
       width: double.infinity,
@@ -156,7 +156,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Thumbnail báº£n Ä‘á»“ (CustomPainter thay NetworkImage)
+          // Thumbnail bản đồ (CustomPainter thay NetworkImage)
           Container(
             width: 64,
             height: 64,
@@ -184,13 +184,13 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
 
           const SizedBox(width: 16),
 
-          // TÃªn + Ä‘á»‹a chá»‰
+          // Tên + địa chỉ
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Nhà riêng',
+                  'Nh� ri�ng',
                   style: TextStyle(
                     color: const Color(0xFF00ACB2),
                     fontSize: ResponsiveHelper.sp(context, 18),
@@ -201,7 +201,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '123 Đường ABC, Quận 1, TP.\nHCM',
+                  '123 �u?ng ABC, Qu?n 1, TP.\nHCM',
                   style: TextStyle(
                     color: const Color(0xFF6B7280),
                     fontSize: ResponsiveHelper.sp(context, 14),
@@ -216,7 +216,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
 
           const SizedBox(width: 8),
 
-          // NÃºt chá»‰nh sá»­a
+          // Nút chỉnh sửa
           GestureDetector(
             onTap: () =>
                 Navigator.of(context).pushNamed(AppRoutes.safeZoneInfo),
@@ -231,7 +231,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Chip bÃ¡n kÃ­nh (scroll ngang, fix Positioned absolute) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Chip bán kính (scroll ngang, fix Positioned absolute) ─────────
   Widget _buildRadiusChips() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -297,7 +297,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Card: ThÃ´ng bÃ¡o thÃ´ng minh (3 toggle rows) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Card: Thông báo thông minh (3 toggle rows) ────────────────────
   Widget _buildSmartAlertsCard() {
     return Container(
       width: double.infinity,
@@ -315,7 +315,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             icon: Icons.logout_rounded,
             iconBg: const Color(0xFFFEF2F2),
             iconColor: const Color(0xFFEF4444),
-            label: 'Rời vùng',
+            label: 'R?i v�ng',
             value: _leaveAlert,
             onToggle: (v) => setState(() => _leaveAlert = v),
             showDivider: false,
@@ -324,7 +324,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             icon: Icons.login_rounded,
             iconBg: const Color(0xFFEFF6FF),
             iconColor: const Color(0xFF3B82F6),
-            label: 'Vào vùng',
+            label: 'V�o v�ng',
             value: _enterAlert,
             onToggle: (v) => setState(() => _enterAlert = v),
             showDivider: true,
@@ -333,7 +333,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
             icon: Icons.timer_rounded,
             iconBg: const Color(0xFFFFFBEB),
             iconColor: const Color(0xFFD97706),
-            label: 'Ở lại quá lâu',
+            label: '? l?i qu� l�u',
             value: _stayLongAlert,
             onToggle: (v) => setState(() => _stayLongAlert = v),
             showDivider: true,
@@ -426,7 +426,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Header ngÆ°á»i nháº­n (title + "+ ThÃªm má»›i") â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Header người nhận (title + "+ Thêm mới") ──────────────────────
   Widget _buildRecipientsHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -434,7 +434,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Thành viên',
+            'Th�nh vi�n',
             style: TextStyle(
               color: const Color(0xFF0C1D1A),
               fontSize: ResponsiveHelper.sp(context, 16),
@@ -446,7 +446,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneSelectMember),
             child: Text(
-              '+ Thêm mới',
+              '+ Th�m m?i',
               style: TextStyle(
                 color: const Color(0xFF00ACB2),
                 fontSize: ResponsiveHelper.sp(context, 14),
@@ -461,7 +461,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Card danh sÃ¡ch ngÆ°á»i nháº­n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Card danh sách người nhận ─────────────────────────────────────
   Widget _buildRecipientsCard() {
     return Container(
       width: double.infinity,
@@ -496,7 +496,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
                   : null,
               child: Row(
                 children: [
-                  // Avatar vá»›i initials (CustomPainter thay NetworkImage)
+                  // Avatar với initials (CustomPainter thay NetworkImage)
                   Container(
                     width: 40,
                     height: 40,
@@ -513,7 +513,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // TÃªn
+                  // Tên
                   Expanded(
                     child: Text(
                       c.name,
@@ -559,7 +559,7 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
     );
   }
 
-  // â”€â”€ Bottom bar: LÆ°u cáº¥u hÃ¬nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Bottom bar: Lưu cấu hình ──────────────────────────────────────
   Widget _buildBottomBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
@@ -576,13 +576,13 @@ class _SafeZoneConfigScreenState extends State<SafeZoneConfigScreen> {
       ),
       child: ElevatedButton(
         onPressed: () => Navigator.of(context).maybePop(),
-        child: const Text('Lưu cấu hình'),
+        child: const Text('Luu c?u h�nh'),
       ),
     );
   }
 }
 
-// â”€â”€ Data model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Data model ────────────────────────────────────────────────────────
 class _Contact {
   final String name;
   final String initials;
@@ -596,7 +596,7 @@ class _Contact {
   });
 }
 
-// â”€â”€ Avatar painter vá»›i initials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Avatar painter với initials ───────────────────────────────────────
 class _AvatarPainter extends CustomPainter {
   final String initials;
   final Color color;

@@ -2,7 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsService = void 0;
 const supabase_1 = require("../../config/supabase");
+const push_delivery_service_1 = require("./push-delivery.service");
 class NotificationsService {
+    constructor() {
+        this.pushDeliveryService = new push_delivery_service_1.PushDeliveryService();
+    }
     normalizeRelationLabel(value) {
         const normalized = value?.toString().trim();
         return normalized && normalized.length > 0 ? normalized : 'Người thân';
@@ -31,6 +35,8 @@ class NotificationsService {
           processing,
           uid,
           relationship_id,
+          fall_latitude,
+          fall_longitude,
           created_at,
           relationship:relationship_id(
             relation_type,
@@ -54,8 +60,10 @@ class NotificationsService {
                 processing: item.processing,
                 uid: item.uid,
                 relationship_id: item.relationship_id,
+                fall_latitude: item.fall_latitude ?? null,
+                fall_longitude: item.fall_longitude ?? null,
                 created_at: item.created_at,
-                sender_name: isPendingInvite ? item.relationship?.inviter?.name ?? null : null,
+                sender_name: item.relationship?.inviter?.name ?? null,
                 sender_relation: isPendingInvite
                     ? item.relationship?.reverse_relation_type ??
                         item.relationship?.relation_type ??
@@ -64,7 +72,7 @@ class NotificationsService {
             };
         });
     }
-    async createFallAlert(uid) {
+    async createFallAlert(uid, locationSnapshot) {
         const seniorName = await this.getUserDisplayName(uid);
         const { data: relationships, error } = await supabase_1.supabaseAdmin
             .from('relationship')
@@ -102,6 +110,8 @@ class NotificationsService {
                 title: 'Cảnh báo té ngã',
                 content: `${seniorName}(${recipient.relationLabel}) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.`,
                 processing: 'done',
+                fall_latitude: locationSnapshot?.latitude ?? null,
+                fall_longitude: locationSnapshot?.longitude ?? null,
             })
                 .select('*')
                 .single();
@@ -109,6 +119,20 @@ class NotificationsService {
                 throw notificationError;
             }
             createdNotifications.push(notification);
+            try {
+                await this.pushDeliveryService.sendToUser({
+                    uid: recipient.recipientUid,
+                    title: 'Cảnh báo té ngã',
+                    body: `${seniorName}(${recipient.relationLabel}) vừa được phát hiện té ngã. Vui lòng kiểm tra ngay vị trí hiện tại.`,
+                    data: {
+                        type: 'fall_alert',
+                        notification_id: String(notification.id),
+                    },
+                });
+            }
+            catch (error) {
+                console.error('Không thể gửi push té ngã', error);
+            }
         }
         return createdNotifications;
     }
@@ -180,6 +204,15 @@ class NotificationsService {
                     title: 'Mối quan hệ đã được xác nhận',
                     content: `${responderName}(${responderRelation}) đã xác nhận lời mời kết nối gia đình của bạn. Hai người hiện đã được liên kết.`,
                     processing: 'done',
+                });
+                await this.pushDeliveryService.sendToUser({
+                    uid: relationship.uid,
+                    title: 'Mối quan hệ đã được xác nhận',
+                    body: `${responderName}(${responderRelation}) đã xác nhận lời mời kết nối gia đình của bạn.`,
+                    data: {
+                        type: 'relationship_confirmed',
+                        relationship_id: String(relationship.id),
+                    },
                 });
             }
             catch (error) {

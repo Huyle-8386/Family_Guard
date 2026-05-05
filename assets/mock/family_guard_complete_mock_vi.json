@@ -1,4 +1,4 @@
-﻿{
+{
   "metadata": {
     "datasetVersion": "1.0.0",
     "datasetName": "family_guard_complete_mock_vi",
@@ -10,14 +10,14 @@
   },
   "family": {
     "familyId": "family_nguyen_001",
-    "familyName": "Gia Ä‘Ã¬nh Minh - Lan",
+    "familyName": "Gia đình Minh - Lan",
     "createdByUserId": "user_ba_minh",
     "createdAt": "2025-11-18T20:15:00+07:00",
     "coManagerUserIds": [
       "user_me_lan"
     ],
     "language": "vi-VN",
-    "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+    "homeAddress": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
     "memberUserIds": [
       "user_ba_minh",
       "user_me_lan",
@@ -50,7 +50,7 @@
       "user_con_an",
       "user_ba_noi_hoa"
     ],
-    "familyStatusLabel": "Cáº§n chÃº Ã½ An vÃ  BÃ  ná»™i trong hÃ´m nay"
+    "familyStatusLabel": "Cần chú ý An và Bà nội trong hôm nay"
   },
   "accounts": [
     {
@@ -58,13 +58,13 @@
       "familyId": "family_nguyen_001",
       "email": "ba@gmail.com",
       "password": "123456",
-      "displayName": "Nguyá»…n VÄƒn Minh",
+      "displayName": "Nguyễn Văn Minh",
       "role": "ba",
       "roleLabel": "Ba",
       "relationshipMap": {
-        "user_me_lan": "Vá»£",
+        "user_me_lan": "Vợ",
         "user_con_an": "Con",
-        "user_ba_noi_hoa": "Máº¹"
+        "user_ba_noi_hoa": "Mẹ"
       },
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenVanMinh",
       "accountStatus": "active",
@@ -109,13 +109,13 @@
       "familyId": "family_nguyen_001",
       "email": "me@gmail.com",
       "password": "123456",
-      "displayName": "Tráº§n Thá»‹ Lan",
+      "displayName": "Trần Thị Lan",
       "role": "me",
-      "roleLabel": "Máº¹",
+      "roleLabel": "Mẹ",
       "relationshipMap": {
-        "user_ba_minh": "Chá»“ng",
+        "user_ba_minh": "Chồng",
         "user_con_an": "Con",
-        "user_ba_noi_hoa": "Máº¹ chá»“ng"
+        "user_ba_noi_hoa": "Mẹ chồng"
       },
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=TranThiLan",
       "accountStatus": "active",
@@ -156,13 +156,13 @@
       "familyId": "family_nguyen_001",
       "email": "con@gmail.com",
       "password": "123456",
-      "displayName": "Nguyá»…n Minh An",
+      "displayName": "Nguyễn Minh An",
       "role": "con",
       "roleLabel": "Con",
       "relationshipMap": {
         "user_ba_minh": "Ba",
-        "user_me_lan": "Máº¹",
-        "user_ba_noi_hoa": "BÃ  ná»™i"
+        "user_me_lan": "Mẹ",
+        "user_ba_noi_hoa": "Bà nội"
       },
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenMinhAn",
       "accountStatus": "active",
@@ -199,13 +199,13 @@
       "familyId": "family_nguyen_001",
       "email": "noi@gmail.com",
       "password": "123456",
-      "displayName": "LÃª Thá»‹ Hoa",
+      "displayName": "Lê Thị Hoa",
       "role": "ba_noi",
-      "roleLabel": "BÃ  ná»™i",
+      "roleLabel": "Bà nội",
       "relationshipMap": {
         "user_ba_minh": "Con trai",
-        "user_me_lan": "Con dÃ¢u",
-        "user_con_an": "ChÃ¡u ná»™i"
+        "user_me_lan": "Con dâu",
+        "user_con_an": "Cháu nội"
       },
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=LeThiHoa",
       "accountStatus": "active",
@@ -239,103 +239,103 @@
     {
       "userId": "user_ba_minh",
       "familyId": "family_nguyen_001",
-      "fullName": "Nguyá»…n VÄƒn Minh",
+      "fullName": "Nguyễn Văn Minh",
       "nickname": "Ba Minh",
       "roleInFamily": "Ba",
       "age": 42,
       "dateOfBirth": "1983-07-18",
       "gender": "Nam",
-      "occupation": "Ká»¹ sÆ° xÃ¢y dá»±ng",
+      "occupation": "Kỹ sư xây dựng",
       "phoneNumber": "+84 903 118 286",
       "email": "ba@gmail.com",
-      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "homeAddress": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenVanMinh",
-      "healthNotes": "KhÃ´ng cÃ³ bá»‡nh ná»n nghiÃªm trá»ng, Ä‘Ã´i lÃºc Ä‘au lÆ°ng khi Ä‘á»©ng cÃ´ng trÆ°á»ng lÃ¢u.",
+      "healthNotes": "Không có bệnh nền nghiêm trọng, đôi lúc đau lưng khi đứng công trường lâu.",
       "bloodType": "O+",
       "emergencyContactIds": [
         "contact_ba_1"
       ],
-      "lifeContext": "NgÆ°á»i quáº£n lÃ½ chÃ­nh cá»§a gia Ä‘Ã¬nh, thÆ°á»ng xem báº£n Ä‘á»“ gia Ä‘Ã¬nh vÃ  bÃ¡o cÃ¡o cuá»‘i ngÃ y.",
+      "lifeContext": "Người quản lý chính của gia đình, thường xem bản đồ gia đình và báo cáo cuối ngày.",
       "medicalTags": [
-        "Äau lÆ°ng nháº¹",
-        "KhÃ´ng dá»‹ á»©ng thuá»‘c"
+        "Đau lưng nhẹ",
+        "Không dị ứng thuốc"
       ]
     },
     {
       "userId": "user_me_lan",
       "familyId": "family_nguyen_001",
-      "fullName": "Tráº§n Thá»‹ Lan",
-      "nickname": "Máº¹ Lan",
-      "roleInFamily": "Máº¹",
+      "fullName": "Trần Thị Lan",
+      "nickname": "Mẹ Lan",
+      "roleInFamily": "Mẹ",
       "age": 39,
       "dateOfBirth": "1986-11-03",
-      "gender": "Ná»¯",
-      "occupation": "NhÃ¢n viÃªn vÄƒn phÃ²ng",
+      "gender": "Nữ",
+      "occupation": "Nhân viên văn phòng",
       "phoneNumber": "+84 907 226 541",
       "email": "me@gmail.com",
-      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "homeAddress": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=TranThiLan",
-      "healthNotes": "ViÃªm xoang nháº¹, dá»… Ä‘au Ä‘áº§u khi lÃ m viá»‡c quÃ¡ lÃ¢u trÆ°á»›c mÃ n hÃ¬nh.",
+      "healthNotes": "Viêm xoang nhẹ, dễ đau đầu khi làm việc quá lâu trước màn hình.",
       "bloodType": "A+",
       "emergencyContactIds": [
         "contact_me_1"
       ],
-      "lifeContext": "Theo dÃµi Con vÃ  BÃ  ná»™i thÆ°á»ng xuyÃªn, Æ°u tiÃªn gá»i nhanh khi cÃ³ sá»± cá»‘.",
+      "lifeContext": "Theo dõi Con và Bà nội thường xuyên, ưu tiên gọi nhanh khi có sự cố.",
       "medicalTags": [
-        "ViÃªm xoang nháº¹"
+        "Viêm xoang nhẹ"
       ]
     },
     {
       "userId": "user_con_an",
       "familyId": "family_nguyen_001",
-      "fullName": "Nguyá»…n Minh An",
+      "fullName": "Nguyễn Minh An",
       "nickname": "An",
       "roleInFamily": "Con",
       "age": 12,
       "dateOfBirth": "2013-08-21",
       "gender": "Nam",
-      "occupation": "Há»c sinh",
+      "occupation": "Học sinh",
       "phoneNumber": "+84 933 440 115",
       "email": "con@gmail.com",
-      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "homeAddress": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=NguyenMinhAn",
-      "healthNotes": "Cáº­n thá»‹ 1.5 Ä‘á»™, dá»‹ á»©ng nháº¹ vá»›i tÃ´m cua.",
+      "healthNotes": "Cận thị 1.5 độ, dị ứng nhẹ với tôm cua.",
       "bloodType": "B+",
       "emergencyContactIds": [
         "contact_con_1",
         "contact_con_2"
       ],
-      "lifeContext": "Di chuyá»ƒn giá»¯a nhÃ , trÆ°á»ng vÃ  lá»›p há»c thÃªm; cÃ³ lá»‹ch sinh hoáº¡t khÃ¡ Ä‘á»u nhÆ°ng Ä‘Ã´i lÃºc ra khá»i vÃ¹ng an toÃ n sá»›m.",
+      "lifeContext": "Di chuyển giữa nhà, trường và lớp học thêm; có lịch sinh hoạt khá đều nhưng đôi lúc ra khỏi vùng an toàn sớm.",
       "medicalTags": [
-        "Cáº­n thá»‹",
-        "Dá»‹ á»©ng háº£i sáº£n nháº¹"
+        "Cận thị",
+        "Dị ứng hải sản nhẹ"
       ]
     },
     {
       "userId": "user_ba_noi_hoa",
       "familyId": "family_nguyen_001",
-      "fullName": "LÃª Thá»‹ Hoa",
-      "nickname": "BÃ  ná»™i",
-      "roleInFamily": "BÃ  ná»™i",
+      "fullName": "Lê Thị Hoa",
+      "nickname": "Bà nội",
+      "roleInFamily": "Bà nội",
       "age": 72,
       "dateOfBirth": "1953-02-14",
-      "gender": "Ná»¯",
-      "occupation": "Nghá»‰ hÆ°u",
+      "gender": "Nữ",
+      "occupation": "Nghỉ hưu",
       "phoneNumber": "+84 908 775 662",
       "email": "noi@gmail.com",
-      "homeAddress": "CÄƒn há»™ B1508, Riverside Residence, 188 Nguyá»…n Há»¯u Thá», P. TÃ¢n HÆ°ng, Quáº­n 7, TP.HCM",
+      "homeAddress": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
       "avatar": "https://api.dicebear.com/9.x/notionists/png?seed=LeThiHoa",
-      "healthNotes": "TÄƒng huyáº¿t Ã¡p, thoÃ¡i hÃ³a khá»›p gá»‘i, cáº§n theo dÃµi tÃ© ngÃ£ vÃ  thá»i gian ra ngoÃ i má»™t mÃ¬nh.",
+      "healthNotes": "Tăng huyết áp, thoái hóa khớp gối, cần theo dõi té ngã và thời gian ra ngoài một mình.",
       "bloodType": "O-",
       "emergencyContactIds": [
         "contact_noi_1",
         "contact_noi_2"
       ],
-      "lifeContext": "ThÆ°á»ng á»Ÿ nhÃ , thá»‰nh thoáº£ng Ä‘i chá»£ gáº§n nhÃ ; Æ°u tiÃªn giao diá»‡n chá»¯ to vÃ  nÃºt SOS lá»›n.",
+      "lifeContext": "Thường ở nhà, thỉnh thoảng đi chợ gần nhà; ưu tiên giao diện chữ to và nút SOS lớn.",
       "medicalTags": [
-        "TÄƒng huyáº¿t Ã¡p",
-        "ThoÃ¡i hÃ³a khá»›p gá»‘i",
-        "Nguy cÆ¡ tÃ© ngÃ£ trung bÃ¬nh"
+        "Tăng huyết áp",
+        "Thoái hóa khớp gối",
+        "Nguy cơ té ngã trung bình"
       ]
     }
   ],
@@ -345,14 +345,14 @@
       "fromUserId": "user_ba_minh",
       "toUserId": "user_me_lan",
       "type": "spouse",
-      "label": "Chá»“ng"
+      "label": "Chồng"
     },
     {
       "relationshipId": "rel_me_ba_spouse",
       "fromUserId": "user_me_lan",
       "toUserId": "user_ba_minh",
       "type": "spouse",
-      "label": "Vá»£"
+      "label": "Vợ"
     },
     {
       "relationshipId": "rel_ba_con_parent",
@@ -366,7 +366,7 @@
       "fromUserId": "user_me_lan",
       "toUserId": "user_con_an",
       "type": "parent",
-      "label": "Máº¹"
+      "label": "Mẹ"
     },
     {
       "relationshipId": "rel_con_ba_child",
@@ -387,7 +387,7 @@
       "fromUserId": "user_ba_noi_hoa",
       "toUserId": "user_ba_minh",
       "type": "parent",
-      "label": "Máº¹"
+      "label": "Mẹ"
     },
     {
       "relationshipId": "rel_ba_noi_child",
@@ -401,28 +401,28 @@
       "fromUserId": "user_ba_noi_hoa",
       "toUserId": "user_me_lan",
       "type": "in_law",
-      "label": "Máº¹ chá»“ng"
+      "label": "Mẹ chồng"
     },
     {
       "relationshipId": "rel_me_noi_inlaw",
       "fromUserId": "user_me_lan",
       "toUserId": "user_ba_noi_hoa",
       "type": "in_law",
-      "label": "Con dÃ¢u"
+      "label": "Con dâu"
     },
     {
       "relationshipId": "rel_noi_con_grandparent",
       "fromUserId": "user_ba_noi_hoa",
       "toUserId": "user_con_an",
       "type": "grandparent",
-      "label": "BÃ  ná»™i"
+      "label": "Bà nội"
     },
     {
       "relationshipId": "rel_con_noi_grandchild",
       "fromUserId": "user_con_an",
       "toUserId": "user_ba_noi_hoa",
       "type": "grandchild",
-      "label": "ChÃ¡u ná»™i"
+      "label": "Cháu nội"
     }
   ],
   "accessControl": {
@@ -565,50 +565,50 @@
         "isAtHome": false,
         "hasRecentAlert": false,
         "requiresPriorityWatch": false,
-        "currentStatus": "Äang á»Ÿ cÃ´ng trÃ¬nh",
-        "locationText": "Midtown M8, PhÃº Má»¹ HÆ°ng",
+        "currentStatus": "Đang ở công trình",
+        "locationText": "Midtown M8, Phú Mỹ Hưng",
         "batteryPercent": 58
       },
       {
         "userId": "user_me_lan",
         "displayOrder": 2,
-        "displayName": "Máº¹ Lan",
-        "roleLabel": "Máº¹",
+        "displayName": "Mẹ Lan",
+        "roleLabel": "Mẹ",
         "isOnline": true,
         "isMoving": true,
         "isAtHome": false,
         "hasRecentAlert": false,
         "requiresPriorityWatch": false,
-        "currentStatus": "Äang Ä‘i xe vá» nhÃ ",
-        "locationText": "Nguyá»…n Há»¯u Thá», Quáº­n 7",
+        "currentStatus": "Đang đi xe về nhà",
+        "locationText": "Nguyễn Hữu Thọ, Quận 7",
         "batteryPercent": 41
       },
       {
         "userId": "user_con_an",
         "displayOrder": 3,
-        "displayName": "Nguyá»…n Minh An",
+        "displayName": "Nguyễn Minh An",
         "roleLabel": "Con",
         "isOnline": true,
         "isMoving": false,
         "isAtHome": false,
         "hasRecentAlert": true,
         "requiresPriorityWatch": true,
-        "currentStatus": "Äang há»c thÃªm",
-        "locationText": "Trung tÃ¢m Anh ngá»¯ Sao Viá»‡t",
+        "currentStatus": "Đang học thêm",
+        "locationText": "Trung tâm Anh ngữ Sao Việt",
         "batteryPercent": 18
       },
       {
         "userId": "user_ba_noi_hoa",
         "displayOrder": 4,
-        "displayName": "BÃ  ná»™i",
-        "roleLabel": "BÃ  ná»™i",
+        "displayName": "Bà nội",
+        "roleLabel": "Bà nội",
         "isOnline": true,
         "isMoving": false,
         "isAtHome": true,
         "hasRecentAlert": true,
         "requiresPriorityWatch": true,
-        "currentStatus": "Äang á»Ÿ nhÃ ",
-        "locationText": "Riverside Residence, Quáº­n 7",
+        "currentStatus": "Đang ở nhà",
+        "locationText": "Riverside Residence, Quận 7",
         "batteryPercent": 76
       }
     ]
@@ -724,9 +724,9 @@
     {
       "zoneId": "zone_home_001",
       "familyId": "family_nguyen_001",
-      "name": "Nhà",
+      "name": "Nh�",
       "zoneType": "home",
-      "addressText": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
+      "addressText": "Can h? B1508, Riverside Residence, 188 Nguy?n H?u Th?, P. T�n Hung, Qu?n 7, TP.HCM",
       "centerLatitude": 10.737463,
       "centerLongitude": 106.704642,
       "radiusMeters": 120,
@@ -754,9 +754,9 @@
     {
       "zoneId": "zone_school_001",
       "familyId": "family_nguyen_001",
-      "name": "Trường THCS Tân Hưng",
+      "name": "Tru?ng THCS T�n Hung",
       "zoneType": "school",
-      "addressText": "12 Đường số 3, P. Tân Hưng, Quận 7, TP.HCM",
+      "addressText": "12 �u?ng s? 3, P. T�n Hung, Qu?n 7, TP.HCM",
       "centerLatitude": 10.741985,
       "centerLongitude": 106.709824,
       "radiusMeters": 180,
@@ -776,7 +776,7 @@
       "specialRules": [
         {
           "condition": "exit_before_16:30",
-          "description": "Báo nếu An rời trường sớm hơn giờ tan học.",
+          "description": "B�o n?u An r?i tru?ng s?m hon gi? tan h?c.",
           "notifyUserIds": ["user_ba_minh", "user_me_lan"]
         }
       ],
@@ -786,9 +786,9 @@
     {
       "zoneId": "zone_office_me_001",
       "familyId": "family_nguyen_001",
-      "name": "Văn phòng Mẹ",
+      "name": "Van ph�ng M?",
       "zoneType": "office",
-      "addressText": "Tòa nhà Sunrise City North, 27 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
+      "addressText": "T�a nh� Sunrise City North, 27 Nguy?n H?u Th?, P. T�n Hung, Qu?n 7, TP.HCM",
       "centerLatitude": 10.739612,
       "centerLongitude": 106.705599,
       "radiusMeters": 140,
@@ -811,9 +811,9 @@
     {
       "zoneId": "zone_site_ba_001",
       "familyId": "family_nguyen_001",
-      "name": "Công trình Midtown M8",
+      "name": "C�ng tr�nh Midtown M8",
       "zoneType": "worksite",
-      "addressText": "Đường số 16, Khu đô thị Phú Mỹ Hưng, P. Tân Phú, Quận 7, TP.HCM",
+      "addressText": "�u?ng s? 16, Khu d� th? Ph� M? Hung, P. T�n Ph�, Qu?n 7, TP.HCM",
       "centerLatitude": 10.730284,
       "centerLongitude": 106.71985,
       "radiusMeters": 200,
@@ -836,9 +836,9 @@
     {
       "zoneId": "zone_market_noi_001",
       "familyId": "family_nguyen_001",
-      "name": "Chợ gần nhà của Bà nội",
+      "name": "Ch? g?n nh� c?a B� n?i",
       "zoneType": "market",
-      "addressText": "Chợ Tân Mỹ, 19 Nguyễn Thị Thập, P. Tân Phú, Quận 7, TP.HCM",
+      "addressText": "Ch? T�n M?, 19 Nguy?n Th? Th?p, P. T�n Ph�, Qu?n 7, TP.HCM",
       "centerLatitude": 10.729412,
       "centerLongitude": 106.721902,
       "radiusMeters": 100,
@@ -858,7 +858,7 @@
       "specialRules": [
         {
           "condition": "outside_home_more_than_90_minutes",
-          "description": "Báo khi Bà nội ở ngoài nhà quá lâu.",
+          "description": "B�o khi B� n?i ? ngo�i nh� qu� l�u.",
           "notifyUserIds": ["user_ba_minh", "user_me_lan"]
         }
       ],
@@ -871,28 +871,28 @@
       "userId": "user_ba_minh",
       "latitude": 10.730391,
       "longitude": 106.719622,
-      "addressText": "Block M8, Công trình Midtown, Đường số 16, Phú Mỹ Hưng, Quận 7, TP.HCM",
+      "addressText": "Block M8, C�ng tr�nh Midtown, �u?ng s? 16, Ph� M? Hung, Qu?n 7, TP.HCM",
       "lastUpdatedAt": "2026-04-09T17:40:58+07:00",
       "gpsAccuracyMeters": 8,
-      "movementStatus": "đang ở cơ quan",
-      "placeContext": "Đang kiểm tra cuối ngày tại công trình",
+      "movementStatus": "dang ? co quan",
+      "placeContext": "�ang ki?m tra cu?i ng�y t?i c�ng tr�nh",
       "batteryPercent": 58,
       "networkType": "5g",
       "speedKmh": 0.4,
       "headingDegrees": 132,
       "isOnline": true,
       "zoneId": "zone_site_ba_001",
-      "zoneName": "Công trình Midtown M8"
+      "zoneName": "C�ng tr�nh Midtown M8"
     },
     {
       "userId": "user_me_lan",
       "latitude": 10.738264,
       "longitude": 106.707481,
-      "addressText": "Nguyễn Hữu Thọ, hướng về Riverside Residence, Quận 7, TP.HCM",
+      "addressText": "Nguy?n H?u Th?, hu?ng v? Riverside Residence, Qu?n 7, TP.HCM",
       "lastUpdatedAt": "2026-04-09T17:38:21+07:00",
       "gpsAccuracyMeters": 11,
-      "movementStatus": "đang đi xe",
-      "placeContext": "Đang trên đường về nhà sau giờ làm",
+      "movementStatus": "dang di xe",
+      "placeContext": "�ang tr�n du?ng v? nh� sau gi? l�m",
       "batteryPercent": 41,
       "networkType": "4g",
       "speedKmh": 27.6,
@@ -905,11 +905,11 @@
       "userId": "user_con_an",
       "latitude": 10.7399,
       "longitude": 106.71185,
-      "addressText": "Trung tâm Anh ngữ Sao Việt, 41 Lâm Văn Bền, P. Tân Kiểng, Quận 7, TP.HCM",
+      "addressText": "Trung t�m Anh ng? Sao Vi?t, 41 L�m Van B?n, P. T�n Ki?ng, Qu?n 7, TP.HCM",
       "lastUpdatedAt": "2026-04-09T17:40:12+07:00",
       "gpsAccuracyMeters": 12,
-      "movementStatus": "đang đứng yên",
-      "placeContext": "Đang ngồi học thêm",
+      "movementStatus": "dang d?ng y�n",
+      "placeContext": "�ang ng?i h?c th�m",
       "batteryPercent": 18,
       "networkType": "wifi",
       "speedKmh": 0,
@@ -922,18 +922,18 @@
       "userId": "user_ba_noi_hoa",
       "latitude": 10.737463,
       "longitude": 106.704642,
-      "addressText": "Căn hộ B1508, Riverside Residence, 188 Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7, TP.HCM",
+      "addressText": "Can h? B1508, Riverside Residence, 188 Nguy?n H?u Th?, P. T�n Hung, Qu?n 7, TP.HCM",
       "lastUpdatedAt": "2026-04-09T17:39:36+07:00",
       "gpsAccuracyMeters": 6,
-      "movementStatus": "đang ở nhà",
-      "placeContext": "Đang nghỉ ở phòng khách",
+      "movementStatus": "dang ? nh�",
+      "placeContext": "�ang ngh? ? ph�ng kh�ch",
       "batteryPercent": 76,
       "networkType": "wifi",
       "speedKmh": 0,
       "headingDegrees": 0,
       "isOnline": true,
       "zoneId": "zone_home_001",
-      "zoneName": "Nhà"
+      "zoneName": "Nh�"
     }
   ],
   "locationHistory": [
@@ -951,11 +951,11 @@
         {
           "from": "2026-04-09T06:10:00+07:00",
           "to": "2026-04-09T07:04:00+07:00",
-          "locationName": "Nhà",
-          "addressText": "Riverside Residence, Quận 7",
+          "locationName": "Nh�",
+          "addressText": "Riverside Residence, Qu?n 7",
           "latitude": 10.737463,
           "longitude": 106.704642,
-          "activity": "Chuẩn bị đi làm, ăn sáng cùng gia đình",
+          "activity": "Chu?n b? di l�m, an s�ng c�ng gia d�nh",
           "movementType": "still",
           "durationMinutes": 54,
           "geofenceEvent": "inside_zone_home_001"
@@ -963,11 +963,11 @@
         {
           "from": "2026-04-09T07:04:00+07:00",
           "to": "2026-04-09T07:48:00+07:00",
-          "locationName": "Trên đường đến công trình",
-          "addressText": "Nguyễn Hữu Thọ - Phú Mỹ Hưng, Quận 7",
+          "locationName": "Tr�n du?ng d?n c�ng tr�nh",
+          "addressText": "Nguy?n H?u Th? - Ph� M? Hung, Qu?n 7",
           "latitude": 10.73495,
           "longitude": 106.71234,
-          "activity": "Đi xe máy đến công trình",
+          "activity": "�i xe m�y d?n c�ng tr�nh",
           "movementType": "vehicle",
           "durationMinutes": 44,
           "geofenceEvent": "exit_zone_home_001"
@@ -975,11 +975,11 @@
         {
           "from": "2026-04-09T07:48:00+07:00",
           "to": "2026-04-09T11:57:00+07:00",
-          "locationName": "Công trình Midtown M8",
-          "addressText": "Phú Mỹ Hưng, Quận 7",
+          "locationName": "C�ng tr�nh Midtown M8",
+          "addressText": "Ph� M? Hung, Qu?n 7",
           "latitude": 10.730284,
           "longitude": 106.71985,
-          "activity": "Kiểm tra hiện trường và họp đội thi công",
+          "activity": "Ki?m tra hi?n tru?ng v� h?p d?i thi c�ng",
           "movementType": "walking",
           "durationMinutes": 249,
           "geofenceEvent": "enter_zone_site_ba_001"
@@ -987,11 +987,11 @@
         {
           "from": "2026-04-09T11:57:00+07:00",
           "to": "2026-04-09T12:44:00+07:00",
-          "locationName": "Căng tin gần công trình",
-          "addressText": "Khu dịch vụ Midtown, Quận 7",
+          "locationName": "Cang tin g?n c�ng tr�nh",
+          "addressText": "Khu d?ch v? Midtown, Qu?n 7",
           "latitude": 10.731248,
           "longitude": 106.718204,
-          "activity": "Ăn trưa cùng đồng nghiệp",
+          "activity": "An trua c�ng d?ng nghi?p",
           "movementType": "still",
           "durationMinutes": 47,
           "geofenceEvent": "exit_zone_site_ba_001"
@@ -999,11 +999,11 @@
         {
           "from": "2026-04-09T12:44:00+07:00",
           "to": "2026-04-09T17:40:00+07:00",
-          "locationName": "Công trình Midtown M8",
-          "addressText": "Phú Mỹ Hưng, Quận 7",
+          "locationName": "C�ng tr�nh Midtown M8",
+          "addressText": "Ph� M? Hung, Qu?n 7",
           "latitude": 10.730391,
           "longitude": 106.719622,
-          "activity": "Hoàn tất nghiệm thu cuối ngày",
+          "activity": "Ho�n t?t nghi?m thu cu?i ng�y",
           "movementType": "walking",
           "durationMinutes": 296,
           "geofenceEvent": "enter_zone_site_ba_001"
@@ -1024,11 +1024,11 @@
         {
           "from": "2026-04-09T06:00:00+07:00",
           "to": "2026-04-09T07:18:00+07:00",
-          "locationName": "Nhà",
-          "addressText": "Riverside Residence, Quận 7",
+          "locationName": "Nh�",
+          "addressText": "Riverside Residence, Qu?n 7",
           "latitude": 10.737463,
           "longitude": 106.704642,
-          "activity": "Chuẩn bị đồ ăn sáng và đưa An đi học",
+          "activity": "Chu?n b? d? an s�ng v� dua An di h?c",
           "movementType": "still",
           "durationMinutes": 78,
           "geofenceEvent": "inside_zone_home_001"
@@ -1036,11 +1036,11 @@
         {
           "from": "2026-04-09T07:18:00+07:00",
           "to": "2026-04-09T07:52:00+07:00",
-          "locationName": "Trên đường đến văn phòng",
-          "addressText": "Nguyễn Hữu Thọ, Quận 7",
+          "locationName": "Tr�n du?ng d?n van ph�ng",
+          "addressText": "Nguy?n H?u Th?, Qu?n 7",
           "latitude": 10.73911,
           "longitude": 106.70524,
-          "activity": "Đi xe đến văn phòng",
+          "activity": "�i xe d?n van ph�ng",
           "movementType": "vehicle",
           "durationMinutes": 34,
           "geofenceEvent": "exit_zone_home_001"
@@ -1048,11 +1048,11 @@
         {
           "from": "2026-04-09T07:52:00+07:00",
           "to": "2026-04-09T11:58:00+07:00",
-          "locationName": "Văn phòng Mẹ",
-          "addressText": "Sunrise City North, Quận 7",
+          "locationName": "Van ph�ng M?",
+          "addressText": "Sunrise City North, Qu?n 7",
           "latitude": 10.739612,
           "longitude": 106.705599,
-          "activity": "Làm việc tại văn phòng",
+          "activity": "L�m vi?c t?i van ph�ng",
           "movementType": "still",
           "durationMinutes": 246,
           "geofenceEvent": "enter_zone_office_me_001"
@@ -1060,11 +1060,11 @@
         {
           "from": "2026-04-09T11:58:00+07:00",
           "to": "2026-04-09T13:05:00+07:00",
-          "locationName": "Quán cà phê trưa",
-          "addressText": "Khu Nguyễn Hữu Thọ, Quận 7",
+          "locationName": "Qu�n c� ph� trua",
+          "addressText": "Khu Nguy?n H?u Th?, Qu?n 7",
           "latitude": 10.74042,
           "longitude": 106.70642,
-          "activity": "Ăn trưa và trả lời tin nhắn gia đình",
+          "activity": "An trua v� tr? l?i tin nh?n gia d�nh",
           "movementType": "walking",
           "durationMinutes": 67,
           "geofenceEvent": "exit_zone_office_me_001"
@@ -1072,11 +1072,11 @@
         {
           "from": "2026-04-09T13:05:00+07:00",
           "to": "2026-04-09T17:18:00+07:00",
-          "locationName": "Văn phòng Mẹ",
-          "addressText": "Sunrise City North, Quận 7",
+          "locationName": "Van ph�ng M?",
+          "addressText": "Sunrise City North, Qu?n 7",
           "latitude": 10.739612,
           "longitude": 106.705599,
-          "activity": "Tiếp tục làm việc, kiểm tra thông báo của Con và Bà nội",
+          "activity": "Ti?p t?c l�m vi?c, ki?m tra th�ng b�o c?a Con v� B� n?i",
           "movementType": "still",
           "durationMinutes": 253,
           "geofenceEvent": "enter_zone_office_me_001"
@@ -1084,11 +1084,11 @@
         {
           "from": "2026-04-09T17:18:00+07:00",
           "to": "2026-04-09T17:38:00+07:00",
-          "locationName": "Đường về nhà",
-          "addressText": "Nguyễn Hữu Thọ, Quận 7",
+          "locationName": "�u?ng v? nh�",
+          "addressText": "Nguy?n H?u Th?, Qu?n 7",
           "latitude": 10.738264,
           "longitude": 106.707481,
-          "activity": "Đi xe về nhà",
+          "activity": "�i xe v? nh�",
           "movementType": "vehicle",
           "durationMinutes": 20,
           "geofenceEvent": "exit_zone_office_me_001"
@@ -1109,11 +1109,11 @@
         {
           "from": "2026-04-09T06:15:00+07:00",
           "to": "2026-04-09T07:00:00+07:00",
-          "locationName": "Nhà",
-          "addressText": "Riverside Residence, Quận 7",
+          "locationName": "Nh�",
+          "addressText": "Riverside Residence, Qu?n 7",
           "latitude": 10.737463,
           "longitude": 106.704642,
-          "activity": "Ăn sáng, chuẩn bị đến trường",
+          "activity": "An s�ng, chu?n b? d?n tru?ng",
           "movementType": "still",
           "durationMinutes": 45,
           "geofenceEvent": "inside_zone_home_001"
@@ -1121,11 +1121,11 @@
         {
           "from": "2026-04-09T07:00:00+07:00",
           "to": "2026-04-09T07:25:00+07:00",
-          "locationName": "Trên đường đến trường",
-          "addressText": "Nguyễn Hữu Thọ - Đường số 3, Quận 7",
+          "locationName": "Tr�n du?ng d?n tru?ng",
+          "addressText": "Nguy?n H?u Th? - �u?ng s? 3, Qu?n 7",
           "latitude": 10.739884,
           "longitude": 106.707402,
-          "activity": "Đi xe cùng Mẹ đến trường",
+          "activity": "�i xe c�ng M? d?n tru?ng",
           "movementType": "vehicle",
           "durationMinutes": 25,
           "geofenceEvent": "exit_zone_home_001"
@@ -1133,11 +1133,11 @@
         {
           "from": "2026-04-09T07:25:00+07:00",
           "to": "2026-04-09T15:18:00+07:00",
-          "locationName": "Trường THCS Tân Hưng",
-          "addressText": "12 Đường số 3, Quận 7",
+          "locationName": "Tru?ng THCS T�n Hung",
+          "addressText": "12 �u?ng s? 3, Qu?n 7",
           "latitude": 10.741985,
           "longitude": 106.709824,
-          "activity": "Học ở trường, ra sân chơi giờ ra chơi",
+          "activity": "H?c ? tru?ng, ra s�n choi gi? ra choi",
           "movementType": "still",
           "durationMinutes": 473,
           "geofenceEvent": "enter_zone_school_001"
@@ -1145,11 +1145,11 @@
         {
           "from": "2026-04-09T15:18:00+07:00",
           "to": "2026-04-09T15:42:00+07:00",
-          "locationName": "Cửa hàng tiện lợi trước trường",
-          "addressText": "Gần cổng Trường THCS Tân Hưng, Quận 7",
+          "locationName": "C?a h�ng ti?n l?i tru?c tru?ng",
+          "addressText": "G?n c?ng Tru?ng THCS T�n Hung, Qu?n 7",
           "latitude": 10.74241,
           "longitude": 106.71102,
-          "activity": "Ra ngoài mua nước trước giờ tan học",
+          "activity": "Ra ngo�i mua nu?c tru?c gi? tan h?c",
           "movementType": "walking",
           "durationMinutes": 24,
           "geofenceEvent": "exit_zone_school_001"
@@ -1157,11 +1157,11 @@
         {
           "from": "2026-04-09T15:42:00+07:00",
           "to": "2026-04-09T16:05:00+07:00",
-          "locationName": "Trên đường đến lớp học thêm",
-          "addressText": "Đường Lâm Văn Bền, Quận 7",
+          "locationName": "Tr�n du?ng d?n l?p h?c th�m",
+          "addressText": "�u?ng L�m Van B?n, Qu?n 7",
           "latitude": 10.74102,
           "longitude": 106.71148,
-          "activity": "Đi xe cùng Ba đến lớp học thêm",
+          "activity": "�i xe c�ng Ba d?n l?p h?c th�m",
           "movementType": "vehicle",
           "durationMinutes": 23,
           "geofenceEvent": "outside_all_zones"
@@ -1169,11 +1169,11 @@
         {
           "from": "2026-04-09T16:05:00+07:00",
           "to": "2026-04-09T17:40:00+07:00",
-          "locationName": "Trung tâm Anh ngữ Sao Việt",
-          "addressText": "41 Lâm Văn Bền, Quận 7",
+          "locationName": "Trung t�m Anh ng? Sao Vi?t",
+          "addressText": "41 L�m Van B?n, Qu?n 7",
           "latitude": 10.7399,
           "longitude": 106.71185,
-          "activity": "Học thêm tiếng Anh",
+          "activity": "H?c th�m ti?ng Anh",
           "movementType": "still",
           "durationMinutes": 95,
           "geofenceEvent": "outside_all_zones"
@@ -1194,11 +1194,11 @@
         {
           "from": "2026-04-09T05:50:00+07:00",
           "to": "2026-04-09T08:32:00+07:00",
-          "locationName": "Nhà",
-          "addressText": "Riverside Residence, Quận 7",
+          "locationName": "Nh�",
+          "addressText": "Riverside Residence, Qu?n 7",
           "latitude": 10.737463,
           "longitude": 106.704642,
-          "activity": "Ở nhà, tưới cây và ăn sáng",
+          "activity": "? nh�, tu?i c�y v� an s�ng",
           "movementType": "still",
           "durationMinutes": 162,
           "geofenceEvent": "inside_zone_home_001"
@@ -1206,11 +1206,11 @@
         {
           "from": "2026-04-09T08:32:00+07:00",
           "to": "2026-04-09T08:52:00+07:00",
-          "locationName": "Trên đường ra chợ",
-          "addressText": "Nguyễn Hữu Thọ - Nguyễn Thị Thập, Quận 7",
+          "locationName": "Tr�n du?ng ra ch?",
+          "addressText": "Nguy?n H?u Th? - Nguy?n Th? Th?p, Qu?n 7",
           "latitude": 10.73482,
           "longitude": 106.71012,
-          "activity": "Đi bộ chậm ra chợ",
+          "activity": "�i b? ch?m ra ch?",
           "movementType": "walking",
           "durationMinutes": 20,
           "geofenceEvent": "exit_zone_home_001"
@@ -1218,11 +1218,11 @@
         {
           "from": "2026-04-09T08:52:00+07:00",
           "to": "2026-04-09T09:34:00+07:00",
-          "locationName": "Chợ Tân Mỹ",
-          "addressText": "19 Nguyễn Thị Thập, Quận 7",
+          "locationName": "Ch? T�n M?",
+          "addressText": "19 Nguy?n Th? Th?p, Qu?n 7",
           "latitude": 10.729412,
           "longitude": 106.721902,
-          "activity": "Mua rau và đồ ăn sáng",
+          "activity": "Mua rau v� d? an s�ng",
           "movementType": "walking",
           "durationMinutes": 42,
           "geofenceEvent": "enter_zone_market_noi_001"
@@ -1230,11 +1230,11 @@
         {
           "from": "2026-04-09T09:34:00+07:00",
           "to": "2026-04-09T10:12:00+07:00",
-          "locationName": "Nhà thuốc Minh Châu",
-          "addressText": "Đường Nguyễn Thị Thập, Quận 7",
+          "locationName": "Nh� thu?c Minh Ch�u",
+          "addressText": "�u?ng Nguy?n Th? Th?p, Qu?n 7",
           "latitude": 10.731318,
           "longitude": 106.718614,
-          "activity": "Ghé mua thuốc huyết áp",
+          "activity": "Gh� mua thu?c huy?t �p",
           "movementType": "walking",
           "durationMinutes": 38,
           "geofenceEvent": "exit_zone_market_noi_001"
@@ -1242,11 +1242,11 @@
         {
           "from": "2026-04-09T10:12:00+07:00",
           "to": "2026-04-09T10:34:00+07:00",
-          "locationName": "Trên đường về nhà",
-          "addressText": "Nguyễn Hữu Thọ, Quận 7",
+          "locationName": "Tr�n du?ng v? nh�",
+          "addressText": "Nguy?n H?u Th?, Qu?n 7",
           "latitude": 10.73492,
           "longitude": 106.70974,
-          "activity": "Đi bộ về nhà",
+          "activity": "�i b? v? nh�",
           "movementType": "walking",
           "durationMinutes": 22,
           "geofenceEvent": "outside_all_zones"
@@ -1254,11 +1254,11 @@
         {
           "from": "2026-04-09T10:34:00+07:00",
           "to": "2026-04-09T17:40:00+07:00",
-          "locationName": "Nhà",
-          "addressText": "Riverside Residence, Quận 7",
+          "locationName": "Nh�",
+          "addressText": "Riverside Residence, Qu?n 7",
           "latitude": 10.737463,
           "longitude": 106.704642,
-          "activity": "Nghỉ ngơi tại nhà sau khi trở về",
+          "activity": "Ngh? ngoi t?i nh� sau khi tr? v?",
           "movementType": "still",
           "durationMinutes": 426,
           "geofenceEvent": "enter_zone_home_001"
@@ -1271,15 +1271,15 @@
       "userId": "user_ba_minh",
       "currentActivity": {
         "type": "still",
-        "label": "Đang đứng kiểm tra công trình",
+        "label": "�ang d?ng ki?m tra c�ng tr�nh",
         "startedAt": "2026-04-09T17:18:00+07:00",
         "confidence": 0.89
       },
       "history": [
-        {"from": "2026-04-09T07:04:00+07:00", "to": "2026-04-09T07:48:00+07:00", "type": "vehicle", "label": "Đi xe máy đến công trình"},
-        {"from": "2026-04-09T07:48:00+07:00", "to": "2026-04-09T11:57:00+07:00", "type": "walking", "label": "Di chuyển trong công trình"},
-        {"from": "2026-04-09T11:57:00+07:00", "to": "2026-04-09T12:44:00+07:00", "type": "still", "label": "Ngồi ăn trưa"},
-        {"from": "2026-04-09T12:44:00+07:00", "to": "2026-04-09T17:40:00+07:00", "type": "walking", "label": "Kiểm tra hiện trường"}
+        {"from": "2026-04-09T07:04:00+07:00", "to": "2026-04-09T07:48:00+07:00", "type": "vehicle", "label": "�i xe m�y d?n c�ng tr�nh"},
+        {"from": "2026-04-09T07:48:00+07:00", "to": "2026-04-09T11:57:00+07:00", "type": "walking", "label": "Di chuy?n trong c�ng tr�nh"},
+        {"from": "2026-04-09T11:57:00+07:00", "to": "2026-04-09T12:44:00+07:00", "type": "still", "label": "Ng?i an trua"},
+        {"from": "2026-04-09T12:44:00+07:00", "to": "2026-04-09T17:40:00+07:00", "type": "walking", "label": "Ki?m tra hi?n tru?ng"}
       ],
       "todaySummary": {
         "walkingMinutes": 92,
@@ -1295,16 +1295,16 @@
       "userId": "user_me_lan",
       "currentActivity": {
         "type": "vehicle",
-        "label": "Đang ngồi trên xe về nhà",
+        "label": "�ang ng?i tr�n xe v? nh�",
         "startedAt": "2026-04-09T17:18:00+07:00",
         "confidence": 0.93
       },
       "history": [
-        {"from": "2026-04-09T07:18:00+07:00", "to": "2026-04-09T07:52:00+07:00", "type": "vehicle", "label": "Di chuyển đến văn phòng"},
-        {"from": "2026-04-09T07:52:00+07:00", "to": "2026-04-09T11:58:00+07:00", "type": "still", "label": "Ngồi làm việc"},
-        {"from": "2026-04-09T11:58:00+07:00", "to": "2026-04-09T13:05:00+07:00", "type": "walking", "label": "Đi bộ ăn trưa"},
-        {"from": "2026-04-09T13:05:00+07:00", "to": "2026-04-09T17:18:00+07:00", "type": "still", "label": "Ngồi làm việc"},
-        {"from": "2026-04-09T17:18:00+07:00", "to": "2026-04-09T17:38:00+07:00", "type": "vehicle", "label": "Đi xe về nhà"}
+        {"from": "2026-04-09T07:18:00+07:00", "to": "2026-04-09T07:52:00+07:00", "type": "vehicle", "label": "Di chuy?n d?n van ph�ng"},
+        {"from": "2026-04-09T07:52:00+07:00", "to": "2026-04-09T11:58:00+07:00", "type": "still", "label": "Ng?i l�m vi?c"},
+        {"from": "2026-04-09T11:58:00+07:00", "to": "2026-04-09T13:05:00+07:00", "type": "walking", "label": "�i b? an trua"},
+        {"from": "2026-04-09T13:05:00+07:00", "to": "2026-04-09T17:18:00+07:00", "type": "still", "label": "Ng?i l�m vi?c"},
+        {"from": "2026-04-09T17:18:00+07:00", "to": "2026-04-09T17:38:00+07:00", "type": "vehicle", "label": "�i xe v? nh�"}
       ],
       "todaySummary": {
         "walkingMinutes": 46,
@@ -1320,17 +1320,17 @@
       "userId": "user_con_an",
       "currentActivity": {
         "type": "still",
-        "label": "Đang ngồi học thêm",
+        "label": "�ang ng?i h?c th�m",
         "startedAt": "2026-04-09T16:05:00+07:00",
         "confidence": 0.95
       },
       "history": [
-        {"from": "2026-04-09T07:00:00+07:00", "to": "2026-04-09T07:25:00+07:00", "type": "vehicle", "label": "Đi xe đến trường"},
-        {"from": "2026-04-09T07:25:00+07:00", "to": "2026-04-09T10:15:00+07:00", "type": "still", "label": "Ngồi học trong lớp"},
-        {"from": "2026-04-09T10:15:00+07:00", "to": "2026-04-09T10:33:00+07:00", "type": "running", "label": "Chạy ở sân trường giờ ra chơi"},
-        {"from": "2026-04-09T10:33:00+07:00", "to": "2026-04-09T15:18:00+07:00", "type": "still", "label": "Ngồi học"},
-        {"from": "2026-04-09T15:18:00+07:00", "to": "2026-04-09T15:42:00+07:00", "type": "walking", "label": "Đi bộ ra ngoài cổng trường"},
-        {"from": "2026-04-09T15:42:00+07:00", "to": "2026-04-09T16:05:00+07:00", "type": "vehicle", "label": "Đi xe đến lớp học thêm"}
+        {"from": "2026-04-09T07:00:00+07:00", "to": "2026-04-09T07:25:00+07:00", "type": "vehicle", "label": "�i xe d?n tru?ng"},
+        {"from": "2026-04-09T07:25:00+07:00", "to": "2026-04-09T10:15:00+07:00", "type": "still", "label": "Ng?i h?c trong l?p"},
+        {"from": "2026-04-09T10:15:00+07:00", "to": "2026-04-09T10:33:00+07:00", "type": "running", "label": "Ch?y ? s�n tru?ng gi? ra choi"},
+        {"from": "2026-04-09T10:33:00+07:00", "to": "2026-04-09T15:18:00+07:00", "type": "still", "label": "Ng?i h?c"},
+        {"from": "2026-04-09T15:18:00+07:00", "to": "2026-04-09T15:42:00+07:00", "type": "walking", "label": "�i b? ra ngo�i c?ng tru?ng"},
+        {"from": "2026-04-09T15:42:00+07:00", "to": "2026-04-09T16:05:00+07:00", "type": "vehicle", "label": "�i xe d?n l?p h?c th�m"}
       ],
       "todaySummary": {
         "walkingMinutes": 51,
@@ -1346,15 +1346,15 @@
       "userId": "user_ba_noi_hoa",
       "currentActivity": {
         "type": "still",
-        "label": "Đang nghỉ ở phòng khách",
+        "label": "�ang ngh? ? ph�ng kh�ch",
         "startedAt": "2026-04-09T15:10:00+07:00",
         "confidence": 0.91
       },
       "history": [
-        {"from": "2026-04-09T05:50:00+07:00", "to": "2026-04-09T08:32:00+07:00", "type": "still", "label": "Ở nhà"},
-        {"from": "2026-04-09T08:32:00+07:00", "to": "2026-04-09T10:34:00+07:00", "type": "walking", "label": "Đi bộ chậm ra chợ và về nhà"},
-        {"from": "2026-04-09T10:42:00+07:00", "to": "2026-04-09T10:43:00+07:00", "type": "unknown", "label": "Thiết bị ghi nhận va chạm bất thường"},
-        {"from": "2026-04-09T10:47:00+07:00", "to": "2026-04-09T17:40:00+07:00", "type": "still", "label": "Nghỉ ngơi tại nhà"}
+        {"from": "2026-04-09T05:50:00+07:00", "to": "2026-04-09T08:32:00+07:00", "type": "still", "label": "? nh�"},
+        {"from": "2026-04-09T08:32:00+07:00", "to": "2026-04-09T10:34:00+07:00", "type": "walking", "label": "�i b? ch?m ra ch? v� v? nh�"},
+        {"from": "2026-04-09T10:42:00+07:00", "to": "2026-04-09T10:43:00+07:00", "type": "unknown", "label": "Thi?t b? ghi nh?n va ch?m b?t thu?ng"},
+        {"from": "2026-04-09T10:47:00+07:00", "to": "2026-04-09T17:40:00+07:00", "type": "still", "label": "Ngh? ngoi t?i nh�"}
       ],
       "todaySummary": {
         "walkingMinutes": 64,
@@ -1379,7 +1379,7 @@
         {"appName": "Gmail", "minutes": 39},
         {"appName": "FamilyGuard", "minutes": 34}
       ],
-      "usageNote": "Sử dụng mức vừa đến cao, chủ yếu cho công việc và kiểm tra gia đình."
+      "usageNote": "S? d?ng m?c v?a d?n cao, ch? y?u cho c�ng vi?c v� ki?m tra gia d�nh."
     },
     {
       "userId": "user_me_lan",
@@ -1392,7 +1392,7 @@
         {"appName": "FamilyGuard", "minutes": 29},
         {"appName": "Safari", "minutes": 24}
       ],
-      "usageNote": "Dùng điện thoại đều trong giờ làm, ưu tiên kiểm tra thông báo từ An và Bà nội."
+      "usageNote": "D�ng di?n tho?i d?u trong gi? l�m, uu ti�n ki?m tra th�ng b�o t? An v� B� n?i."
     },
     {
       "userId": "user_con_an",
@@ -1403,12 +1403,12 @@
         {"appName": "Google Classroom", "minutes": 28},
         {"appName": "FamilyGuard", "minutes": 22},
         {"appName": "YouTube Kids", "minutes": 18},
-        {"appName": "Từ điển Anh Việt", "minutes": 14}
+        {"appName": "T? di?n Anh Vi?t", "minutes": 14}
       ],
       "studyHours": ["07:30-11:30", "13:00-16:30"],
       "breakHours": ["12:00-13:00", "19:00-20:00"],
       "blockedAppAttemptsToday": 2,
-      "usageNote": "Thời gian dùng vừa phải, chủ yếu cho học tập; thiết bị đang pin yếu cuối ngày."
+      "usageNote": "Th?i gian d�ng v?a ph?i, ch? y?u cho h?c t?p; thi?t b? dang pin y?u cu?i ng�y."
     },
     {
       "userId": "user_ba_noi_hoa",
@@ -1417,10 +1417,10 @@
       "unlockCount": 9,
       "mostUsedApps": [
         {"appName": "FamilyGuard", "minutes": 14},
-        {"appName": "Điện thoại", "minutes": 12},
+        {"appName": "�i?n tho?i", "minutes": 12},
         {"appName": "Zalo", "minutes": 8}
       ],
-      "usageNote": "Dùng rất ít, chủ yếu để xem thông báo đơn giản và gọi nhanh cho người thân."
+      "usageNote": "D�ng r?t �t, ch? y?u d? xem th�ng b�o don gi?n v� g?i nhanh cho ngu?i th�n."
     }
   ],
   "alerts": [
@@ -1429,10 +1429,10 @@
       "type": "geofence_enter",
       "priority": "low",
       "sourceUserId": "user_me_lan",
-      "sourceDisplayName": "Trần Thị Lan",
+      "sourceDisplayName": "Tr?n Th? Lan",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "title": "Mẹ đã đến văn phòng",
-      "message": "Lan đã vào vùng an toàn \"Văn phòng Mẹ\" lúc 07:52.",
+      "title": "M? d� d?n van ph�ng",
+      "message": "Lan d� v�o v�ng an to�n \"Van ph�ng M?\" l�c 07:52.",
       "createdAt": "2026-04-09T07:52:00+07:00",
       "relatedZoneId": "zone_office_me_001",
       "relatedEventId": null,
@@ -1447,10 +1447,10 @@
       "type": "outside_home_too_long",
       "priority": "high",
       "sourceUserId": "user_ba_noi_hoa",
-      "sourceDisplayName": "Lê Thị Hoa",
+      "sourceDisplayName": "L� Th? Hoa",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "title": "Bà nội ở ngoài nhà lâu hơn bình thường",
-      "message": "Bà nội đã ra khỏi vùng Nhà hơn 90 phút và hiện chưa trở về.",
+      "title": "B� n?i ? ngo�i nh� l�u hon b�nh thu?ng",
+      "message": "B� n?i d� ra kh?i v�ng Nh� hon 90 ph�t v� hi?n chua tr? v?.",
       "createdAt": "2026-04-09T10:03:00+07:00",
       "relatedZoneId": "zone_home_001",
       "relatedEventId": null,
@@ -1465,10 +1465,10 @@
       "type": "fall_detection",
       "priority": "critical",
       "sourceUserId": "user_ba_noi_hoa",
-      "sourceDisplayName": "Lê Thị Hoa",
+      "sourceDisplayName": "L� Th? Hoa",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "title": "Nghi ngờ Bà nội bị té ngã",
-      "message": "Thiết bị của Bà nội ghi nhận va chạm mạnh tại nhà lúc 10:42. Chưa có phản hồi trong thời gian đếm ngược.",
+      "title": "Nghi ng? B� n?i b? t� ng�",
+      "message": "Thi?t b? c?a B� n?i ghi nh?n va ch?m m?nh t?i nh� l�c 10:42. Chua c� ph?n h?i trong th?i gian d?m ngu?c.",
       "createdAt": "2026-04-09T10:42:12+07:00",
       "relatedZoneId": "zone_home_001",
       "relatedEventId": "fall_noi_20260409_1042",
@@ -1483,10 +1483,10 @@
       "type": "sos",
       "priority": "critical",
       "sourceUserId": "user_ba_noi_hoa",
-      "sourceDisplayName": "Lê Thị Hoa",
+      "sourceDisplayName": "L� Th? Hoa",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "title": "Bà nội vừa bấm SOS",
-      "message": "Bà nội bấm SOS tại nhà lúc 10:44 với lý do chóng mặt trong nhà tắm.",
+      "title": "B� n?i v?a b?m SOS",
+      "message": "B� n?i b?m SOS t?i nh� l�c 10:44 v?i l� do ch�ng m?t trong nh� t?m.",
       "createdAt": "2026-04-09T10:44:08+07:00",
       "relatedZoneId": "zone_home_001",
       "relatedEventId": "sos_noi_20260409_1044",
@@ -1501,10 +1501,10 @@
       "type": "geofence_exit_early",
       "priority": "high",
       "sourceUserId": "user_con_an",
-      "sourceDisplayName": "Nguyễn Minh An",
+      "sourceDisplayName": "Nguy?n Minh An",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "title": "An rời trường sớm hơn lịch",
-      "message": "An ra khỏi vùng an toàn Trường THCS Tân Hưng lúc 15:18, sớm hơn giờ tan học 16:30.",
+      "title": "An r?i tru?ng s?m hon l?ch",
+      "message": "An ra kh?i v�ng an to�n Tru?ng THCS T�n Hung l�c 15:18, s?m hon gi? tan h?c 16:30.",
       "createdAt": "2026-04-09T15:18:14+07:00",
       "relatedZoneId": "zone_school_001",
       "relatedEventId": null,
@@ -1519,10 +1519,10 @@
       "type": "sos_test",
       "priority": "high",
       "sourceUserId": "user_con_an",
-      "sourceDisplayName": "Nguyễn Minh An",
+      "sourceDisplayName": "Nguy?n Minh An",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "title": "An vừa gửi SOS thử",
-      "message": "An bấm SOS thử tại lớp học thêm theo hướng dẫn của Ba.",
+      "title": "An v?a g?i SOS th?",
+      "message": "An b?m SOS th? t?i l?p h?c th�m theo hu?ng d?n c?a Ba.",
       "createdAt": "2026-04-09T16:38:00+07:00",
       "relatedZoneId": null,
       "relatedEventId": "sos_con_20260409_1638",
@@ -1537,10 +1537,10 @@
       "type": "low_battery",
       "priority": "medium",
       "sourceUserId": "user_con_an",
-      "sourceDisplayName": "Nguyễn Minh An",
+      "sourceDisplayName": "Nguy?n Minh An",
       "recipientUserIds": ["user_ba_minh", "user_me_lan", "user_con_an"],
-      "title": "Pin thiết bị của An sắp hết",
-      "message": "Thiết bị của An còn 18% pin tại lớp học thêm. Nên sạc trước khi về nhà.",
+      "title": "Pin thi?t b? c?a An s?p h?t",
+      "message": "Thi?t b? c?a An c�n 18% pin t?i l?p h?c th�m. N�n s?c tru?c khi v? nh�.",
       "createdAt": "2026-04-09T17:05:00+07:00",
       "relatedZoneId": null,
       "relatedEventId": null,
@@ -1558,15 +1558,15 @@
       "detectedAt": "2026-04-08T19:18:44+07:00",
       "latitude": 10.737463,
       "longitude": 106.704642,
-      "addressText": "Phòng khách, Riverside Residence, Quận 7",
-      "promptText": "Bà có ổn không?",
+      "addressText": "Ph�ng kh�ch, Riverside Residence, Qu?n 7",
+      "promptText": "B� c� ?n kh�ng?",
       "countdownSeconds": 20,
-      "countdownResult": "đã phản hồi",
-      "finalStatus": "đã xác nhận an toàn",
+      "countdownResult": "d� ph?n h?i",
+      "finalStatus": "d� x�c nh?n an to�n",
       "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
       "alertSentAt": null,
       "confirmedSafeAt": "2026-04-08T19:19:01+07:00",
-      "note": "Bà nội chạm nhầm điện thoại khi ngồi xuống ghế."
+      "note": "B� n?i ch?m nh?m di?n tho?i khi ng?i xu?ng gh?."
     },
     {
       "eventId": "fall_noi_20260409_1042",
@@ -1574,15 +1574,15 @@
       "detectedAt": "2026-04-09T10:42:12+07:00",
       "latitude": 10.737463,
       "longitude": 106.704642,
-      "addressText": "Nhà tắm, Riverside Residence, Quận 7",
-      "promptText": "Bà có ổn không?",
+      "addressText": "Nh� t?m, Riverside Residence, Qu?n 7",
+      "promptText": "B� c� ?n kh�ng?",
       "countdownSeconds": 30,
-      "countdownResult": "không phản hồi",
-      "finalStatus": "đã gửi cảnh báo cho người thân",
+      "countdownResult": "kh�ng ph?n h?i",
+      "finalStatus": "d� g?i c?nh b�o cho ngu?i th�n",
       "alertRecipientUserIds": ["user_ba_minh", "user_me_lan"],
       "alertSentAt": "2026-04-09T10:42:42+07:00",
       "confirmedSafeAt": "2026-04-09T10:47:10+07:00",
-      "note": "Bà bị choáng nhẹ trong nhà tắm, sau đó ngồi nghỉ và xác nhận đã an toàn qua cuộc gọi của Mẹ."
+      "note": "B� b? cho�ng nh? trong nh� t?m, sau d� ng?i ngh? v� x�c nh?n d� an to�n qua cu?c g?i c?a M?."
     }
   ],
   "sosEvents": [
@@ -1594,28 +1594,28 @@
       "createdAt": "2026-04-09T16:38:00+07:00",
       "latitude": 10.7399,
       "longitude": 106.71185,
-      "addressText": "Trung tâm Anh ngữ Sao Việt, 41 Lâm Văn Bền, Quận 7, TP.HCM",
-      "shortReason": "Bấm thử nút SOS theo hướng dẫn",
+      "addressText": "Trung t�m Anh ng? Sao Vi?t, 41 L�m Van B?n, Qu?n 7, TP.HCM",
+      "shortReason": "B?m th? n�t SOS theo hu?ng d?n",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "responseStatus": "đã phản hồi",
+      "responseStatus": "d� ph?n h?i",
       "firstResponderUserId": "user_ba_minh",
       "firstResponseAt": "2026-04-09T16:39:08+07:00",
       "resolvedAt": "2026-04-09T16:41:10+07:00",
-      "resolutionNote": "Ba xác nhận đây là SOS thử, Mẹ đã thấy thông báo.",
+      "resolutionNote": "Ba x�c nh?n d�y l� SOS th?, M? d� th?y th�ng b�o.",
       "communicationLog": [
         {
           "type": "in_app_message",
           "fromUserId": "user_ba_minh",
           "toUserId": "user_con_an",
           "time": "2026-04-09T16:39:08+07:00",
-          "content": "Ba đã nhận được SOS thử của con."
+          "content": "Ba d� nh?n du?c SOS th? c?a con."
         },
         {
           "type": "in_app_message",
           "fromUserId": "user_me_lan",
           "toUserId": "user_con_an",
           "time": "2026-04-09T16:40:12+07:00",
-          "content": "Mẹ đã thấy rồi, lát về nhớ sạc máy nhé."
+          "content": "M? d� th?y r?i, l�t v? nh? s?c m�y nh�."
         }
       ]
     },
@@ -1627,35 +1627,35 @@
       "createdAt": "2026-04-09T10:44:08+07:00",
       "latitude": 10.737463,
       "longitude": 106.704642,
-      "addressText": "Nhà tắm, Riverside Residence, Quận 7, TP.HCM",
-      "shortReason": "Chóng mặt trong nhà tắm",
+      "addressText": "Nh� t?m, Riverside Residence, Qu?n 7, TP.HCM",
+      "shortReason": "Ch�ng m?t trong nh� t?m",
       "recipientUserIds": ["user_ba_minh", "user_me_lan"],
-      "responseStatus": "đã phản hồi",
+      "responseStatus": "d� ph?n h?i",
       "firstResponderUserId": "user_me_lan",
       "firstResponseAt": "2026-04-09T10:45:02+07:00",
       "resolvedAt": "2026-04-09T10:47:30+07:00",
-      "resolutionNote": "Mẹ gọi xác nhận Bà nội ổn, Ba tiếp tục theo dõi từ app.",
+      "resolutionNote": "M? g?i x�c nh?n B� n?i ?n, Ba ti?p t?c theo d�i t? app.",
       "communicationLog": [
         {
           "type": "phone_call",
           "fromUserId": "user_me_lan",
           "toUserId": "user_ba_noi_hoa",
           "time": "2026-04-09T10:45:02+07:00",
-          "content": "Cuộc gọi kết nối 1 phút 14 giây, Bà nội nói còn chóng mặt nhẹ."
+          "content": "Cu?c g?i k?t n?i 1 ph�t 14 gi�y, B� n?i n�i c�n ch�ng m?t nh?."
         },
         {
           "type": "phone_call",
           "fromUserId": "user_ba_minh",
           "toUserId": "user_ba_noi_hoa",
           "time": "2026-04-09T10:46:18+07:00",
-          "content": "Ba gọi lại để kiểm tra, cuộc gọi nhỡ vì Mẹ đang nói chuyện với Bà."
+          "content": "Ba g?i l?i d? ki?m tra, cu?c g?i nh? v� M? dang n�i chuy?n v?i B�."
         },
         {
           "type": "in_app_message",
           "fromUserId": "user_me_lan",
           "toUserId": "user_ba_minh",
           "time": "2026-04-09T10:47:30+07:00",
-          "content": "Mẹ ổn rồi, em đang ngồi nghỉ và uống nước."
+          "content": "M? ?n r?i, em dang ng?i ngh? v� u?ng nu?c."
         }
       ]
     }
@@ -1665,8 +1665,8 @@
       {
         "notificationId": "noti_ba_1",
         "type": "alert",
-        "title": "Pin của An còn 18%",
-        "body": "Thiết bị của An đang pin yếu tại lớp học thêm.",
+        "title": "Pin c?a An c�n 18%",
+        "body": "Thi?t b? c?a An dang pin y?u t?i l?p h?c th�m.",
         "createdAt": "2026-04-09T17:05:00+07:00",
         "isRead": false,
         "priority": "medium",
@@ -1675,8 +1675,8 @@
       {
         "notificationId": "noti_ba_2",
         "type": "alert",
-        "title": "An đã gửi SOS thử",
-        "body": "Ba đã xác nhận đây là thao tác thử nút SOS.",
+        "title": "An d� g?i SOS th?",
+        "body": "Ba d� x�c nh?n d�y l� thao t�c th? n�t SOS.",
         "createdAt": "2026-04-09T16:38:00+07:00",
         "isRead": true,
         "priority": "high",
@@ -1685,8 +1685,8 @@
       {
         "notificationId": "noti_ba_3",
         "type": "alert",
-        "title": "An rời trường sớm",
-        "body": "An ra khỏi vùng Trường THCS Tân Hưng lúc 15:18.",
+        "title": "An r?i tru?ng s?m",
+        "body": "An ra kh?i v�ng Tru?ng THCS T�n Hung l�c 15:18.",
         "createdAt": "2026-04-09T15:18:14+07:00",
         "isRead": true,
         "priority": "high",
@@ -1695,8 +1695,8 @@
       {
         "notificationId": "noti_ba_4",
         "type": "alert",
-        "title": "Bà nội vừa bấm SOS",
-        "body": "Sự cố đã được Mẹ xử lý, Bà nội hiện đã an toàn.",
+        "title": "B� n?i v?a b?m SOS",
+        "body": "S? c? d� du?c M? x? l�, B� n?i hi?n d� an to�n.",
         "createdAt": "2026-04-09T10:44:08+07:00",
         "isRead": true,
         "priority": "critical",
@@ -1705,8 +1705,8 @@
       {
         "notificationId": "noti_ba_5",
         "type": "alert",
-        "title": "Nghi ngờ Bà nội té ngã",
-        "body": "Thiết bị ghi nhận va chạm mạnh trong nhà tắm lúc 10:42.",
+        "title": "Nghi ng? B� n?i t� ng�",
+        "body": "Thi?t b? ghi nh?n va ch?m m?nh trong nh� t?m l�c 10:42.",
         "createdAt": "2026-04-09T10:42:12+07:00",
         "isRead": true,
         "priority": "critical",
@@ -1715,8 +1715,8 @@
       {
         "notificationId": "noti_ba_6",
         "type": "info",
-        "title": "Mẹ đã đến văn phòng",
-        "body": "Lan vào vùng an toàn lúc 07:52.",
+        "title": "M? d� d?n van ph�ng",
+        "body": "Lan v�o v�ng an to�n l�c 07:52.",
         "createdAt": "2026-04-09T07:52:00+07:00",
         "isRead": true,
         "priority": "low",
@@ -1727,8 +1727,8 @@
       {
         "notificationId": "noti_me_1",
         "type": "alert",
-        "title": "Pin của An sắp hết",
-        "body": "Thiết bị của An còn 18% pin ở lớp học thêm.",
+        "title": "Pin c?a An s?p h?t",
+        "body": "Thi?t b? c?a An c�n 18% pin ? l?p h?c th�m.",
         "createdAt": "2026-04-09T17:05:00+07:00",
         "isRead": true,
         "priority": "medium",
@@ -1737,8 +1737,8 @@
       {
         "notificationId": "noti_me_2",
         "type": "alert",
-        "title": "An đã gửi SOS thử",
-        "body": "Ba đã phản hồi, đây là thao tác kiểm tra.",
+        "title": "An d� g?i SOS th?",
+        "body": "Ba d� ph?n h?i, d�y l� thao t�c ki?m tra.",
         "createdAt": "2026-04-09T16:38:00+07:00",
         "isRead": true,
         "priority": "high",
@@ -1747,8 +1747,8 @@
       {
         "notificationId": "noti_me_3",
         "type": "alert",
-        "title": "An rời trường sớm hơn lịch",
-        "body": "Mẹ đã gọi xác nhận An chỉ ra cổng mua nước.",
+        "title": "An r?i tru?ng s?m hon l?ch",
+        "body": "M? d� g?i x�c nh?n An ch? ra c?ng mua nu?c.",
         "createdAt": "2026-04-09T15:18:14+07:00",
         "isRead": true,
         "priority": "high",
@@ -1757,8 +1757,8 @@
       {
         "notificationId": "noti_me_4",
         "type": "alert",
-        "title": "Bà nội vừa bấm SOS",
-        "body": "Mẹ đã gọi và xác nhận Bà nội ổn.",
+        "title": "B� n?i v?a b?m SOS",
+        "body": "M? d� g?i v� x�c nh?n B� n?i ?n.",
         "createdAt": "2026-04-09T10:44:08+07:00",
         "isRead": true,
         "priority": "critical",
@@ -1767,8 +1767,8 @@
       {
         "notificationId": "noti_me_5",
         "type": "alert",
-        "title": "Bà nội ở ngoài nhà lâu",
-        "body": "Cảnh báo được gửi lúc 10:03 và đã theo dõi an toàn.",
+        "title": "B� n?i ? ngo�i nh� l�u",
+        "body": "C?nh b�o du?c g?i l�c 10:03 v� d� theo d�i an to�n.",
         "createdAt": "2026-04-09T10:03:00+07:00",
         "isRead": true,
         "priority": "high",
@@ -1779,8 +1779,8 @@
       {
         "notificationId": "noti_con_1",
         "type": "device",
-        "title": "Pin máy sắp hết",
-        "body": "Máy của bạn còn 18%. Hãy sạc khi về nhà.",
+        "title": "Pin m�y s?p h?t",
+        "body": "M�y c?a b?n c�n 18%. H�y s?c khi v? nh�.",
         "createdAt": "2026-04-09T17:05:00+07:00",
         "isRead": false,
         "priority": "medium",
@@ -1789,8 +1789,8 @@
       {
         "notificationId": "noti_con_2",
         "type": "sos",
-        "title": "Gia đình đã nhận SOS",
-        "body": "Ba và Mẹ đã thấy tín hiệu SOS thử của bạn.",
+        "title": "Gia d�nh d� nh?n SOS",
+        "body": "Ba v� M? d� th?y t�n hi?u SOS th? c?a b?n.",
         "createdAt": "2026-04-09T16:39:08+07:00",
         "isRead": true,
         "priority": "high",
@@ -1799,8 +1799,8 @@
       {
         "notificationId": "noti_con_3",
         "type": "safe_zone",
-        "title": "Bạn đã rời trường sớm",
-        "body": "Ứng dụng đã báo cho Ba và Mẹ để bảo đảm an toàn.",
+        "title": "B?n d� r?i tru?ng s?m",
+        "body": "?ng d?ng d� b�o cho Ba v� M? d? b?o d?m an to�n.",
         "createdAt": "2026-04-09T15:18:14+07:00",
         "isRead": true,
         "priority": "medium",
@@ -1809,8 +1809,8 @@
       {
         "notificationId": "noti_con_4",
         "type": "info",
-        "title": "Lịch hôm nay",
-        "body": "Sau lớp học thêm, bạn cần về nhà trước 18:30.",
+        "title": "L?ch h�m nay",
+        "body": "Sau l?p h?c th�m, b?n c?n v? nh� tru?c 18:30.",
         "createdAt": "2026-04-09T16:00:00+07:00",
         "isRead": true,
         "priority": "low",
@@ -1821,8 +1821,8 @@
       {
         "notificationId": "noti_noi_1",
         "type": "simple_alert",
-        "title": "Lan đang gọi cho mẹ",
-        "body": "Mẹ hãy nhấc máy nhé.",
+        "title": "Lan dang g?i cho m?",
+        "body": "M? h�y nh?c m�y nh�.",
         "createdAt": "2026-04-09T10:45:02+07:00",
         "isRead": true,
         "priority": "critical",
@@ -1831,8 +1831,8 @@
       {
         "notificationId": "noti_noi_2",
         "type": "simple_alert",
-        "title": "Gia đình đã nhận SOS",
-        "body": "Ba Minh và Mẹ Lan đang theo dõi mẹ.",
+        "title": "Gia d�nh d� nh?n SOS",
+        "body": "Ba Minh v� M? Lan dang theo d�i m?.",
         "createdAt": "2026-04-09T10:44:20+07:00",
         "isRead": true,
         "priority": "critical",
@@ -1841,8 +1841,8 @@
       {
         "notificationId": "noti_noi_3",
         "type": "simple_info",
-        "title": "Mẹ đang an toàn",
-        "body": "Ứng dụng ghi nhận mẹ đã ở nhà.",
+        "title": "M? dang an to�n",
+        "body": "?ng d?ng ghi nh?n m? d� ? nh�.",
         "createdAt": "2026-04-09T11:00:00+07:00",
         "isRead": true,
         "priority": "low",
@@ -1854,8 +1854,8 @@
     "user_ba_minh": {
       "dashboardType": "family_manager",
       "header": {
-        "title": "Gia đình hôm nay",
-        "subtitle": "Thứ Năm, 09/04/2026 - 17:45"
+        "title": "Gia d�nh h�m nay",
+        "subtitle": "Th? Nam, 09/04/2026 - 17:45"
       },
       "summary": {
         "safeMembersCount": 2,
@@ -1864,14 +1864,14 @@
         "criticalUnreadCount": 1
       },
       "memberQuickStatus": [
-        {"userId": "user_ba_minh", "label": "Ba", "status": "Tại công trình", "zoneName": "Công trình Midtown M8"},
-        {"userId": "user_me_lan", "label": "Mẹ", "status": "Đang đi xe về nhà", "zoneName": null},
-        {"userId": "user_con_an", "label": "An", "status": "Đang học thêm", "zoneName": null},
-        {"userId": "user_ba_noi_hoa", "label": "Bà nội", "status": "Ở nhà", "zoneName": "Nhà"}
+        {"userId": "user_ba_minh", "label": "Ba", "status": "T?i c�ng tr�nh", "zoneName": "C�ng tr�nh Midtown M8"},
+        {"userId": "user_me_lan", "label": "M?", "status": "�ang di xe v? nh�", "zoneName": null},
+        {"userId": "user_con_an", "label": "An", "status": "�ang h?c th�m", "zoneName": null},
+        {"userId": "user_ba_noi_hoa", "label": "B� n?i", "status": "? nh�", "zoneName": "Nh�"}
       ],
       "attentionMembers": [
-        {"userId": "user_con_an", "reason": "Rời trường sớm lúc 15:18 và hiện pin chỉ còn 18%."},
-        {"userId": "user_ba_noi_hoa", "reason": "Có nghi ngờ té ngã lúc 10:42, hiện đã an toàn nhưng cần theo dõi."}
+        {"userId": "user_con_an", "reason": "R?i tru?ng s?m l�c 15:18 v� hi?n pin ch? c�n 18%."},
+        {"userId": "user_ba_noi_hoa", "reason": "C� nghi ng? t� ng� l�c 10:42, hi?n d� an to�n nhung c?n theo d�i."}
       ],
       "latestAlertIds": [
         "alert_con_low_battery_20260409_1705",
@@ -1885,65 +1885,65 @@
         "breachCountToday": 2
       },
       "quickActions": [
-        "Xem bản đồ gia đình",
-        "Gọi Mẹ",
-        "Gọi An",
-        "Tạo vùng an toàn",
-        "Mở báo cáo hôm nay"
+        "Xem b?n d? gia d�nh",
+        "G?i M?",
+        "G?i An",
+        "T?o v�ng an to�n",
+        "M? b�o c�o h�m nay"
       ]
     },
     "user_me_lan": {
       "dashboardType": "caregiver_focus",
       "header": {
-        "title": "Theo dõi An và Bà nội",
-        "subtitle": "Ưu tiên người thân cần chú ý trong ngày"
+        "title": "Theo d�i An v� B� n?i",
+        "subtitle": "Uu ti�n ngu?i th�n c?n ch� � trong ng�y"
       },
       "priorityCards": [
         {
           "userId": "user_con_an",
-          "title": "Vị trí hiện tại của An",
-          "value": "Trung tâm Anh ngữ Sao Việt",
-          "status": "Pin 18%, đang ngồi học thêm"
+          "title": "V? tr� hi?n t?i c?a An",
+          "value": "Trung t�m Anh ng? Sao Vi?t",
+          "status": "Pin 18%, dang ng?i h?c th�m"
         },
         {
           "userId": "user_ba_noi_hoa",
-          "title": "Tình trạng của Bà nội",
-          "value": "Đang ở nhà",
-          "status": "Đã xác nhận an toàn sau cảnh báo té ngã"
+          "title": "T�nh tr?ng c?a B� n?i",
+          "value": "�ang ? nh�",
+          "status": "�� x�c nh?n an to�n sau c?nh b�o t� ng�"
         }
       ],
       "recentNotifications": ["noti_me_1", "noti_me_2", "noti_me_4"],
       "quickCalls": [
-        {"userId": "user_con_an", "label": "Gọi An"},
-        {"userId": "user_ba_noi_hoa", "label": "Gọi Bà nội"},
-        {"userId": "user_ba_minh", "label": "Gọi Ba Minh"}
+        {"userId": "user_con_an", "label": "G?i An"},
+        {"userId": "user_ba_noi_hoa", "label": "G?i B� n?i"},
+        {"userId": "user_ba_minh", "label": "G?i Ba Minh"}
       ],
       "spouseBasicStatus": {
         "userId": "user_ba_minh",
-        "status": "Đang ở công trình",
+        "status": "�ang ? c�ng tr�nh",
         "lastUpdatedAt": "2026-04-09T17:40:58+07:00"
       }
     },
     "user_con_an": {
       "dashboardType": "child_simple",
       "header": {
-        "title": "Xin chào An",
-        "subtitle": "Hôm nay bạn đang học thêm"
+        "title": "Xin ch�o An",
+        "subtitle": "H�m nay b?n dang h?c th�m"
       },
       "selfLocation": {
-        "addressText": "Trung tâm Anh ngữ Sao Việt, Quận 7",
+        "addressText": "Trung t�m Anh ng? Sao Vi?t, Qu?n 7",
         "lastUpdatedAt": "2026-04-09T17:40:12+07:00",
-        "status": "Đang đứng yên"
+        "status": "�ang d?ng y�n"
       },
       "currentSafeZone": {
-        "zoneName": "Trường THCS Tân Hưng",
-        "status": "Đã rời vùng lúc 15:18",
-        "nextExpectedZone": "Nhà trước 18:30"
+        "zoneName": "Tru?ng THCS T�n Hung",
+        "status": "�� r?i v�ng l�c 15:18",
+        "nextExpectedZone": "Nh� tru?c 18:30"
       },
       "sosButton": {
         "label": "SOS",
         "size": "large",
-        "description": "Bấm để báo ngay cho Ba và Mẹ"
+        "description": "B?m d? b�o ngay cho Ba v� M?"
       },
       "emergencyContactsQuick": ["contact_con_1", "contact_con_2"],
       "notificationsPreview": ["noti_con_1", "noti_con_2"]
@@ -1951,18 +1951,18 @@
     "user_ba_noi_hoa": {
       "dashboardType": "senior_simple",
       "header": {
-        "title": "Bà nội",
-        "subtitle": "17:45 - Hôm nay mẹ đang an toàn"
+        "title": "B� n?i",
+        "subtitle": "17:45 - H�m nay m? dang an to�n"
       },
       "currentStatus": {
         "timeText": "17:45",
-        "locationText": "Đang ở nhà",
-        "safetyText": "Đã an toàn sau khi được gia đình xác nhận"
+        "locationText": "�ang ? nh�",
+        "safetyText": "�� an to�n sau khi du?c gia d�nh x�c nh?n"
       },
       "largeSosButton": {
-        "label": "SOS KHẨN",
+        "label": "SOS KH?N",
         "color": "red",
-        "description": "Bấm một lần để gọi Ba Minh và Mẹ Lan"
+        "description": "B?m m?t l?n d? g?i Ba Minh v� M? Lan"
       },
       "quickContacts": ["contact_noi_1", "contact_noi_2"],
       "simpleNotifications": ["noti_noi_1", "noti_noi_2"]
@@ -2032,9 +2032,9 @@
       "contactId": "contact_ba_1",
       "ownerUserId": "user_ba_minh",
       "contactUserId": "user_me_lan",
-      "name": "Trần Thị Lan",
+      "name": "Tr?n Th? Lan",
       "phoneNumber": "+84 907 226 541",
-      "relationship": "Vợ",
+      "relationship": "V?",
       "priorityOrder": 1,
       "canReceiveSos": true
     },
@@ -2042,9 +2042,9 @@
       "contactId": "contact_me_1",
       "ownerUserId": "user_me_lan",
       "contactUserId": "user_ba_minh",
-      "name": "Nguyễn Văn Minh",
+      "name": "Nguy?n Van Minh",
       "phoneNumber": "+84 903 118 286",
-      "relationship": "Chồng",
+      "relationship": "Ch?ng",
       "priorityOrder": 1,
       "canReceiveSos": true
     },
@@ -2062,9 +2062,9 @@
       "contactId": "contact_con_2",
       "ownerUserId": "user_con_an",
       "contactUserId": "user_me_lan",
-      "name": "Mẹ Lan",
+      "name": "M? Lan",
       "phoneNumber": "+84 907 226 541",
-      "relationship": "Mẹ",
+      "relationship": "M?",
       "priorityOrder": 2,
       "canReceiveSos": true
     },
@@ -2082,9 +2082,9 @@
       "contactId": "contact_noi_2",
       "ownerUserId": "user_ba_noi_hoa",
       "contactUserId": "user_me_lan",
-      "name": "Mẹ Lan",
+      "name": "M? Lan",
       "phoneNumber": "+84 907 226 541",
-      "relationship": "Con dâu",
+      "relationship": "Con d�u",
       "priorityOrder": 2,
       "canReceiveSos": true
     }
@@ -2102,7 +2102,7 @@
       "totalFallAlerts": 1,
       "totalLowBatteryAlerts": 1,
       "lowestSafetyMemberUserId": "user_ba_noi_hoa",
-      "lowestSafetyMemberReason": "Có cảnh báo té ngã và SOS trong cùng ngày."
+      "lowestSafetyMemberReason": "C� c?nh b�o t� ng� v� SOS trong c�ng ng�y."
     },
     "memberDailySummaries": [
       {
@@ -2148,43 +2148,43 @@
       {
         "stateId": "empty_medical_appointments",
         "module": "medicalAppointments",
-        "title": "Chưa có lịch hẹn nào",
-        "description": "Gia đình chưa thêm lịch khám hoặc tái khám."
+        "title": "Chua c� l?ch h?n n�o",
+        "description": "Gia d�nh chua th�m l?ch kh�m ho?c t�i kh�m."
       },
       {
         "stateId": "empty_shared_notes",
         "module": "sharedNotes",
-        "title": "Chưa có ghi chú gia đình",
-        "description": "Ba hoặc Mẹ có thể tạo ghi chú chung cho cả nhà."
+        "title": "Chua c� ghi ch� gia d�nh",
+        "description": "Ba ho?c M? c� th? t?o ghi ch� chung cho c? nh�."
       }
     ],
     "loadingStates": [
       {
         "stateId": "loading_family_map",
         "module": "map",
-        "title": "Đang đồng bộ vị trí gia đình",
-        "description": "Ứng dụng đang lấy dữ liệu GPS và vùng an toàn mới nhất."
+        "title": "�ang d?ng b? v? tr� gia d�nh",
+        "description": "?ng d?ng dang l?y d? li?u GPS v� v�ng an to�n m?i nh?t."
       },
       {
         "stateId": "loading_daily_report",
         "module": "reports",
-        "title": "Đang tạo báo cáo hôm nay",
-        "description": "Hệ thống đang tổng hợp lộ trình, cảnh báo và thời gian hoạt động."
+        "title": "�ang t?o b�o c�o h�m nay",
+        "description": "H? th?ng dang t?ng h?p l? tr�nh, c?nh b�o v� th?i gian ho?t d?ng."
       }
     ],
     "errorStates": [
       {
         "stateId": "error_report_timeout",
         "module": "reports",
-        "title": "Tải báo cáo chậm",
-        "description": "Kết nối mạng không ổn định. Hãy thử lại sau ít giây.",
+        "title": "T?i b�o c�o ch?m",
+        "description": "K?t n?i m?ng kh�ng ?n d?nh. H�y th? l?i sau �t gi�y.",
         "retryable": true
       },
       {
         "stateId": "error_location_permission_partial",
         "module": "tracking",
-        "title": "Thiếu quyền vị trí nền",
-        "description": "Thiết bị của Mẹ chỉ gửi vị trí đầy đủ khi đã bật chạy nền.",
+        "title": "Thi?u quy?n v? tr� n?n",
+        "description": "Thi?t b? c?a M? ch? g?i v? tr� d?y d? khi d� b?t ch?y n?n.",
         "retryable": true,
         "affectedUserId": "user_me_lan"
       }
@@ -2193,21 +2193,21 @@
       {
         "stateId": "no_new_alerts",
         "module": "alerts",
-        "title": "Không có cảnh báo mới",
-        "description": "Mọi cảnh báo quan trọng hiện đã được xử lý."
+        "title": "Kh�ng c� c?nh b�o m?i",
+        "description": "M?i c?nh b�o quan tr?ng hi?n d� du?c x? l�."
       },
       {
         "stateId": "temporary_disconnect",
         "module": "devices",
-        "title": "Mất kết nối tạm thời",
-        "description": "Vòng tay của Bà nội đang ngoại tuyến, dữ liệu sẽ tự đồng bộ lại khi kết nối trở lại.",
+        "title": "M?t k?t n?i t?m th?i",
+        "description": "V�ng tay c?a B� n?i dang ngo?i tuy?n, d? li?u s? t? d?ng b? l?i khi k?t n?i tr? l?i.",
         "affectedDeviceId": "device_ba_noi_band"
       },
       {
         "stateId": "device_offline",
         "module": "devices",
-        "title": "Thiết bị offline",
-        "description": "Thiết bị đeo của Bà nội chưa đồng bộ từ 14:02.",
+        "title": "Thi?t b? offline",
+        "description": "Thi?t b? deo c?a B� n?i chua d?ng b? t? 14:02.",
         "affectedDeviceId": "device_ba_noi_band"
       }
     ]

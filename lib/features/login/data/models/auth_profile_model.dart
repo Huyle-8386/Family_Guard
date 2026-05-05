@@ -10,6 +10,7 @@ class AuthProfileModel extends AuthProfile {
     super.sex,
     super.address,
     super.role,
+    super.userType,
     super.avata,
     super.age,
     super.homeType,
@@ -29,6 +30,9 @@ class AuthProfileModel extends AuthProfile {
       sex: _nullableString(json['sex']),
       address: _nullableString(json['address']),
       role: _nullableString(json['role']),
+      userType:
+          _nullableString(json['user_type']) ??
+          _nullableString(json['userType']),
       avata: _nullableString(json['avata']),
       age: _nullableInt(json['age']) ?? fallbackAge,
       homeType:
@@ -48,6 +52,7 @@ class AuthProfileModel extends AuthProfile {
       sex: entity.sex,
       address: entity.address,
       role: entity.role,
+      userType: entity.userType,
       avata: entity.avata,
       age: entity.age,
       homeType: entity.homeType,
@@ -64,6 +69,7 @@ class AuthProfileModel extends AuthProfile {
       'sex': sex,
       'address': address,
       'role': role,
+      'userType': userType,
       'avata': avata,
       'age': age,
       'homeType': homeType,

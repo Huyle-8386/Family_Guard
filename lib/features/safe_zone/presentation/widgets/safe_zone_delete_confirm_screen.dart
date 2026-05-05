@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
@@ -6,9 +6,9 @@ import 'package:family_guard/core/widgets/app_back_header.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 
 /// ============================================================
-/// SAFE ZONE DELETE CONFIRM SCREEN - XÃ¡c nháº­n xÃ³a vÃ¹ng an toÃ n
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
-/// Hiá»ƒn thá»‹ map ná»n + modal bottom sheet xÃ¡c nháº­n xÃ³a
+/// SAFE ZONE DELETE CONFIRM SCREEN - Xác nhận xóa vùng an toàn
+/// Được dịch và sửa lỗi từ Figma Dev Mode export
+/// Hiển thị map nền + modal bottom sheet xác nhận xóa
 /// ============================================================
 class SafeZoneDeleteConfirmScreen extends StatefulWidget {
   const SafeZoneDeleteConfirmScreen({super.key});
@@ -38,7 +38,7 @@ class _SafeZoneDeleteConfirmScreenState
     _fadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeIn),
     );
-    // Tá»± Ä‘á»™ng má»Ÿ modal khi vÃ o mÃ n hÃ¬nh
+    // Tự động mở modal khi vào màn hình
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animController.forward();
     });
@@ -62,7 +62,7 @@ class _SafeZoneDeleteConfirmScreenState
     final service = SafeZoneProvider.read(context);
     final zones = service.zones;
     final zone = zones.isNotEmpty ? zones.first : null;
-    final zoneName = zone?.name ?? 'Nhà riêng';
+    final zoneName = zone?.name ?? 'Nh� ri�ng';
 
     // Actually remove from service
     if (zone != null) {
@@ -74,11 +74,11 @@ class _SafeZoneDeleteConfirmScreenState
       navigator.popUntil(ModalRoute.withName(AppRoutes.safeZoneActive));
       messenger.showSnackBar(
         SnackBar(
-          content: Text('Đã xóa vùng an toàn "$zoneName"'),
+          content: Text('�� x�a v�ng an to�n "$zoneName"'),
           backgroundColor: const Color(0xFF111827),
           duration: const Duration(seconds: 4),
           action: SnackBarAction(
-            label: 'HOÀN TÁC',
+            label: 'HO�N T�C',
             textColor: const Color(0xFF00ACB2),
             onPressed: () {
               if (zone != null) service.addZone(zone);
@@ -95,10 +95,10 @@ class _SafeZoneDeleteConfirmScreenState
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // â”€â”€ Ná»n: map + zone circle + AppBar + search bar â”€â”€â”€â”€â”€â”€
+          // ── Nền: map + zone circle + AppBar + search bar ──────
           _buildMapBackground(context),
 
-          // â”€â”€ Lá»›p má» overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Lớp mờ overlay ─────────────────────────────────────
           AnimatedBuilder(
             animation: _fadeAnim,
             builder: (_, __) => Opacity(
@@ -107,7 +107,7 @@ class _SafeZoneDeleteConfirmScreenState
             ),
           ),
 
-          // â”€â”€ Modal bottom sheet xÃ¡c nháº­n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Modal bottom sheet xác nhận ─────────────────────────
           AnimatedBuilder(
             animation: _slideAnim,
             builder: (_, child) => FractionalTranslation(
@@ -121,7 +121,7 @@ class _SafeZoneDeleteConfirmScreenState
     );
   }
 
-  // â”€â”€ Ná»n báº£n Ä‘á»“ (tÃ¡i sá»­ dá»¥ng tá»« edit screen) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Nền bản đồ (tái sử dụng từ edit screen) ───────────────────────
   Widget _buildMapBackground(BuildContext context) {
     final service = SafeZoneProvider.of(context);
     final zones = service.zones;
@@ -163,12 +163,12 @@ class _SafeZoneDeleteConfirmScreenState
                 ),
               ),
 
-              // Zone circle + pin á»Ÿ giá»¯a
+              // Zone circle + pin ở giữa
               Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // VÃ²ng trÃ²n zone
+                    // Vòng tròn zone
                     Container(
                       width: 256,
                       height: 256,
@@ -201,7 +201,7 @@ class _SafeZoneDeleteConfirmScreenState
                         Container(width: 4, height: 8, color: const Color(0xFF00ACB2)),
                       ],
                     ),
-                    // Badge bÃ¡n kÃ­nh
+                    // Badge bán kính
                     Positioned(
                       bottom: 36,
                       child: Container(
@@ -270,7 +270,7 @@ class _SafeZoneDeleteConfirmScreenState
                 ),
               ),
 
-              // NÃºt GPS
+              // Nút GPS
               Positioned(
                 right: 16,
                 bottom: 80,
@@ -336,7 +336,7 @@ class _SafeZoneDeleteConfirmScreenState
                           color: Color(0xFF9CA3AF), size: 20),
                       SizedBox(width: 8),
                       Text(
-                        'Tìm địa điểm mới',
+                        'T�m d?a di?m m?i',
                         style: TextStyle(
                           color: Color(0xFF9CA3AF),
                           fontSize: 14,
@@ -355,7 +355,7 @@ class _SafeZoneDeleteConfirmScreenState
                 right: 0,
                 top: 0,
                 child: AppBackHeaderBar(
-                  title: 'Vùng an toàn',
+                  title: 'V�ng an to�n',
                   onBack: _dismiss,
                 ),
               ),
@@ -363,7 +363,7 @@ class _SafeZoneDeleteConfirmScreenState
           ),
         ),
 
-        // Bottom panel phÃ­a sau (má» do overlay)
+        // Bottom panel phía sau (mờ do overlay)
         Expanded(
           child: Container(
             decoration: const BoxDecoration(
@@ -379,7 +379,7 @@ class _SafeZoneDeleteConfirmScreenState
     );
   }
 
-  // â”€â”€ Modal xÃ¡c nháº­n xÃ³a â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Modal xác nhận xóa ────────────────────────────────────────────
   Widget _buildConfirmSheet(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -416,7 +416,7 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // Icon cáº£nh bÃ¡o
+            // Icon cảnh báo
             Container(
               width: 72,
               height: 72,
@@ -440,9 +440,9 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // TiÃªu Ä‘á»
+            // Tiêu đề
             const Text(
-              'Xóa vùng an toàn?',
+              'X�a v�ng an to�n?',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF111827),
@@ -455,7 +455,7 @@ class _SafeZoneDeleteConfirmScreenState
 
             const SizedBox(height: 12),
 
-            // TÃªn + Ä‘á»‹a chá»‰ vÃ¹ng
+            // Tên + địa chỉ vùng
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -488,7 +488,7 @@ class _SafeZoneDeleteConfirmScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nhà riêng',
+                          'Nh� ri�ng',
                           style: TextStyle(
                             color: Color(0xFF111827),
                             fontSize: 16,
@@ -499,7 +499,7 @@ class _SafeZoneDeleteConfirmScreenState
                         ),
                         SizedBox(height: 2),
                         Text(
-                          '123 Đường Nguyễn Huệ, Quận 1, TP. HCM',
+                          '123 �u?ng Nguy?n Hu?, Qu?n 1, TP. HCM',
                           style: TextStyle(
                             color: Color(0xFF6B7280),
                             fontSize: 13,
@@ -515,7 +515,7 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // ThÃ´ng bÃ¡o cáº£nh bÃ¡o
+            // Thông báo cảnh báo
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -541,7 +541,7 @@ class _SafeZoneDeleteConfirmScreenState
                   const SizedBox(width: 10),
                   const Expanded(
                     child: Text(
-                      'Sau khi xóa, tất cả dữ liệu liên quan tới vùng an toàn này sẽ bị mất vĩnh viễn và không thể khôi phục.',
+                      'Sau khi x�a, t?t c? d? li?u li�n quan t?i v�ng an to�n n�y s? b? m?t vinh vi?n v� kh�ng th? kh�i ph?c.',
                       style: TextStyle(
                         color: Color(0xFFDC2626),
                         fontSize: 13,
@@ -555,23 +555,23 @@ class _SafeZoneDeleteConfirmScreenState
               ),
             ),
 
-            // NÃºt hÃ nh Ä‘á»™ng
+            // Nút hành động
             Row(
               children: [
-                // NÃºt Há»§y
+                // Nút Hủy
                 Expanded(
                   child: SizedBox(
                     height: 56,
                     child: OutlinedButton(
                       onPressed: _dismiss,
-                      child: const Text('Hủy'),
+                      child: const Text('H?y'),
                     ),
                   ),
                 ),
 
                 const SizedBox(width: 12),
 
-                // NÃºt XÃ³a
+                // Nút Xóa
                 Expanded(
                   child: SizedBox(
                     height: 56,
@@ -581,7 +581,7 @@ class _SafeZoneDeleteConfirmScreenState
                         backgroundColor: const Color(0xFFEF4444),
                       ),
                       icon: const Icon(Icons.delete_rounded, size: 20),
-                      label: const Text('Xóa vùng'),
+                      label: const Text('X�a v�ng'),
                     ),
                   ),
                 ),

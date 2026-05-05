@@ -1,12 +1,12 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SELECT MEMBER SCREEN - Chá»n thÃ nh viÃªn (Safe Zone)
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
+/// SELECT MEMBER SCREEN - Chọn thành viên (Safe Zone)
+/// Được dịch và sửa lỗi từ Figma Dev Mode export
 /// ============================================================
 class SafeZoneSelectMemberScreen extends StatelessWidget {
   const SafeZoneSelectMemberScreen({super.key});
@@ -14,7 +14,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBackHeaderBar(title: 'Chọn thành viên'),
+      appBar: const AppBackHeaderBar(title: 'Ch?n th�nh vi�n'),
       backgroundColor: AppColors.background,
       body: Container(
         width: double.infinity,
@@ -36,7 +36,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // â”€â”€ Danh sÃ¡ch thÃ nh viÃªn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              // ── Danh sách thành viên ────────────────────────────
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(
@@ -62,7 +62,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
                                   badgeColor: members[i].badgeColor,
                                   badgeBorderColor: members[i].badgeBorderColor,
                                   badgeTextColor: members[i].badgeTextColor,
-                                  zoneCount: '${members[i].zoneCount} vùng an toàn',
+                                  zoneCount: '${members[i].zoneCount} v�ng an to�n',
                                   avatarUrl: '',
                                   isOnline: members[i].isOnline,
                                 ),
@@ -75,12 +75,12 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      // NÃºt "ThÃªm thÃ nh viÃªn má»›i"
+                      // Nút "Thêm thành viên mới"
                       OutlinedButton.icon(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Tính năng thêm thành viên mới sẽ được cập nhật'),
+                              content: Text('T�nh nang th�m th�nh vi�n m?i s? du?c c?p nh?t'),
                             ),
                           );
                         },
@@ -89,7 +89,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
                           side: const BorderSide(width: 2, color: Color(0x4C00ACB2)),
                         ),
                         icon: const Icon(Icons.add_circle_outline_rounded, size: 20),
-                        label: const Text('Thêm thành viên mới'),
+                        label: const Text('Th�m th�nh vi�n m?i'),
                       ),
                     ],
                   ),
@@ -103,7 +103,7 @@ class SafeZoneSelectMemberScreen extends StatelessWidget {
   }
 }
 
-// â”€â”€ Widget tháº» chá»n thÃ nh viÃªn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Widget thẻ chọn thành viên ─────────────────────────────────────
 class _MemberSelectCard extends StatelessWidget {
   const _MemberSelectCard({
     required this.memberId,
@@ -155,7 +155,7 @@ class _MemberSelectCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Avatar + dot tráº¡ng thÃ¡i online
+          // Avatar + dot trạng thái online
           Stack(
             children: [
               Container(
@@ -206,13 +206,13 @@ class _MemberSelectCard extends StatelessWidget {
           ),
           const SizedBox(width: 16),
 
-          // ThÃ´ng tin thÃ nh viÃªn
+          // Thông tin thành viên
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // TÃªn
+                // Tên
                 Text(
                   name,
                   style: const TextStyle(
@@ -224,7 +224,7 @@ class _MemberSelectCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Badge nhÃ³m tuá»•i / vai trÃ²
+                // Badge nhóm tuổi / vai trò
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
@@ -248,7 +248,7 @@ class _MemberSelectCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                // Sá»‘ vÃ¹ng an toÃ n
+                // Số vùng an toàn
                 Text(
                   zoneCount,
                   style: const TextStyle(
@@ -263,7 +263,7 @@ class _MemberSelectCard extends StatelessWidget {
             ),
           ),
 
-          // NÃºt mÅ©i tÃªn chá»n
+          // Nút mũi tên chọn
           const Icon(
             Icons.chevron_right_rounded,
             color: Color(0xFF00ACB2),

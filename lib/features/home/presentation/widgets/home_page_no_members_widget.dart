@@ -1,7 +1,11 @@
 // ignore_for_file: unused_element
 
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/routes/app_route_observer.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
+import 'package:family_guard/features/login/domain/entities/auth_session.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePageNoMember extends StatelessWidget {
@@ -84,44 +88,105 @@ class _BackgroundShapes extends StatelessWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
+class _TopBar extends StatefulWidget {
   const _TopBar();
 
   @override
+  State<_TopBar> createState() => _TopBarState();
+}
+
+class _TopBarState extends State<_TopBar> with RouteAware {
+  late Future<AuthSession?> _sessionFuture;
+  ModalRoute<dynamic>? _route;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionFuture = AppDependencies.instance.getSavedSessionUseCase();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && route != _route) {
+      if (_route is PageRoute) {
+        appRouteObserver.unsubscribe(this);
+      }
+      _route = route;
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    setState(() {
+      _sessionFuture = AppDependencies.instance.getSavedSessionUseCase();
+    });
+  }
+
+  String _greetingFor(DateTime now) {
+    final hour = now.hour;
+    if (hour < 12) {
+      return 'Ch\u00E0o bu\u1ED5i s\u00E1ng';
+    }
+    if (hour < 18) {
+      return 'Ch\u00E0o bu\u1ED5i chi\u1EC1u';
+    }
+    return 'Ch\u00E0o bu\u1ED5i t\u1ED1i';
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Text(
-            'Chào buổi tối,\nHuy',
-            style: GoogleFonts.beVietnamPro(
-              color: _AppColors.primary,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              height: 1.2,
-            ),
-          ),
-        ),
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+    return FutureBuilder<AuthSession?>(
+      future: _sessionFuture,
+      builder: (context, snapshot) {
+        final user = CurrentUserViewData.fromSession(snapshot.data);
+        final avatar = user.avatarUrl.isNotEmpty
+            ? NetworkImage(user.avatarUrl)
+            : const NetworkImage('https://picsum.photos/seed/family-guard-user/120.jpg');
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                '${_greetingFor(DateTime.now())},\n${user.shortName}',
+                style: GoogleFonts.beVietnamPro(
+                  color: _AppColors.primary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  height: 1.2,
+                ),
               ),
-            ],
-          ),
-          child: const CircleAvatar(
-            backgroundImage: NetworkImage('https://picsum.photos/seed/huy/120.jpg'),
-          ),
-        ),
-      ],
+            ),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                backgroundImage: avatar,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -509,3 +574,5 @@ class _BottomNavButton extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,5 +1,6 @@
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/routes/app_route_observer.dart';
 import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_flow_bottom_nav.dart';
 import 'package:family_guard/features/profile_security/presentation/screens/personal_info_screen.dart';
@@ -100,8 +101,10 @@ class SettingsScreen extends StatelessWidget {
                               iconBg: const Color(0x3317E8E8),
                               iconColor: const Color(0xFF00ACB1),
                               label: 'Quản lý thành viên',
-                              onTap: (ctx) =>
-                                  Navigator.pushNamed(ctx, AppRoutes.memberList),
+                              onTap: (ctx) => Navigator.pushNamed(
+                                ctx,
+                                AppRoutes.memberList,
+                              ),
                             ),
                             _MenuItemData(
                               icon: Icons.location_on_outlined,
@@ -307,15 +310,55 @@ class _SettingsHeader extends StatelessWidget {
   }
 }
 
-class _ProfileCard extends StatelessWidget {
+class _ProfileCard extends StatefulWidget {
   const _ProfileCard({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
+  State<_ProfileCard> createState() => _ProfileCardState();
+}
+
+class _ProfileCardState extends State<_ProfileCard> with RouteAware {
+  late Future<dynamic> _sessionFuture;
+  ModalRoute<dynamic>? _route;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionFuture = AppDependencies.instance.getSavedSessionUseCase();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && route != _route) {
+      if (_route is PageRoute) {
+        appRouteObserver.unsubscribe(this);
+      }
+      _route = route;
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    setState(() {
+      _sessionFuture = AppDependencies.instance.getSavedSessionUseCase();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: AppDependencies.instance.getSavedSessionUseCase(),
+      future: _sessionFuture,
       builder: (context, snapshot) {
         final session = snapshot.data;
         final user = CurrentUserViewData.fromSession(session);
@@ -324,7 +367,7 @@ class _ProfileCard extends StatelessWidget {
             : session?.email ?? '';
 
         return InkWell(
-          onTap: onTap,
+          onTap: widget.onTap,
           borderRadius: BorderRadius.circular(32),
           child: Container(
             padding: const EdgeInsets.all(17),

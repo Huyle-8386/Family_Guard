@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/widgets/app_dialog.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
@@ -6,9 +6,9 @@ import 'package:family_guard/core/widgets/app_back_header.dart';
 
 
 /// ============================================================
-/// MÃ€N HÃŒNH: Chi tiáº¿t nháº¯c nhá»Ÿ
-/// View chi tiáº¿t reminder vá»›i audio Ä‘ang phÃ¡t
-/// Chuyá»ƒn Ä‘á»•i tá»« Figma Dev Mode â†’ Flutter Clean Code
+/// MÀN HÌNH: Chi tiết nhắc nhở
+/// View chi tiết reminder với audio đang phát
+/// Chuyển đổi từ Figma Dev Mode → Flutter Clean Code
 /// ============================================================
 class ReminderDetailsViewScreen extends StatefulWidget {
   const ReminderDetailsViewScreen({super.key});
@@ -64,11 +64,11 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return const AppBackHeaderBar(
-      title: 'Chi tiết nhắc nhở',
+      title: 'Chi ti?t nh?c nh?',
     );
   }
 
-  /// Main reminder card vá»›i icon vÃ  thÃ´ng tin
+  /// Main reminder card với icon và thông tin
   Widget _buildReminderCard() {
     return Container(
       width: double.infinity,
@@ -114,7 +114,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
           Column(
             children: [
               Text(
-                'Uống thuốc huyết áp',
+                'U?ng thu?c huy?t �p',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: const Color(0xFF0C1D1A),
@@ -135,7 +135,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '08:00 - Hàng ngày',
+                    '08:00 - H�ng ng�y',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: const Color(0xFF00ACB2),
@@ -154,7 +154,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
     );
   }
 
-  /// Voice recording section vá»›i waveform Ä‘ang phÃ¡t
+  /// Voice recording section với waveform đang phát
   Widget _buildVoiceRecordingSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +321,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'THÀNH VIÊN NHẬN',
+            'TH�NH VI�N NH?N',
             style: TextStyle(
               color: const Color(0xFF45A191),
               fontSize: ResponsiveHelper.sp(context, 14),
@@ -387,7 +387,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Bà Lan',
+                        'B� Lan',
                         style: TextStyle(
                           color: const Color(0xFF0C1D1A),
                           fontSize: ResponsiveHelper.sp(context, 16),
@@ -397,7 +397,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                         ),
                       ),
                       Text(
-                        'Người nhận chính',
+                        'Ngu?i nh?n ch�nh',
                         style: TextStyle(
                           color: const Color(0xFF45A191),
                           fontSize: ResponsiveHelper.sp(context, 12),
@@ -433,7 +433,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'TRẠNG THÁI KÍCH HOẠT',
+            'TR?NG TH�I K�CH HO?T',
             style: TextStyle(
               color: const Color(0xFF45A191),
               fontSize: ResponsiveHelper.sp(context, 14),
@@ -493,7 +493,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                   const SizedBox(width: 12),
                   // Text
                   Text(
-                    'Đang bật nhắc nhở',
+                    '�ang b?t nh?c nh?',
                     style: TextStyle(
                       color: const Color(0xFF0C1D1A),
                       fontSize: ResponsiveHelper.sp(context, 16),
@@ -592,7 +592,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                 child: OutlinedButton.icon(
                   onPressed: _handleDelete,
                   icon: const Icon(Icons.delete_outline, size: 20),
-                  label: const Text('Xóa'),
+                  label: const Text('X�a'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFFFF5252),
                     side: const BorderSide(
@@ -612,7 +612,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _handleSave,
                   icon: const Icon(Icons.check, size: 20),
-                  label: const Text('Lưu'),
+                  label: const Text('Luu'),
                 ),
               ),
             ),
@@ -634,15 +634,15 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'Xác nhận xóa',
-      content: 'Bạn có chắc chắn muốn xóa lịch nhắc này?',
-      confirmText: 'Xóa',
+      title: 'X�c nh?n x�a',
+      content: 'B?n c� ch?c ch?n mu?n x�a l?ch nh?c n�y?',
+      confirmText: 'X�a',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Đã xóa lịch nhắc'),
+            content: Text('�� x�a l?ch nh?c'),
             backgroundColor: Color(0xFFFF5252),
           ),
         );
@@ -653,7 +653,7 @@ class _ReminderDetailsViewScreenState extends State<ReminderDetailsViewScreen> {
   void _handleSave() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Đã lưu thay đổi'),
+        content: Text('�� luu thay d?i'),
         backgroundColor: Color(0xFF00ACB2),
         behavior: SnackBarBehavior.floating,
       ),

@@ -3,6 +3,7 @@ class UserLocation {
     required this.uid,
     this.name,
     this.role,
+    this.userType,
     this.avata,
     this.phone,
     this.email,
@@ -24,6 +25,7 @@ class UserLocation {
   final String uid;
   final String? name;
   final String? role;
+  final String? userType;
   final String? avata;
   final String? phone;
   final String? email;
@@ -75,6 +77,7 @@ class UserLocation {
     String? uid,
     String? name,
     String? role,
+    String? userType,
     String? avata,
     String? phone,
     String? email,
@@ -96,6 +99,7 @@ class UserLocation {
       uid: uid ?? this.uid,
       name: name ?? this.name,
       role: role ?? this.role,
+      userType: userType ?? this.userType,
       avata: avata ?? this.avata,
       phone: phone ?? this.phone,
       email: email ?? this.email,

@@ -1,24 +1,24 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SAFE ZONE INFO SCREEN - ThÃ´ng tin vÃ¹ng an toÃ n
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export (class ThNgTinVNgAnToN)
+/// SAFE ZONE INFO SCREEN - Thông tin vùng an toàn
+/// Được dịch và sửa lỗi từ Figma Dev Mode export (class ThNgTinVNgAnToN)
 ///
-/// Lá»—i Figma Ä‘Ã£ sá»­a:
-/// - `children: [,]` rá»—ng (8 chá»—: icon back, icon loáº¡i vÃ¹ng x4, icon clock, ...)
-///   â†’ thÃªm `Icon(...)` thá»±c táº¿
-/// - `BoxShadow(...)BoxShadow(...)` thiáº¿u dáº¥u `,` (5 chá»—)
-///   â†’ thÃªm dáº¥u `,`
-/// - `Expanded` náº±m trong cá»™t gá»‘c ngoÃ i Scaffold â†’ xÃ³a, dÃ¹ng SingleChildScrollView
-/// - Bottom bar `top: 874` (ngoÃ i mÃ n hÃ¬nh) â†’ Positioned bottom cá»‘ Ä‘á»‹nh
-/// - AppBar dÃ¹ng Positioned â†’ chuyá»ƒn thÃ nh Scaffold.appBar thá»±c sá»±
-/// - `spacing:` property trÃªn Column/Row (Figma syntax) â†’ SizedBox
-/// - Grid loáº¡i vÃ¹ng dÃ¹ng Positioned absolute â†’ GridView 2x2 linh hoáº¡t
-/// - `class ThNgTinVNgAnToN` tÃªn lá»™n xá»™n â†’ SafeZoneInfoScreen
+/// Lỗi Figma đã sửa:
+/// - `children: [,]` rỗng (8 chỗ: icon back, icon loại vùng x4, icon clock, ...)
+///   → thêm `Icon(...)` thực tế
+/// - `BoxShadow(...)BoxShadow(...)` thiếu dấu `,` (5 chỗ)
+///   → thêm dấu `,`
+/// - `Expanded` nằm trong cột gốc ngoài Scaffold → xóa, dùng SingleChildScrollView
+/// - Bottom bar `top: 874` (ngoài màn hình) → Positioned bottom cố định
+/// - AppBar dùng Positioned → chuyển thành Scaffold.appBar thực sự
+/// - `spacing:` property trên Column/Row (Figma syntax) → SizedBox
+/// - Grid loại vùng dùng Positioned absolute → GridView 2x2 linh hoạt
+/// - `class ThNgTinVNgAnToN` tên lộn xộn → SafeZoneInfoScreen
 /// ============================================================
 
 class SafeZoneInfoScreen extends StatefulWidget {
@@ -31,16 +31,16 @@ class SafeZoneInfoScreen extends StatefulWidget {
 class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     with SingleTickerProviderStateMixin {
   // Controllers
-  final _nameCtrl = TextEditingController(text: 'Nhà của tôi');
+  final _nameCtrl = TextEditingController(text: 'Nh� c?a t�i');
 
-  // BÃ¡n kÃ­nh Ä‘Ã£ chá»n
-  int _selectedRadius = 2; // index trong danh sÃ¡ch _radiusOptions
+  // Bán kính đã chọn
+  int _selectedRadius = 2; // index trong danh sách _radiusOptions
   final List<String> _radiusOptions = ['50m', '100m', '500m', '1km', '2km'];
 
-  // Loáº¡i vÃ¹ng Ä‘Ã£ chá»n (0=NhÃ , 1=TrÆ°á»ng há»c, 2=Bá»‡nh viá»‡n, 3=TÃ¹y chá»‰nh)
+  // Loại vùng đã chọn (0=Nhà, 1=Trường học, 2=Bệnh viện, 3=Tùy chỉnh)
   int _selectedZoneType = 0;
 
-  // Toggle hoáº¡t Ä‘á»™ng theo giá»
+  // Toggle hoạt động theo giờ
   bool _timeBasedEnabled = true;
 
   // Animation controller cho toggle
@@ -75,48 +75,48 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
       appBar: _buildAppBar(),
       body: Stack(
         children: [
-          // â”€â”€ Ná»™i dung cuá»™n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Nội dung cuộn ──────────────────────────────────────────
           SingleChildScrollView(
             padding: EdgeInsets.only(
                 left: 16, right: 16, top: 24, bottom: 120),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // â”€â”€ TÃŠN VÃ™NG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                _buildSectionLabel('TÊN VÙNG'),
+                // ── TÊN VÙNG ─────────────────────────────────────────
+                _buildSectionLabel('T�N V�NG'),
                 const SizedBox(height: 12),
                 _buildNameField(),
 
                 const SizedBox(height: 32),
 
-                // â”€â”€ Äá»ŠA CHá»ˆ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                _buildSectionLabel('ĐỊA CHỈ'),
+                // ── ĐỊA CHỈ ──────────────────────────────────────────
+                _buildSectionLabel('�?A CH?'),
                 const SizedBox(height: 12),
                 _buildAddressField(),
 
                 const SizedBox(height: 32),
 
-                // â”€â”€ BÃN KÃNH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ── BÁN KÍNH ─────────────────────────────────────────
                 _buildRadiusHeader(),
                 const SizedBox(height: 16),
                 _buildRadiusChips(),
 
                 const SizedBox(height: 32),
 
-                // â”€â”€ LOáº I VÃ™NG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                _buildSectionLabel('LOẠI VÙNG'),
+                // ── LOẠI VÙNG ────────────────────────────────────────
+                _buildSectionLabel('LO?I V�NG'),
                 const SizedBox(height: 16),
                 _buildZoneTypeGrid(),
 
                 const SizedBox(height: 32),
 
-                // â”€â”€ HOáº T Äá»˜NG THEO GIá»œ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ── HOẠT ĐỘNG THEO GIỜ ───────────────────────────────
                 _buildTimeBasedCard(),
               ],
             ),
           ),
 
-          // â”€â”€ Bottom bar cá»‘ Ä‘á»‹nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Bottom bar cố định ────────────────────────────────────
           Positioned(
             left: 0,
             right: 0,
@@ -128,14 +128,14 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ AppBar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── AppBar ────────────────────────────────────────────────────────
   PreferredSizeWidget _buildAppBar() {
     return const AppBackHeaderBar(
-      title: 'Thông tin vùng an toàn',
+      title: 'Th�ng tin v�ng an to�n',
     );
   }
 
-  // â”€â”€ Section label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Section label ─────────────────────────────────────────────────
   Widget _buildSectionLabel(String label) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4),
@@ -153,7 +153,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Field: TÃªn vÃ¹ng (editable) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Field: Tên vùng (editable) ────────────────────────────────────
   Widget _buildNameField() {
     return Container(
       decoration: ShapeDecoration(
@@ -178,7 +178,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
       ),
       child: Row(
         children: [
-          // Icon bÃªn trÃ¡i
+          // Icon bên trái
           Padding(
             padding: EdgeInsets.only(left: 16),
             child: Icon(
@@ -202,7 +202,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 border: InputBorder.none,
-                hintText: 'Nhập tên vùng...',
+                hintText: 'Nh?p t�n v�ng...',
                 hintStyle: TextStyle(color: Color(0xFF9CA3AF)),
               ),
             ),
@@ -212,7 +212,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Field: Äá»‹a chá»‰ (readonly) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Field: Địa chỉ (readonly) ─────────────────────────────────────
   Widget _buildAddressField() {
     return Container(
       padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
@@ -236,7 +236,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh',
+              '123 �u?ng L� L?i, Qu?n 1, TP. H? Ch� Minh',
               style: TextStyle(
                 color: Color(0xFF6B7280),
                 fontSize: ResponsiveHelper.sp(context, 16),
@@ -251,7 +251,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Radius header (label + badge "TÃ¹y chá»‰nh") â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Radius header (label + badge "Tùy chỉnh") ─────────────────────
   Widget _buildRadiusHeader() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4),
@@ -259,7 +259,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'BÁN KÍNH',
+            'B�N K�NH',
             style: TextStyle(
               color: Color(0xCC00ACB2),
               fontSize: ResponsiveHelper.sp(context, 14),
@@ -279,7 +279,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
               ),
             ),
             child: Text(
-              'Tùy chỉnh',
+              'T�y ch?nh',
               style: TextStyle(
                 color: Color(0xFF00ACB2),
                 fontSize: ResponsiveHelper.sp(context, 12),
@@ -294,7 +294,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Radius chips (Wrap layout, fix Positioned absolute tá»« Figma) â”€â”€
+  // ── Radius chips (Wrap layout, fix Positioned absolute từ Figma) ──
   Widget _buildRadiusChips() {
     return Wrap(
       spacing: 8,
@@ -352,29 +352,29 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Zone type grid 2x2 (fix Positioned absolute tá»« Figma) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Zone type grid 2x2 (fix Positioned absolute từ Figma) ─────────
   Widget _buildZoneTypeGrid() {
     final zoneTypes = [
       _ZoneType(
-        label: 'Nhà',
+        label: 'Nh�',
         icon: Icons.home_rounded,
         iconBg: const Color(0xFFEFF6FF),
         iconColor: const Color(0xFF3B82F6),
       ),
       _ZoneType(
-        label: 'Trường học',
+        label: 'Tru?ng h?c',
         icon: Icons.school_rounded,
         iconBg: const Color(0xFFFFFBEB),
         iconColor: const Color(0xFFD97706),
       ),
       _ZoneType(
-        label: 'Bệnh viện',
+        label: 'B?nh vi?n',
         icon: Icons.local_hospital_rounded,
         iconBg: const Color(0xFFFFF1F2),
         iconColor: const Color(0xFFF43F5E),
       ),
       _ZoneType(
-        label: 'Tùy chỉnh',
+        label: 'T�y ch?nh',
         icon: Icons.tune_rounded,
         iconBg: const Color(0xFFF8FAFC),
         iconColor: const Color(0xFF64748B),
@@ -462,7 +462,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Card: Hoáº¡t Ä‘á»™ng theo giá» â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Card: Hoạt động theo giờ ──────────────────────────────────────
   Widget _buildTimeBasedCard() {
     return Container(
       padding: EdgeInsets.all(20),
@@ -508,7 +508,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hoạt động theo giờ',
+                      'Ho?t d?ng theo gi?',
                       style: TextStyle(
                         color: Color(0xFF0C1D1A),
                         fontSize: ResponsiveHelper.sp(context, 16),
@@ -518,7 +518,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
                       ),
                     ),
                     Text(
-                      'Chỉ thông báo trong khung giờ này',
+                      'Ch? th�ng b�o trong khung gi? n�y',
                       style: TextStyle(
                         color: Color(0xFF9CA3AF),
                         fontSize: ResponsiveHelper.sp(context, 12),
@@ -567,7 +567,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
             ],
           ),
 
-          // Khung giá» hiá»‡n táº¡i (chá»‰ hiá»‡n khi báº­t)
+          // Khung giờ hiện tại (chỉ hiện khi bật)
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 250),
             crossFadeState: _timeBasedEnabled
@@ -584,7 +584,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
                       MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Khung giờ hiện tại',
+                      'Khung gi? hi?n t?i',
                       style: TextStyle(
                         color: Color(0xFF4B5563),
                         fontSize: ResponsiveHelper.sp(context, 14),
@@ -593,7 +593,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
                         height: 1.43,
                       ),
                     ),
-                    // Badge thá»i gian
+                    // Badge thời gian
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context)
@@ -643,7 +643,7 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
     );
   }
 
-  // â”€â”€ Bottom bar cá»‘ Ä‘á»‹nh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Bottom bar cố định ────────────────────────────────────────────
   Widget _buildBottomBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
@@ -660,13 +660,13 @@ class _SafeZoneInfoScreenState extends State<SafeZoneInfoScreen>
       ),
       child: ElevatedButton(
         onPressed: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneActive),
-        child: const Text('Lưu cấu hình'),
+        child: const Text('Luu c?u h�nh'),
       ),
     );
   }
 }
 
-// â”€â”€ Data model cho loáº¡i vÃ¹ng â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Data model cho loại vùng ─────────────────────────────────────────
 class _ZoneType {
   final String label;
   final IconData icon;

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -10,9 +10,9 @@ import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
 /// UNIFIED SAFE ZONE ADD SCREEN
-/// Gá»™p 3 mÃ n hÃ¬nh (Add + Info + Config) vÃ o 1 screen dáº¡ng step
-/// Architecture: Scaffold â†’ Stack â†’ [Map, DraggableScrollableSheet]
-/// 3 bÆ°á»›c: Vá»‹ trÃ­ & BÃ¡n kÃ­nh â†’ ThÃ´ng tin vÃ¹ng â†’ Cáº¥u hÃ¬nh cáº£nh bÃ¡o
+/// Gộp 3 màn hình (Add + Info + Config) vào 1 screen dạng step
+/// Architecture: Scaffold → Stack → [Map, DraggableScrollableSheet]
+/// 3 bước: Vị trí & Bán kính → Thông tin vùng → Cấu hình cảnh báo
 /// ============================================================
 class SafeZoneAddScreen extends StatefulWidget {
   const SafeZoneAddScreen({
@@ -40,7 +40,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
   final _nameFocus = FocusNode();
 
   // -- Step 2: Zone Information
-  final _zoneNameCtrl = TextEditingController(text: 'Nhà của tôi');
+  final _zoneNameCtrl = TextEditingController(text: 'Nh� c?a t�i');
   int _selectedRadiusChip = 2;
   final List<String> _radiusOptions = ['50m', '100m', '500m', '1km', '2km'];
   int _selectedZoneType = 0;
@@ -123,7 +123,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
           : _searchController.text.trim();
       final newZone = SafeZone(
         id: service.nextZoneId(),
-        name: _zoneNameCtrl.text.trim().isEmpty ? 'Vùng mới' : _zoneNameCtrl.text.trim(),
+        name: _zoneNameCtrl.text.trim().isEmpty ? 'V�ng m?i' : _zoneNameCtrl.text.trim(),
         targetUid: selectedContact.id,
         address: address,
         latitude: latitude,
@@ -313,9 +313,9 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
 
   Widget _buildAppBar(double topPadding) {
     const titles = [
-      'Thêm vùng an toàn mới',
-      'Thông tin vùng an toàn',
-      'Cấu hình cảnh báo',
+      'Th�m v�ng an to�n m?i',
+      'Th�ng tin v�ng an to�n',
+      'C?u h�nh c?nh b�o',
     ];
     return Positioned(
       top: 0,
@@ -332,7 +332,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
               ? TextButton(
                   onPressed: () => Navigator.of(context).maybePop(),
                   child: Text(
-                    'Hủy',
+                    'H?y',
                     style: TextStyle(
                       color: const Color(0xFF00ACB2),
                       fontSize: ResponsiveHelper.sp(context, 16),
@@ -390,7 +390,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
   }
 
   Widget _buildBottomButtons() {
-    const labels = ['Tiếp tục', 'Tiếp tục', 'Lưu cấu hình'];
+    const labels = ['Ti?p t?c', 'Ti?p t?c', 'Luu c?u h�nh'];
     return Container(
       padding: EdgeInsets.only(
         top: 16, left: 16, right: 16,
@@ -413,7 +413,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
                   side: const BorderSide(width: 1, color: Color(0xFF00ACB2)),
                   minimumSize: const Size(0, 56),
                 ),
-                child: const Text('Quay lại'),
+                child: const Text('Quay l?i'),
               ),
             ),
             const SizedBox(width: 12),
@@ -538,7 +538,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
           fontFamily: 'Lexend',
         ),
         decoration: InputDecoration(
-          hintText: 'Tìm kiếm địa chỉ hoặc vị trí...',
+          hintText: 'T�m ki?m d?a ch? ho?c v? tr�...',
           hintStyle: TextStyle(
             color: const Color(0x9900ACB2),
             fontSize: ResponsiveHelper.sp(context, 16),
@@ -585,7 +585,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
   List<Widget> _buildStep1Content() {
     return [
       Text(
-        'TÊN VÙNG AN TOÀN',
+        'T�N V�NG AN TO�N',
         style: TextStyle(
           color: const Color(0xFF00ACB2),
           fontSize: ResponsiveHelper.sp(context, 14),
@@ -614,7 +614,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
             fontFamily: 'Lexend',
           ),
           decoration: InputDecoration(
-            hintText: 'Ví dụ: Nhà riêng, Công viên...',
+            hintText: 'V� d?: Nh� ri�ng, C�ng vi�n...',
             hintStyle: TextStyle(
               color: const Color(0xFF9CA3AF),
               fontSize: ResponsiveHelper.sp(context, 16),
@@ -633,7 +633,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'BÁN KÍNH VÙNG AN TOÀN',
+              'B�N K�NH V�NG AN TO�N',
               style: TextStyle(
                 color: const Color(0xFF00ACB2),
                 fontSize: ResponsiveHelper.sp(context, 14),
@@ -702,11 +702,11 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
 
   List<Widget> _buildStep2Content() {
     return [
-      _buildSectionLabel('TÊN VÙNG'),
+      _buildSectionLabel('T�N V�NG'),
       const SizedBox(height: 12),
       _buildZoneNameField(),
       const SizedBox(height: 32),
-      _buildSectionLabel('ĐỊA CHỈ'),
+      _buildSectionLabel('�?A CH?'),
       const SizedBox(height: 12),
       _buildAddressField(),
       const SizedBox(height: 32),
@@ -714,7 +714,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
       const SizedBox(height: 16),
       _buildRadiusChips(),
       const SizedBox(height: 32),
-      _buildSectionLabel('LOẠI VÙNG'),
+      _buildSectionLabel('LO?I V�NG'),
       const SizedBox(height: 16),
       _buildZoneTypeGrid(),
       const SizedBox(height: 32),
@@ -768,7 +768,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 border: InputBorder.none,
-                hintText: 'Nhập tên vùng...',
+                hintText: 'Nh?p t�n v�ng...',
                 hintStyle: TextStyle(color: Color(0xFF9CA3AF)),
               ),
             ),
@@ -795,7 +795,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh',
+              '123 �u?ng L� L?i, Qu?n 1, TP. H? Ch� Minh',
               style: TextStyle(
                 color: const Color(0xFF6B7280),
                 fontSize: ResponsiveHelper.sp(context, 16),
@@ -817,7 +817,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'BÁN KÍNH',
+            'B�N K�NH',
             style: TextStyle(
               color: const Color(0xCC00ACB2),
               fontSize: ResponsiveHelper.sp(context, 14),
@@ -834,7 +834,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9999)),
             ),
             child: Text(
-              'Tùy chỉnh',
+              'T�y ch?nh',
               style: TextStyle(
                 color: const Color(0xFF00ACB2),
                 fontSize: ResponsiveHelper.sp(context, 12),
@@ -891,10 +891,10 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
 
   Widget _buildZoneTypeGrid() {
     final zoneTypes = [
-      _ZoneType(label: 'Nhà', icon: Icons.home_rounded, iconBg: const Color(0xFFEFF6FF), iconColor: const Color(0xFF3B82F6)),
-      _ZoneType(label: 'Trường học', icon: Icons.school_rounded, iconBg: const Color(0xFFFFFBEB), iconColor: const Color(0xFFD97706)),
-      _ZoneType(label: 'Bệnh viện', icon: Icons.local_hospital_rounded, iconBg: const Color(0xFFFFF1F2), iconColor: const Color(0xFFF43F5E)),
-      _ZoneType(label: 'Tùy chỉnh', icon: Icons.tune_rounded, iconBg: const Color(0xFFF8FAFC), iconColor: const Color(0xFF64748B)),
+      _ZoneType(label: 'Nh�', icon: Icons.home_rounded, iconBg: const Color(0xFFEFF6FF), iconColor: const Color(0xFF3B82F6)),
+      _ZoneType(label: 'Tru?ng h?c', icon: Icons.school_rounded, iconBg: const Color(0xFFFFFBEB), iconColor: const Color(0xFFD97706)),
+      _ZoneType(label: 'B?nh vi?n', icon: Icons.local_hospital_rounded, iconBg: const Color(0xFFFFF1F2), iconColor: const Color(0xFFF43F5E)),
+      _ZoneType(label: 'T�y ch?nh', icon: Icons.tune_rounded, iconBg: const Color(0xFFF8FAFC), iconColor: const Color(0xFF64748B)),
     ];
 
     return GridView.builder(
@@ -979,12 +979,12 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Hoạt động theo giờ', style: TextStyle(
+                    Text('Ho?t d?ng theo gi?', style: TextStyle(
                       color: const Color(0xFF0C1D1A),
                       fontSize: ResponsiveHelper.sp(context, 16),
                       fontFamily: 'Lexend', fontWeight: FontWeight.w700, height: 1.50,
                     )),
-                    Text('Chỉ thông báo trong khung giờ này', style: TextStyle(
+                    Text('Ch? th�ng b�o trong khung gi? n�y', style: TextStyle(
                       color: const Color(0xFF9CA3AF),
                       fontSize: ResponsiveHelper.sp(context, 12),
                       fontFamily: 'Lexend', fontWeight: FontWeight.w400, height: 1.33,
@@ -1029,7 +1029,7 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Khung giờ hiện tại', style: TextStyle(
+                    Text('Khung gi? hi?n t?i', style: TextStyle(
                       color: const Color(0xFF4B5563),
                       fontSize: ResponsiveHelper.sp(context, 14),
                       fontFamily: 'Lexend', fontWeight: FontWeight.w500, height: 1.43,
@@ -1073,11 +1073,11 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
     return [
       _buildZoneInfoCard(),
       const SizedBox(height: 24),
-      _buildConfigSectionTitle('Bán kính vùng an toàn'),
+      _buildConfigSectionTitle('B�n k�nh v�ng an to�n'),
       const SizedBox(height: 12),
       _buildConfigRadiusChips(),
       const SizedBox(height: 24),
-      _buildConfigSectionTitle('Thông báo thông minh'),
+      _buildConfigSectionTitle('Th�ng b�o th�ng minh'),
       const SizedBox(height: 12),
       _buildSmartAlertsCard(),
       const SizedBox(height: 24),
@@ -1146,13 +1146,13 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Nhà riêng', style: TextStyle(
+                Text('Nh� ri�ng', style: TextStyle(
                   color: const Color(0xFF00ACB2),
                   fontSize: ResponsiveHelper.sp(context, 18),
                   fontFamily: 'Lexend', fontWeight: FontWeight.w700, height: 1.56,
                 )),
                 const SizedBox(height: 4),
-                Text('123 Đường ABC, Quận 1, TP.\nHCM', style: TextStyle(
+                Text('123 �u?ng ABC, Qu?n 1, TP.\nHCM', style: TextStyle(
                   color: const Color(0xFF6B7280),
                   fontSize: ResponsiveHelper.sp(context, 14),
                   fontFamily: 'Lexend', fontWeight: FontWeight.w400, height: 1.63,
@@ -1228,9 +1228,9 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
       ),
       child: Column(
         children: [
-          _buildAlertRow(icon: Icons.logout_rounded, iconBg: const Color(0xFFFEF2F2), iconColor: const Color(0xFFEF4444), label: 'Rời vùng', value: _leaveAlert, onToggle: (v) => setState(() => _leaveAlert = v), showDivider: false),
-          _buildAlertRow(icon: Icons.login_rounded, iconBg: const Color(0xFFEFF6FF), iconColor: const Color(0xFF3B82F6), label: 'Vào vùng', value: _enterAlert, onToggle: (v) => setState(() => _enterAlert = v), showDivider: true),
-          _buildAlertRow(icon: Icons.timer_rounded, iconBg: const Color(0xFFFFFBEB), iconColor: const Color(0xFFD97706), label: 'Ở lại quá lâu', value: _stayLongAlert, onToggle: (v) => setState(() => _stayLongAlert = v), showDivider: true),
+          _buildAlertRow(icon: Icons.logout_rounded, iconBg: const Color(0xFFFEF2F2), iconColor: const Color(0xFFEF4444), label: 'R?i v�ng', value: _leaveAlert, onToggle: (v) => setState(() => _leaveAlert = v), showDivider: false),
+          _buildAlertRow(icon: Icons.login_rounded, iconBg: const Color(0xFFEFF6FF), iconColor: const Color(0xFF3B82F6), label: 'V�o v�ng', value: _enterAlert, onToggle: (v) => setState(() => _enterAlert = v), showDivider: true),
+          _buildAlertRow(icon: Icons.timer_rounded, iconBg: const Color(0xFFFFFBEB), iconColor: const Color(0xFFD97706), label: '? l?i qu� l�u', value: _stayLongAlert, onToggle: (v) => setState(() => _stayLongAlert = v), showDivider: true),
         ],
       ),
     );
@@ -1300,14 +1300,14 @@ class _SafeZoneAddScreenState extends State<SafeZoneAddScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Người thân', style: TextStyle(
+          Text('Ngu?i th�n', style: TextStyle(
             color: const Color(0xFF0C1D1A),
             fontSize: ResponsiveHelper.sp(context, 16),
             fontFamily: 'Lexend', fontWeight: FontWeight.w700, height: 1.50,
           )),
           TextButton(
             onPressed: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneSelectMember),
-            child: Text('+ Thêm mới', style: TextStyle(
+            child: Text('+ Th�m m?i', style: TextStyle(
               color: const Color(0xFF00ACB2),
               fontSize: ResponsiveHelper.sp(context, 14),
               fontFamily: 'Lexend', fontWeight: FontWeight.w400, height: 1.43,

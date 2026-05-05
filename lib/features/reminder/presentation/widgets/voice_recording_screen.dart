@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -6,14 +6,14 @@ import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/theme/app_dimens.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
-/// Screen: Ghi Ã¢m lá»i nháº¯c (Voice Recording)
-/// Giao diá»‡n ghi Ã¢m vá»›i:
-/// - NÃºt mic lá»›n cÃ³ sÃ³ng phÃ¡t ra (animated rings)
+/// Screen: Ghi �m l?i nh?c (Voice Recording)
+/// Giao di?n ghi �m v?i:
+/// - N�t mic l?n c� s�ng ph�t ra (animated rings)
 /// - Waveform visualizer bars
-/// - Timer hiá»ƒn thá»‹ 00:XX
-/// - Tráº¡ng thÃ¡i "ÄANG GHI Ã‚M..."
-/// - NÃºt Táº¡m dá»«ng / Ghi Ã¢m láº¡i
-/// - NÃºt LÆ°u lá»i nháº¯c
+/// - Timer hi?n th? 00:XX
+/// - Tr?ng th�i "�ANG GHI �M..."
+/// - N�t T?m d?ng / Ghi �m l?i
+/// - N�t Luu l?i nh?c
 class VoiceRecordingScreen extends StatefulWidget {
   const VoiceRecordingScreen({super.key});
 
@@ -73,7 +73,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
       body: Column(
         children: [
           // Header
-          _buildHeader(context),          // Main content area â€” cá»‘ Ä‘á»‹nh, khÃ´ng scroll
+          _buildHeader(context),          // Main content area � c? d?nh, kh�ng scroll
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -81,7 +81,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
               ),
               child: Column(
                 children: [
-                  // Pháº§n trÃªn: mic section chiáº¿m khÃ´ng gian linh hoáº¡t
+                  // Ph?n tr�n: mic section chi?m kh�ng gian linh ho?t
                   Expanded(
                     flex: 5,
                     child: Center(
@@ -97,7 +97,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                   // Status text
                   _buildStatus(),
 
-                  // Pháº§n dÆ°á»›i: description vá»›i khoáº£ng trá»‘ng linh hoáº¡t
+                  // Ph?n du?i: description v?i kho?ng tr?ng linh ho?t
                   Expanded(
                     flex: 2,
                     child: Center(
@@ -116,19 +116,19 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // â”€â”€ Header â”€â”€
+  // -- Header --
   Widget _buildHeader(BuildContext context) {
     return AppBackHeaderBar(
-      title: 'Ghi âm lời nhắc',
+      title: 'Ghi ?m l?i nh?c',
       onBack: () => _showDiscardDialog(context),
     );
   }
 
-  // â”€â”€ Mic with animated rings + waveform â”€â”€
+  // -- Mic with animated rings + waveform --
   Widget _buildMicSection() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Mic section co giÃ£n theo khÃ´ng gian cÃ³ sáºµn, tá»‘i Ä‘a 240
+        // Mic section co gi�n theo kh�ng gian c� s?n, t?i da 240
         final size = constraints.maxHeight.clamp(120.0, 240.0);
         final micSize = size * 0.67; // ~160 khi size=240
         final borderWidth = (micSize * 0.05).clamp(4.0, 8.0);
@@ -230,7 +230,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // â”€â”€ Timer display â”€â”€
+  // -- Timer display --
 
   Widget _buildTimer() {
     final minutes = (_elapsedSeconds ~/ 60).toString().padLeft(2, '0');
@@ -247,7 +247,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // â”€â”€ Status text â”€â”€
+  // -- Status text --
 
   Widget _buildStatus() {
     final text = _isPaused ? 'T\u1EA0M D\u1EEANG' : '\u0110ANG GHI \u00C2M...';
@@ -262,13 +262,13 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // â”€â”€ Description â”€â”€
+  // -- Description --
 
   Widget _buildDescription() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppDimens.spacing16),
       child: Text(
-        'Ghi âm bằng giọng của bạn để\nngười thân cảm thấy gần gũi hơn',
+        'Ghi ?m b?ng gi?ng c?a b?n d?\nngu?i th?n c?m th?y g?n gui hon',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: AppColors.textSlateLight,
@@ -280,7 +280,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // â”€â”€ Bottom action panel â”€â”€
+  // -- Bottom action panel --
 
   Widget _buildBottomPanel() {
     return Container(
@@ -317,7 +317,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                     icon: _isPaused
                         ? Icons.play_arrow_rounded
                         : Icons.pause_rounded,
-                    label: _isPaused ? 'Tiếp tục' : 'Tạm dừng',
+                    label: _isPaused ? 'Ti?p t?c' : 'T?m d?ng',
                     bgColor: AppColors.primaryTint10,
                     iconColor: AppColors.primary,
                     onTap: _togglePause,
@@ -327,7 +327,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
 
                   _buildCircleAction(
                     icon: Icons.refresh_rounded,
-                    label: 'Ghi âm lại',
+                    label: 'Ghi ?m l?i',
                     bgColor: AppColors.divider,
                     iconColor: AppColors.textSlateLight,
                     onTap: _onRestart,
@@ -341,7 +341,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                 height: AppDimens.buttonHeightXLarge,
                 child: ElevatedButton(
                   onPressed: _onSave,
-                  child: const Text('Lưu lời nhắc'),
+                  child: const Text('Luu l?i nh?c'),
                 ),
               ),
 
@@ -401,7 +401,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     );
   }
 
-  // â”€â”€ Actions â”€â”€
+  // -- Actions --
 
   void _togglePause() {
     setState(() => _isPaused = !_isPaused);
@@ -416,7 +416,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
   }
 
   void _onSave() {
-    // TODO: LÆ°u file ghi Ã¢m thá»±c táº¿
+    // TODO: Luu file ghi �m th?c t?
     Navigator.pop(context, {
       'duration': _elapsedSeconds,
       'saved': true,
@@ -432,9 +432,9 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hủy ghi âm?'),
+        title: const Text('H?y ghi ?m?'),
         content: const Text(
-          'Bản ghi âm hiện tại sẽ bị xóa. Bạn có chắc muốn thoát?',
+          'B?n ghi ?m hi?n t?i s? b? x?a. B?n c? ch?c mu?n tho?t?',
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -443,7 +443,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text(
-              'Ở lại',
+              '? l?i',
               style: TextStyle(color: AppColors.textMuted),
             ),
           ),
@@ -453,7 +453,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
               Navigator.pop(context); // close screen
             },
             child: const Text(
-              'Thoát',
+              'Tho?t',
               style: TextStyle(color: AppColors.error),
             ),
           ),

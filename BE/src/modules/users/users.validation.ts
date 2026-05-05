@@ -10,3 +10,12 @@ export const updateMeSchema = z.object({
   role: z.enum(['nguoichamsoc', 'nguoiduocchamsoc']).optional(),
   avata: z.string().optional(),
 });
+
+export const uploadAvatarSchema = z.object({
+  fileName: z.string().min(1),
+  mimeType: z
+    .string()
+    .regex(/^image\/[a-zA-Z0-9.+-]+$/)
+    .optional(),
+  base64Data: z.string().min(1),
+});

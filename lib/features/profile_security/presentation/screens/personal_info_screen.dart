@@ -14,6 +14,7 @@ import 'package:family_guard/features/profile_security/presentation/screens/edit
 import 'package:family_guard/features/profile_security/presentation/screens/edit_personal_role_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({
@@ -39,26 +40,29 @@ class PersonalInfoScreen extends StatefulWidget {
 
 class _PersonalInfoScreenState extends State<PersonalInfoScreen>
     with RouteAware {
-  String name = 'Nguyễn Thị Loan';
+  String name = 'Nguyen Thi Loan';
   String email = 'loan@email.com';
   String phone = '0123 456 789';
   String role = 'Người chăm sóc';
   String avatarUrl = '';
-  String emergencyName = 'Lê Văn Huy';
-  String emergencyRelation = 'Chồng';
+  String emergencyName = 'Le Van Huy';
+  String emergencyRelation = 'Chong';
   String emergencyPhone = '0123 456 789';
   DateTime? createdAt;
   String? _lastErrorMessage;
   String? _lastSuccessMessage;
   late final ProfileCubit _profileCubit;
+  late final ImagePicker _imagePicker;
   ModalRoute<dynamic>? _route;
 
   @override
   void initState() {
     super.initState();
+    _imagePicker = ImagePicker();
     _profileCubit = ProfileCubit(
       getProfileUseCase: AppDependencies.instance.getProfileUseCase,
       updateProfileUseCase: AppDependencies.instance.updateProfileUseCase,
+      uploadAvatarUseCase: AppDependencies.instance.uploadAvatarUseCase,
     )..addListener(_handleProfileStateChanged);
     _profileCubit.loadProfile();
   }
@@ -91,6 +95,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isSaving = _profileCubit.state.isSaving;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0F8F7),
       body: SafeArea(
@@ -102,14 +108,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppBackHeaderBar(
-                    title: 'Thông tin cá nhân',
+                    title: 'Thong tin ca nhan',
                     onBack: () => Navigator.maybePop(context),
                     showLeading: widget.showBackButton,
                     padding: EdgeInsets.zero,
                     titleFontSize: 20,
                   ),
                   const SizedBox(height: 16),
-                  _AvatarEditor(avatarUrl: avatarUrl),
+                  _AvatarEditor(
+                    avatarUrl: avatarUrl,
+                    isSaving: isSaving,
+                    onTap: _changeAvatar,
+                  ),
                   const SizedBox(height: 24),
                   _InfoCard(
                     name: name,
@@ -266,6 +276,52 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen>
     }
   }
 
+  Future<void> _changeAvatar() async {
+    if (_profileCubit.state.isSaving) {
+      return;
+    }
+
+    final pickedFile = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1200,
+      maxHeight: 1200,
+    );
+    if (pickedFile == null) {
+      return;
+    }
+
+    final mimeType = _mimeTypeFromFileName(pickedFile.name);
+    if (mimeType == null) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Chi ho tro anh JPG, PNG, WEBP hoac GIF.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    final fileName = pickedFile.name.trim().isEmpty
+        ? 'avatar.jpg'
+        : pickedFile.name.trim();
+    final bytes = await pickedFile.readAsBytes();
+    if (!mounted) {
+      return;
+    }
+
+    await _profileCubit.uploadAvatar(
+      bytes: bytes,
+      fileName: fileName,
+      mimeType: mimeType,
+    );
+  }
+
   Future<void> _editProfileField({
     required Widget screen,
     required String currentValue,
@@ -334,73 +390,137 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen>
         return null;
     }
   }
+
+  String? _mimeTypeFromFileName(String fileName) {
+    final parts = fileName.split('.');
+    if (parts.length < 2) {
+      return 'image/jpeg';
+    }
+
+    switch (parts.last.trim().toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'webp':
+        return 'image/webp';
+      case 'gif':
+        return 'image/gif';
+      default:
+        return null;
+    }
+  }
 }
 
 class _AvatarEditor extends StatelessWidget {
-  const _AvatarEditor({required this.avatarUrl});
+  const _AvatarEditor({
+    required this.avatarUrl,
+    required this.onTap,
+    required this.isSaving,
+  });
 
   final String avatarUrl;
+  final VoidCallback onTap;
+  final bool isSaving;
 
   @override
   Widget build(BuildContext context) {
     final hasAvatar = avatarUrl.trim().isNotEmpty;
+
     return Center(
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                width: 112,
-                height: 112,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 4),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x1A000000),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ClipOval(
-                  child: hasAvatar
-                      ? Image.network(
-                          avatarUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(color: const Color(0xFFE5E7EB)),
-                        )
-                      : Container(color: const Color(0xFFE5E7EB)),
-                ),
-              ),
-              Positioned(
-                right: 8,
-                bottom: 8,
-                child: Container(
-                  width: 20,
-                  height: 20,
+      child: InkWell(
+        onTap: isSaving ? null : onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 112,
+                  height: 112,
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF22C55E),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 3),
+                    border: Border.all(color: Colors.white, width: 4),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x1A000000),
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        if (hasAvatar)
+                          Image.network(
+                            avatarUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(color: const Color(0xFFE5E7EB)),
+                          )
+                        else
+                          Container(
+                            color: const Color(0xFFE5E7EB),
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.person_rounded,
+                              size: 42,
+                              color: Color(0xFF94A3B8),
+                            ),
+                          ),
+                        if (isSaving)
+                          Container(
+                            color: const Color(0x660F172A),
+                            alignment: Alignment.center,
+                            child: const SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 11),
-          Text(
-            'Thay đổi ảnh',
-            style: GoogleFonts.beVietnamPro(
-              color: const Color(0xFF87E4DB),
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              height: 1.5,
+                Positioned(
+                  right: 4,
+                  bottom: 4,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F766E),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                    ),
+                    child: const Icon(
+                      Icons.photo_camera_outlined,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 11),
+            Text(
+              isSaving ? 'Dang tai anh...' : 'Thay doi anh',
+              style: GoogleFonts.beVietnamPro(
+                color: const Color(0xFF0F766E),
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -432,7 +552,7 @@ class _InfoCard extends StatelessWidget {
     return _InfoSurface(
       child: Column(
         children: [
-          _DataRow(label: 'Họ & Tên', value: name, onTap: onTapName),
+          _DataRow(label: 'Ho va ten', value: name, onTap: onTapName),
           const _RowDivider(),
           _DataRow(
             label: 'Email',
@@ -441,7 +561,7 @@ class _InfoCard extends StatelessWidget {
             onTap: onTapEmail,
           ),
           const _RowDivider(),
-          _DataRow(label: 'Điện thoại', value: phone, onTap: onTapPhone),
+          _DataRow(label: 'Dien thoai', value: phone, onTap: onTapPhone),
           const _RowDivider(),
           _RoleRow(value: role, onTap: onTapRole),
         ],
@@ -475,7 +595,7 @@ class _EmergencyContactSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'LIÊN HỆ KHẨN CẤP',
+            'LIEN HE KHAN CAP',
             style: GoogleFonts.beVietnamPro(
               color: const Color(0xFF638888),
               fontSize: 13,
@@ -489,15 +609,15 @@ class _EmergencyContactSection extends StatelessWidget {
         _InfoSurface(
           child: Column(
             children: [
-              _DataRow(label: 'Tên', value: name, onTap: onTapName),
+              _DataRow(label: 'Ten', value: name, onTap: onTapName),
               const _RowDivider(),
               _DataRow(
-                label: 'Quan hệ',
+                label: 'Quan he',
                 value: relationship,
                 onTap: onTapRelationship,
               ),
               const _RowDivider(),
-              _DataRow(label: 'Điện thoại', value: phone, onTap: onTapPhone),
+              _DataRow(label: 'Dien thoai', value: phone, onTap: onTapPhone),
             ],
           ),
         ),
@@ -514,8 +634,9 @@ class _MetaInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final createdText = createdAt == null
-        ? 'Tài khoản tạo ngày 27/10/2025'
-        : 'Tài khoản tạo ngày ${_formatDate(createdAt!)}';
+        ? 'Tai khoan tao ngay 27/10/2025'
+        : 'Tai khoan tao ngay ${_formatDate(createdAt!)}';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -531,7 +652,7 @@ class _MetaInfo extends StatelessWidget {
             ),
           ),
           Text(
-            'Đã liên kết với 4 thành viên',
+            'Da lien ket voi 4 thanh vien',
             textAlign: TextAlign.center,
             style: GoogleFonts.beVietnamPro(
               color: const Color(0xFF638888),
@@ -632,7 +753,7 @@ class _RoleRow extends StatelessWidget {
             SizedBox(
               width: 106,
               child: Text(
-                'Vai trò',
+                'Vai tro',
                 style: GoogleFonts.beVietnamPro(
                   color: const Color(0xFF111818),
                   fontSize: 17,

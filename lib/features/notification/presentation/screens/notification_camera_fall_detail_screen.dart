@@ -72,7 +72,7 @@ class _NotificationHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Thông báo',
+            'Th�ng b�o',
             style: GoogleFonts.inter(
               color: const Color(0xFF0F172A),
               fontSize: 30,
@@ -124,7 +124,7 @@ class _CameraFallDetailCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Phòng khách',
+                        'Ph�ng kh�ch',
                         style: GoogleFonts.beVietnamPro(
                           color: const Color(0xFF161D1D),
                           fontSize: 34 / 1.88,
@@ -145,7 +145,7 @@ class _CameraFallDetailCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Trực tuyến',
+                            'Tr?c tuy?n',
                             style: GoogleFonts.beVietnamPro(
                               color: const Color(0xFF3C4949),
                               fontSize: 14,
@@ -209,7 +209,7 @@ class _CameraFallDetailCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'PHÁT HIỆN TÉ NGÃ',
+                          'PH�T HI?N T� NG�',
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.white,
                             fontSize: 10,
