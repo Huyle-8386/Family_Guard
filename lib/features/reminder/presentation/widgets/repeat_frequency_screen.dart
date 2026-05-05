@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/theme/legacy_app_text_styles.dart';
@@ -6,17 +6,17 @@ import 'package:family_guard/core/theme/app_dimens.dart';
 import 'package:family_guard/core/theme/app_shadows.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
-/// Screen: Táº§n suáº¥t láº·p láº¡i (Repeat Frequency)
-/// Cho phÃ©p ngÆ°á»i dÃ¹ng cáº¥u hÃ¬nh:
-/// - Loáº¡i láº·p láº¡i: HÃ ng ngÃ y / HÃ ng tuáº§n / TÃ¹y chá»‰nh
-/// - Chá»n ngÃ y trong tuáº§n (T2â€“CN)
-/// - Báº­t/táº¯t giá»›i háº¡n khung giá»
-/// - Chá»n khung giá» hoáº¡t Ä‘á»™ng (08:00 â€“ 22:00)
+/// Screen: Tần suất lặp lại (Repeat Frequency)
+/// Cho phép người dùng cấu hình:
+/// - Loại lặp lại: Hàng ngày / Hàng tuần / Tùy chỉnh
+/// - Chọn ngày trong tuần (T2–CN)
+/// - Bật/tắt giới hạn khung giờ
+/// - Chọn khung giờ hoạt động (08:00 – 22:00)
 class RepeatFrequencyScreen extends StatefulWidget {
-  /// Repeat mode ban Ä‘áº§u (index 0=HÃ ng ngÃ y, 1=HÃ ng tuáº§n, 2=TÃ¹y chá»‰nh)
+  /// Repeat mode ban đầu (index 0=Hàng ngày, 1=Hàng tuần, 2=Tùy chỉnh)
   final int initialModeIndex;
 
-  /// CÃ¡c ngÃ y Ä‘Ã£ chá»n ban Ä‘áº§u (0=T2 â€¦ 6=CN)
+  /// Các ngày đã chọn ban đầu (0=T2 … 6=CN)
   final Set<int> initialSelectedDays;
 
   const RepeatFrequencyScreen({
@@ -30,7 +30,7 @@ class RepeatFrequencyScreen extends StatefulWidget {
 }
 
 class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
-  static const List<String> _modes = ['Hàng ngày', 'Hàng tuần', 'Tùy chỉnh'];
+  static const List<String> _modes = ['H�ng ng�y', 'H�ng tu?n', 'T�y ch?nh'];
   static const List<String> _dayLabels = [
     'T2',
     'T3',
@@ -104,14 +104,14 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // â”€â”€ Header â”€â”€
+  // ── Header ──
   Widget _buildHeader(BuildContext context) {
     return const AppBackHeaderBar(
-      title: 'Tần suất lặp lại',
+      title: 'T?n su?t l?p l?i',
     );
   }
 
-  // â”€â”€ Mode tabs (HÃ ng ngÃ y / HÃ ng tuáº§n / TÃ¹y chá»‰nh) â”€â”€
+  // ── Mode tabs (Hàng ngày / Hàng tuần / Tùy chỉnh) ──
 
   Widget _buildModeTabs() {
     return SizedBox(
@@ -164,14 +164,14 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // â”€â”€ Day-of-week selector â”€â”€
+  // ── Day-of-week selector ──
 
   Widget _buildDaySelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Chọn ngày trong tuần',
+          'Ch?n ng�y trong tu?n',
           style: AppTextStyles.bodyLarge.copyWith(
             color: AppColors.textDark,
             fontWeight: FontWeight.w700,
@@ -229,7 +229,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // â”€â”€ Time Range card â”€â”€
+  // ── Time Range card ──
 
   Widget _buildTimeRangeCard() {
     final timeRangeStr =
@@ -258,14 +258,14 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Chỉ hoạt động trong khoảng',
+                      'Ch? ho?t d?ng trong kho?ng',
                       style: AppTextStyles.bodyLarge.copyWith(
                         color: AppColors.textDark,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Đặt giới hạn thời gian nhận thông báo',
+                      '�?t gi?i h?n th?i gian nh?n th�ng b�o',
                       style: AppTextStyles.bodySmall.copyWith(
                         color: AppColors.tealMuted,
                       ),
@@ -361,7 +361,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // â”€â”€ Info tip â”€â”€
+  // ── Info tip ──
 
   Widget _buildInfoTip() {
     return Container(
@@ -382,7 +382,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
           const SizedBox(width: AppDimens.spacing12),
           Expanded(
             child: Text(
-              'Các lời nhắc sẽ được gửi định kỳ vào các ngày đã chọn trong khung giờ này.',
+              'C�c l?i nh?c s? du?c g?i d?nh k? v�o c�c ng�y d� ch?n trong khung gi? n�y.',
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textDark.withValues(alpha: 0.7),
                 height: 1.63,
@@ -394,7 +394,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     );
   }
 
-  // â”€â”€ Bottom save button â”€â”€
+  // ── Bottom save button ──
 
   Widget _buildBottomBar() {
     return Container(
@@ -412,14 +412,14 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
           height: AppDimens.buttonHeightXLarge,
           child: ElevatedButton(
             onPressed: _onSave,
-            child: const Text('Lưu thay đổi'),
+            child: const Text('Luu thay d?i'),
           ),
         ),
       ),
     );
   }
 
-  // â”€â”€ Helpers â”€â”€
+  // ── Helpers ──
 
   String _formatTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
@@ -428,7 +428,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     final start = await showTimePicker(
       context: context,
       initialTime: _startTime,
-      helpText: 'Chọn giờ bắt đầu',
+      helpText: 'Ch?n gi? b?t d?u',
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -445,7 +445,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     final end = await showTimePicker(
       context: context,
       initialTime: _endTime,
-      helpText: 'Chọn giờ kết thúc',
+      helpText: 'Ch?n gi? k?t th�c',
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -469,7 +469,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
     if (_selectedDays.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Vui lòng chọn ít nhất 1 ngày'),
+          content: const Text('Vui l�ng ch?n �t nh?t 1 ng�y'),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -482,7 +482,7 @@ class _RepeatFrequencyScreenState extends State<RepeatFrequencyScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Đã lưu tần suất lặp lại'),
+        content: const Text('�� luu t?n su?t l?p l?i'),
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(

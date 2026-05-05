@@ -8,6 +8,7 @@ class AuthProfile {
     this.sex,
     this.address,
     this.role,
+    this.userType,
     this.avata,
     this.age,
     this.homeType,
@@ -21,6 +22,7 @@ class AuthProfile {
   final String? sex;
   final String? address;
   final String? role;
+  final String? userType;
   final String? avata;
   final int? age;
   final String? homeType;
@@ -34,6 +36,7 @@ class AuthProfile {
     String? sex,
     String? address,
     String? role,
+    String? userType,
     String? avata,
     int? age,
     String? homeType,
@@ -47,6 +50,7 @@ class AuthProfile {
       sex: sex ?? this.sex,
       address: address ?? this.address,
       role: role ?? this.role,
+      userType: userType ?? this.userType,
       avata: avata ?? this.avata,
       age: age ?? this.age,
       homeType: homeType ?? this.homeType,

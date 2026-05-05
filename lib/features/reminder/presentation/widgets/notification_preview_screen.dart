@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -6,8 +6,8 @@ import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// NOTIFICATION PREVIEW SCREEN â€“ Xem trÆ°á»›c thÃ´ng bÃ¡o
-/// Redesigned: phone mockup tháº­t, notification animation,
+/// NOTIFICATION PREVIEW SCREEN – Xem trước thông báo
+/// Redesigned: phone mockup thật, notification animation,
 /// lock screen / notification bar / in-app tabs,
 /// functional sound + complete actions
 /// ============================================================
@@ -21,20 +21,20 @@ class NotificationPreviewScreen extends StatefulWidget {
 
 class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     with TickerProviderStateMixin {
-  // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── State ──────────────────────────────────────────────────────
   int _tabIndex = 0; // 0=Lock Screen, 1=Notification Bar, 2=In App
   bool _soundEnabled = true;
   bool _vibrationEnabled = true;
   bool _isPlayingSound = false;
   bool _isCompleted = false;
 
-  // â”€â”€ Animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Animation ──────────────────────────────────────────────────
   late final AnimationController _notifSlideCtrl;
   late final Animation<Offset> _notifSlide;
   late final AnimationController _completeFadeCtrl;
   late final Animation<double> _completeFade;
 
-  // â”€â”€ Clock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Clock ──────────────────────────────────────────────────────
   late Timer _clockTimer;
   String _timeStr = '';
   String _dateStr = '';
@@ -75,19 +75,19 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     setState(() {
       _timeStr =
           '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-      final weekdays = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'];
+      final weekdays = ['Th? 2', 'Th? 3', 'Th? 4', 'Th? 5', 'Th? 6', 'Th? 7', 'CN'];
       final months = [
-        '', 'tháng 1', 'tháng 2', 'tháng 3', 'tháng 4', 'tháng 5', 'tháng 6',
-        'tháng 7', 'tháng 8', 'tháng 9', 'tháng 10', 'tháng 11', 'tháng 12'
+        '', 'th�ng 1', 'th�ng 2', 'th�ng 3', 'th�ng 4', 'th�ng 5', 'th�ng 6',
+        'th�ng 7', 'th�ng 8', 'th�ng 9', 'th�ng 10', 'th�ng 11', 'th�ng 12'
       ];
       _dateStr =
           '${weekdays[now.weekday - 1]}, ${now.day} ${months[now.month]}';
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   // BUILD
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,10 +128,10 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
 
   Widget _buildHeader() {
     return const AppBackHeaderBar(
-      title: 'Xem trước thông báo',
+      title: 'Xem tru?c th�ng b�o',
     );
   }
-  // â”€â”€ Phone Mockup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Phone Mockup ──────────────────────────────────────────────
   Widget _buildPhoneMockup() {
     return LayoutBuilder(builder: (context, constraints) {
       final phoneW = min(constraints.maxWidth * 0.72, 300.0);
@@ -145,7 +145,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
           width: phoneW + bezelW * 2 + 24,
           height: phoneH + bezelW * 2 + 16,
           child: Stack(children: [
-            // â”€â”€ Side buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Side buttons ────────────────────────────────────
             // Power button (right)
             Positioned(
               right: 0,
@@ -183,7 +183,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
               ),
             ),
 
-            // â”€â”€ Phone body â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Phone body ─────────────────────────────────────
             Center(
               child: Container(
                 width: phoneW + bezelW * 2,
@@ -217,18 +217,18 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                       borderRadius: BorderRadius.circular(innerR),
                     ),
                     child: Stack(children: [
-                      // â”€â”€ Wallpaper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                      // ── Wallpaper ─────────────────────────────
                       _buildWallpaper(),
 
-                      // â”€â”€ Status bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                      // ── Status bar ────────────────────────────
                       _buildStatusBar(phoneW),
 
-                      // â”€â”€ Screen content by tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                      // ── Screen content by tab ─────────────────
                       if (_tabIndex == 0) _buildLockScreenContent(phoneW, phoneH),
                       if (_tabIndex == 1) _buildNotificationBarContent(phoneW, phoneH),
                       if (_tabIndex == 2) _buildInAppContent(phoneW, phoneH),
 
-                      // â”€â”€ Home indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                      // ── Home indicator ────────────────────────
                       Positioned(
                         bottom: 8,
                         left: 0, right: 0,
@@ -248,7 +248,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
               ),
             ),
 
-            // â”€â”€ Dynamic Island â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ── Dynamic Island ──────────────────────────────────
             Positioned(
               top: bezelW + 6,
               left: 0, right: 0,
@@ -269,7 +269,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     });
   }
 
-  // â”€â”€ Wallpaper (gradient, no external images) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Wallpaper (gradient, no external images) ──────────────────
   Widget _buildWallpaper() {
     return Positioned.fill(
       child: Container(
@@ -291,7 +291,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // â”€â”€ Status bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Status bar ────────────────────────────────────────────────
   Widget _buildStatusBar(double phoneW) {
     final scale = (phoneW / 300).clamp(0.6, 1.0);
     return Positioned(
@@ -347,9 +347,9 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   // TAB 0: LOCK SCREEN
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   Widget _buildLockScreenContent(double phoneW, double phoneH) {
     final scale = (phoneW / 300).clamp(0.55, 1.0);
     return Stack(children: [
@@ -401,9 +401,9 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     ]);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   // TAB 1: NOTIFICATION BAR
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   Widget _buildNotificationBarContent(double phoneW, double phoneH) {
     final scale = (phoneW / 300).clamp(0.55, 1.0);
     return Stack(children: [
@@ -428,7 +428,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 )),
-            Text('Xóa tất cả',
+            Text('X�a t?t c?',
                 style: TextStyle(
                   fontFamily: 'Lexend',
                   fontSize: 11 * scale,
@@ -460,9 +460,9 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     ]);
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   // TAB 2: IN APP
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   Widget _buildInAppContent(double phoneW, double phoneH) {
     final scale = (phoneW / 300).clamp(0.55, 1.0);
     return Stack(children: [
@@ -517,7 +517,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     ]);
   }
 
-  // â”€â”€ Notification bubble (iOS style) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Notification bubble (iOS style) ───────────────────────────
   Widget _buildNotificationBubble(double scale) {
     return Container(
       padding: EdgeInsets.all(12 * scale),
@@ -551,7 +551,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                 letterSpacing: 0.5,
               )),
           const Spacer(),
-          Text('bây giờ',
+          Text('b�y gi?',
               style: TextStyle(
                 fontFamily: 'Lexend',
                 fontSize: 10 * scale,
@@ -576,7 +576,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Uống thuốc huyết áp',
+                Text('U?ng thu?c huy?t �p',
                     style: TextStyle(
                       fontFamily: 'Lexend',
                       fontSize: 13 * scale,
@@ -584,7 +584,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                       color: const Color(0xFF0C1D1A),
                     )),
                 SizedBox(height: 2 * scale),
-                Text('Đã đến giờ uống thuốc, bà nhớ uống nhé!',
+                Text('�� d?n gi? u?ng thu?c, b� nh? u?ng nh�!',
                     style: TextStyle(
                       fontFamily: 'Lexend',
                       fontSize: 11 * scale,
@@ -618,7 +618,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                     ),
                     SizedBox(width: 4 * scale),
                     Text(
-                      _isPlayingSound ? 'Đang phát...' : 'Phát âm thanh',
+                      _isPlayingSound ? '�ang ph�t...' : 'Ph�t �m thanh',
                       style: TextStyle(
                         fontFamily: 'Lexend',
                         fontSize: 11 * scale,
@@ -643,7 +643,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                   borderRadius: BorderRadius.circular(10 * scale),
                 ),
                 child: Center(
-                  child: Text('Hoàn thành',
+                  child: Text('Ho�n th�nh',
                       style: TextStyle(
                         fontFamily: 'Lexend',
                         fontSize: 11 * scale,
@@ -659,7 +659,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // â”€â”€ In-app banner (slightly different style) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── In-app banner (slightly different style) ──────────────────
   Widget _buildInAppBanner(double scale) {
     return Container(
       padding: EdgeInsets.all(14 * scale),
@@ -688,7 +688,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Uống thuốc huyết áp',
+                Text('U?ng thu?c huy?t �p',
                     style: TextStyle(
                       fontFamily: 'Lexend',
                       fontSize: 15 * scale,
@@ -696,7 +696,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                       color: const Color(0xFF0C1D1A),
                     )),
                 SizedBox(height: 2 * scale),
-                Text('Đã đến giờ uống thuốc, bà nhớ uống nhé!',
+                Text('�� d?n gi? u?ng thu?c, b� nh? u?ng nh�!',
                     style: TextStyle(
                       fontFamily: 'Lexend',
                       fontSize: 12 * scale,
@@ -730,7 +730,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                     ),
                     SizedBox(width: 4 * scale),
                     Text(
-                      _isPlayingSound ? 'Đang phát...' : 'Phát âm thanh',
+                      _isPlayingSound ? '�ang ph�t...' : 'Ph�t �m thanh',
                       style: TextStyle(
                         fontFamily: 'Lexend',
                         fontSize: 12 * scale,
@@ -755,7 +755,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
                   borderRadius: BorderRadius.circular(12 * scale),
                 ),
                 child: Center(
-                  child: Text('Hoàn thành',
+                  child: Text('Ho�n th�nh',
                       style: TextStyle(
                         fontFamily: 'Lexend',
                         fontSize: 12 * scale,
@@ -771,7 +771,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // â”€â”€ Completed badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Completed badge ───────────────────────────────────────────
   Widget _buildCompletedBadge(double scale) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -791,7 +791,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
               size: 22 * scale, color: const Color(0xFF00ACB2)),
         ),
         SizedBox(width: 10 * scale),
-        Text('Đã hoàn thành!',
+        Text('�� ho�n th�nh!',
             style: TextStyle(
               fontFamily: 'Lexend',
               fontSize: 14 * scale,
@@ -802,10 +802,10 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // â”€â”€ Schedule info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Schedule info ─────────────────────────────────────────────
   Widget _buildScheduleInfo() {
     return Column(mainAxisSize: MainAxisSize.min, children: [
-      Text('LỊCH NHẮC NHỞ',
+      Text('L?CH NH?C NH?',
           style: TextStyle(
             fontFamily: 'Lexend',
             fontSize: ResponsiveHelper.sp(context, 11),
@@ -817,7 +817,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
       Text.rich(
         TextSpan(children: [
           TextSpan(
-            text: 'Thông báo sẽ xuất hiện lúc ',
+            text: 'Th�ng b�o s? xu?t hi?n l�c ',
             style: TextStyle(
               fontFamily: 'Lexend',
               fontSize: ResponsiveHelper.sp(context, 14),
@@ -840,7 +840,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     ]);
   }
 
-  // â”€â”€ Preview tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Preview tabs ──────────────────────────────────────────────
   Widget _buildPreviewTabs() {
     final tabs = ['Lock Screen', 'Notification Bar', 'In App'];
     return Container(
@@ -900,7 +900,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     );
   }
 
-  // â”€â”€ Toggles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Toggles ───────────────────────────────────────────────────
   Widget _buildToggles() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -912,7 +912,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
       child: Column(children: [
         _toggleRow(
           icon: Icons.volume_up_rounded,
-          label: 'Kèm âm thanh',
+          label: 'K�m �m thanh',
           value: _soundEnabled,
           onChanged: (v) => setState(() => _soundEnabled = v),
         ),
@@ -983,7 +983,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
     ]);
   }
 
-  // â”€â”€ Bottom button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Bottom button ─────────────────────────────────────────────
   Widget _buildBottomButton() {
     final bottomPad = MediaQuery.of(context).padding.bottom;
     return Container(
@@ -1000,7 +1000,7 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(SnackBar(
-                content: const Text('Đã lưu cài đặt thông báo',
+                content: const Text('�� luu c�i d?t th�ng b�o',
                     style: TextStyle(fontFamily: 'Lexend', color: Colors.white)),
                 backgroundColor: const Color(0xFF00ACB2),
                 behavior: SnackBarBehavior.floating,
@@ -1010,15 +1010,15 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
               ));
             Navigator.pop(context);
           },
-          child: const Text('Lưu và Quay lại'),
+          child: const Text('Luu v� Quay l?i'),
         ),
       ),
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   // ACTIONS
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ══════════════════════════════════════════════════════════════════
   void _handlePlaySound() {
     if (_isCompleted) return;
     setState(() => _isPlayingSound = !_isPlayingSound);
@@ -1041,9 +1041,9 @@ class _NotificationPreviewScreenState extends State<NotificationPreviewScreen>
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// WALLPAPER ACCENT PAINTER â€“ subtle circles/orbs over gradient
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════════════════════════════════════════════════
+// WALLPAPER ACCENT PAINTER – subtle circles/orbs over gradient
+// ═══════════════════════════════════════════════════════════════════
 class _WallpaperAccentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

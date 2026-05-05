@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/features/home/domain/entities/models.dart';
@@ -6,8 +6,8 @@ import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// MÃ€N HÃŒNH: Quáº£n lÃ­ lá»‹ch nháº¯c (Tab 0 trong MainShellScreen)
-/// Bottom nav Ä‘Æ°á»£c MainShellScreen quáº£n lÃ½ â€” khÃ´ng cáº§n á»Ÿ Ä‘Ã¢y
+/// MÀN HÌNH: Quản lí lịch nhắc (Tab 0 trong MainShellScreen)
+/// Bottom nav được MainShellScreen quản lý — không cần ở đây
 /// ============================================================
 class ReminderManagementScreen extends StatefulWidget {
   const ReminderManagementScreen({super.key});
@@ -22,20 +22,20 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
   // === DATA ===
   final List<FamilyMember> _familyMembers = const [
     FamilyMember(
-      name: 'Bà Lan',
-      role: 'Người cao tuổi',
+      name: 'B� Lan',
+      role: 'Ngu?i cao tu?i',
       imageUrl: 'https://i.pravatar.cc/150?img=47',
       isOnline: true,
     ),
     FamilyMember(
-      name: 'Ông Hùng',
-      role: 'Người cao tuổi',
+      name: '�ng H�ng',
+      role: 'Ngu?i cao tu?i',
       imageUrl: 'https://i.pravatar.cc/150?img=68',
       isOnline: true,
     ),
     FamilyMember(
       name: 'Anh Tu\u1EA5n',
-      role: 'Người chăm sóc',
+      role: 'Ngu?i cham s�c',
       imageUrl: 'https://i.pravatar.cc/150?img=12',
       isOnline: false,
     ),
@@ -43,25 +43,25 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
 
   final List<ReminderFeature> _features = const [
     ReminderFeature(
-      title: 'Nhắc nhở uống thuốc',
+      title: 'Nh?c nh? u?ng thu?c',
       icon: Icons.medication_outlined,
       iconColor: Color(0xFF8B5CF6),
       iconBgColor: Color(0xFFF3ECFF),
     ),
     ReminderFeature(
-      title: 'Lịch hẹn khám bệnh',
+      title: 'L?ch h?n kh�m b?nh',
       icon: Icons.calendar_month_outlined,
       iconColor: Color(0xFF14B8A6),
       iconBgColor: AppColors.iconBgTeal,
     ),
     ReminderFeature(
-      title: 'Hoạt động thể chất',
+      title: 'Ho?t d?ng th? ch?t',
       icon: Icons.directions_run_outlined,
       iconColor: Color(0xFFF59E0B),
       iconBgColor: AppColors.iconBgYellow,
     ),
     ReminderFeature(
-      title: 'Theo dõisức khỏe',
+      title: 'Theo d�is?c kh?e',
       icon: Icons.favorite_outline,
       iconColor: Color(0xFFEC4899),
       iconBgColor: AppColors.iconBgPink,
@@ -85,7 +85,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const AppBackHeaderBar(title: 'Quản lý lịch nhắc'),
+              const AppBackHeaderBar(title: 'Qu?n l� l?ch nh?c'),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 32),
@@ -112,7 +112,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
   Widget _buildAppBar() {
     return const SizedBox.shrink();
   }
-  /// === SECTION: Thành viên gia đình ===
+  /// === SECTION: Th�nh vi�n gia d�nh ===
   Widget _buildFamilySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +120,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: ResponsiveHelper.horizontalPadding(context)),
           child: Text(
-            'Thành viên gia đình',
+            'Th�nh vi�n gia d�nh',
             style: const TextStyle(
               color: AppColors.primaryDark,
               fontSize: 18,
@@ -151,7 +151,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
     );
   }
 
-  /// Card thành viên gia đình
+  /// Card th�nh vi�n gia d�nh
   Widget _buildFamilyCard(FamilyMember member) {
     final cardW = ResponsiveHelper.isTablet(context) ? 148.0 : 130.0;
     final avatarSz = ResponsiveHelper.sp(context, 60).clamp(48.0, 72.0);
@@ -261,7 +261,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
     );
   }
 
-  /// Card "ThÃªm má»›i" thÃ nh viÃªn
+  /// Card "Thêm mới" thành viên
   Widget _buildAddFamilyCard() {
     final cardW = ResponsiveHelper.isTablet(context) ? 148.0 : 130.0;
     final addIconSz = ResponsiveHelper.sp(context, 24);
@@ -270,7 +270,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Chức năng thêm thành viên đang phát triển'),
+            content: const Text('Ch?c nang th�m th�nh vi�n dang ph�t tri?n'),
             backgroundColor: AppColors.primary,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -306,7 +306,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Thêm mới',
+              'Th�m m?i',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.primary,
@@ -322,7 +322,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
     );
   }
 
-  /// === SECTION: TÃ­nh nÄƒng nháº¯c nhá»Ÿ ===
+  /// === SECTION: Tính năng nhắc nhở ===
   Widget _buildFeaturesSection() {
     final hPad = ResponsiveHelper.horizontalPadding(context);
     final sectionTitleSz = ResponsiveHelper.sp(context, 18);
@@ -334,7 +334,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
         children: [
           // Section title
           Text(
-            'Tính năng nhắc nhở',
+            'T�nh nang nh?c nh?',
             style: TextStyle(
               color: AppColors.primaryDark,
               fontSize: sectionTitleSz,
@@ -364,7 +364,7 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
       ),
     );
   }
-  /// Feature card â€” navigate based on feature type
+  /// Feature card — navigate based on feature type
   Widget _buildFeatureCard(ReminderFeature feature, int index) {
     final iconContainerSz = ResponsiveHelper.sp(context, 56).clamp(44.0, 68.0);
     final iconSz = ResponsiveHelper.sp(context, 28);
@@ -372,16 +372,16 @@ class _ReminderManagementScreenState extends State<ReminderManagementScreen> {
     return GestureDetector(
       onTap: () {
         if (index == 0) {
-          // Nháº¯c nhá»Ÿ uá»‘ng thuá»‘c â†’ Lá»‹ch nháº¯c Ä‘Ã£ táº¡o
+          // Nhắc nhở uống thuốc → Lịch nhắc đã tạo
           Navigator.of(context).pushNamed(AppRoutes.reminderList);
         } else if (index == 3) {
-          // Theo dÃµi sá»©c khá»e â†’ BÃ¡o cÃ¡o hoáº¡t Ä‘á»™ng
+          // Theo dõi sức khỏe → Báo cáo hoạt động
           Navigator.of(context).pushNamed(AppRoutes.activityReport);
         } else if (index == 1) {
-          // Lá»‹ch háº¹n khÃ¡m bá»‡nh
+          // Lịch hẹn khám bệnh
           Navigator.of(context).pushNamed(AppRoutes.medicalAppointment);
         } else if (index == 2) {
-          // Hoáº¡t Ä‘á»™ng thá»ƒ cháº¥t
+          // Hoạt động thể chất
           Navigator.of(context).pushNamed(AppRoutes.physicalActivity);
         }
       },

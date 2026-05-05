@@ -1,6 +1,10 @@
 import 'package:family_guard/core/constants/app_routes.dart';
+import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/routes/app_route_observer.dart';
+import 'package:family_guard/core/session/current_user_view_data.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/kid_management/presentation/screens/kid_device_control_screen.dart';
+import 'package:family_guard/features/login/domain/entities/auth_session.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -300,60 +304,121 @@ class _TopDecoration extends StatelessWidget {
   }
 }
 
-class _Header extends StatelessWidget {
+class _Header extends StatefulWidget {
   const _Header();
 
   @override
+  State<_Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<_Header> with RouteAware {
+  late Future<AuthSession?> _sessionFuture;
+  ModalRoute<dynamic>? _route;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionFuture = AppDependencies.instance.getSavedSessionUseCase();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute && route != _route) {
+      if (_route is PageRoute) {
+        appRouteObserver.unsubscribe(this);
+      }
+      _route = route;
+      appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    setState(() {
+      _sessionFuture = AppDependencies.instance.getSavedSessionUseCase();
+    });
+  }
+
+  String _greetingFor(DateTime now) {
+    final hour = now.hour;
+    if (hour < 12) {
+      return 'Ch\u00E0o bu\u1ED5i s\u00E1ng';
+    }
+    if (hour < 18) {
+      return 'Ch\u00E0o bu\u1ED5i chi\u1EC1u';
+    }
+    return 'Ch\u00E0o bu\u1ED5i t\u1ED1i';
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Chào buổi tối,\nHuy',
-          style: GoogleFonts.beVietnamPro(
-            color: const Color(0xFF00ACB2),
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            height: 32 / 24,
-          ),
-        ),
-        GestureDetector(
-          onTap: () => Navigator.pushNamed(context, AppRoutes.profile),
-          child: Container(
-            width: 48,
-            height: 48,
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x1A000000),
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-            child: ClipOval(
-              child: Image.network(
-                HomePage._headerAvatarUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFE5E7EB),
-                    alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.person_rounded,
-                      color: Color(0xFF4B5563),
-                    ),
-                  );
-                },
+    return FutureBuilder<AuthSession?>(
+      future: _sessionFuture,
+      builder: (context, snapshot) {
+        final user = CurrentUserViewData.fromSession(snapshot.data);
+        final avatarUrl = user.avatarUrl.isNotEmpty
+            ? user.avatarUrl
+            : HomePage._headerAvatarUrl;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${_greetingFor(DateTime.now())},\n${user.shortName}',
+              style: GoogleFonts.beVietnamPro(
+                color: const Color(0xFF00ACB2),
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                height: 32 / 24,
               ),
             ),
-          ),
-        ),
-      ],
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(context, AppRoutes.profile),
+              child: Container(
+                width: 48,
+                height: 48,
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x1A000000),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    avatarUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: const Color(0xFFE5E7EB),
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.person_rounded,
+                          color: Color(0xFF4B5563),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -870,3 +935,5 @@ class _QuickActionData {
   final String? onTapRouteName;
   final Widget Function()? builder;
 }
+
+

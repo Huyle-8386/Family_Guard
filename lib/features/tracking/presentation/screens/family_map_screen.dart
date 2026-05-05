@@ -40,8 +40,6 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     with SingleTickerProviderStateMixin {
   static const LatLng _initialCenter = LatLng(16.0544, 108.2022);
   static const double _initialZoom = 15;
-  static const LatLng _safeZoneCenter = LatLng(16.0544, 108.2022);
-  static const double _safeZoneRadius = 200;
 
   final MapController _mapController = MapController();
   late final AnimationController _mapAnimationController;
@@ -138,8 +136,6 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
                     selectedMember: selectedMember,
                     mapCenter: _initialCenter,
                     mapController: _mapController,
-                    safeZoneCenter: _safeZoneCenter,
-                    safeZoneRadius: _safeZoneRadius,
                     onMapReady: _handleMapReady,
                     onSelectMember: (memberName) {
                       _selectMember(memberName);
@@ -377,7 +373,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     return _MapMember(
       id: location.uid,
       name: _displayName(location),
-      role: _mapRole(location.role),
+      role: _mapRole(location.userType, location.role),
       battery: 82,
       subtitle:
           location.formattedAddress ??
@@ -386,7 +382,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
       distanceLabel: _formatDistanceFromMe(location, myLocation),
       lastUpdatedLabel: _formatUpdatedAt(location.updatedAt),
       activityIcon: _activityIconFor(location.speed),
-      markerBorderColor: _markerColorFor(location.role),
+      markerBorderColor: _markerColorFor(location.userType, location.role),
       location: latLng,
       routeHistory: hasLocation ? <LatLng>[latLng] : const <LatLng>[],
       avatarUrl: _avatarUrlFor(location.avata),
@@ -405,6 +401,7 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
         uid: profile.uid,
         name: profile.name,
         role: profile.role,
+        userType: profile.userType ?? _userTypeFromHomeType(profile.homeType),
         email: profile.email,
         phone: profile.phone,
         avata: profile.avata,
@@ -425,7 +422,16 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     return 'Thanh vien';
   }
 
-  _MemberFilter _mapRole(String? role) {
+  _MemberFilter _mapRole(String? userType, String? role) {
+    switch (userType) {
+      case 'nguoi_lon':
+        return _MemberFilter.adults;
+      case 'nguoi_gia':
+        return _MemberFilter.seniors;
+      case 'tre_em':
+        return _MemberFilter.children;
+    }
+
     if (role == 'nguoichamsoc') {
       return _MemberFilter.adults;
     }
@@ -442,11 +448,35 @@ class _FamilyMapScreenState extends State<FamilyMapScreen>
     return Icons.location_on_outlined;
   }
 
-  Color _markerColorFor(String? role) {
+  String? _userTypeFromHomeType(String? homeType) {
+    switch (homeType) {
+      case 'adult':
+        return 'nguoi_lon';
+      case 'elderly':
+        return 'nguoi_gia';
+      case 'child':
+        return 'tre_em';
+    }
+    return null;
+  }
+
+  Color _markerColorFor(String? userType, String? role) {
+    switch (userType) {
+      case 'nguoi_lon':
+        return const Color(0xFF17E8E8);
+      case 'nguoi_gia':
+        return const Color(0xFF34D399);
+      case 'tre_em':
+        return const Color(0xFF60A5FA);
+    }
+
     if (role == 'nguoichamsoc') {
       return const Color(0xFF17E8E8);
     }
-    return const Color(0xFF60A5FA);
+    if (role == 'nguoiduocchamsoc') {
+      return const Color(0xFF60A5FA);
+    }
+    return const Color(0xFF94A3B8);
   }
 
   String _avatarUrlFor(String? avatarUrl) {
@@ -623,8 +653,6 @@ class _MapLayer extends StatelessWidget {
     required this.selectedMember,
     required this.mapCenter,
     required this.mapController,
-    required this.safeZoneCenter,
-    required this.safeZoneRadius,
     required this.onMapReady,
     required this.onSelectMember,
   });
@@ -633,8 +661,6 @@ class _MapLayer extends StatelessWidget {
   final _MapMember? selectedMember;
   final LatLng mapCenter;
   final MapController mapController;
-  final LatLng safeZoneCenter;
-  final double safeZoneRadius;
   final VoidCallback onMapReady;
   final ValueChanged<String> onSelectMember;
 
@@ -662,18 +688,6 @@ class _MapLayer extends StatelessWidget {
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.familyguard.app',
               ),
-              CircleLayer(
-                circles: [
-                  CircleMarker(
-                    point: safeZoneCenter,
-                    radius: safeZoneRadius,
-                    useRadiusInMeter: true,
-                    color: const Color(0x333B82F6),
-                    borderColor: const Color(0xFF3B82F6),
-                    borderStrokeWidth: 2,
-                  ),
-                ],
-              ),
               if (selectedMember != null &&
                   selectedMember!.hasLocation &&
                   selectedMember!.routeHistory.isNotEmpty)
@@ -688,20 +702,6 @@ class _MapLayer extends StatelessWidget {
                     ),
                   ],
                 ),
-              CircleLayer(
-                circles: membersWithLocation
-                    .map(
-                      (member) => CircleMarker(
-                        point: member.location,
-                        radius: member.name == selectedMember?.name ? 62 : 52,
-                        color: const Color(0x4417E8E8),
-                        borderColor: const Color(0x6617E8E8),
-                        borderStrokeWidth: 1,
-                        useRadiusInMeter: false,
-                      ),
-                    )
-                    .toList(),
-              ),
               MarkerLayer(
                 markers: membersWithLocation
                     .map(
@@ -721,17 +721,6 @@ class _MapLayer extends StatelessWidget {
                       ),
                     )
                     .toList(),
-              ),
-              const MarkerLayer(
-                markers: [
-                  Marker(
-                    point: _FamilyMapScreenState._safeZoneCenter,
-                    width: 16,
-                    height: 16,
-                    alignment: Alignment.center,
-                    child: _CenterMapDot(),
-                  ),
-                ],
               ),
             ],
           ),
@@ -983,23 +972,6 @@ class _MapActionButton extends StatelessWidget {
           ],
         ),
         child: Icon(icon, size: 22, color: const Color(0xFF475569)),
-      ),
-    );
-  }
-}
-
-class _CenterMapDot extends StatelessWidget {
-  const _CenterMapDot();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: const Color(0xFF3B82F6),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
       ),
     );
   }

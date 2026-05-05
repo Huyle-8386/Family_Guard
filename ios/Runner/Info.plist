@@ -46,8 +46,10 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Family Guard cần quyền vị trí để cập nhật vị trí hiện tại và theo dõi an toàn gia đình.</string>
+	<string>Family Guard can quyen vi tri de cap nhat vi tri hien tai va theo doi an toan gia dinh.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Family Guard dùng vị trí để hỗ trợ vùng an toàn và cập nhật theo thời gian thực khi ứng dụng đang hoạt động.</string>
+	<string>Family Guard dung vi tri de ho tro vung an toan va cap nhat theo thoi gian thuc khi ung dung dang hoat dong.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Family Guard can truy cap anh de ban cap nhat avatar tai khoan.</string>
 </dict>
 </plist>

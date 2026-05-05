@@ -99,7 +99,7 @@ class LocationsService {
         const ids = Array.from(familyIds);
         const { data: users, error: userError } = await supabase_1.supabaseAdmin
             .from('user_info')
-            .select('uid, name, email, phone, role, avata')
+            .select('uid, name, email, phone, role, user_type, avata')
             .in('uid', ids);
         if (userError) {
             throw new Error(userError.message || 'Khong lay duoc thong tin thanh vien');
@@ -121,6 +121,7 @@ class LocationsService {
                 uid: user.uid,
                 name: user.name ?? user.email ?? 'Thanh vien',
                 role: user.role ?? null,
+                user_type: user.user_type ?? null,
                 avata: user.avata ?? null,
                 phone: user.phone ?? null,
                 email: user.email ?? null,

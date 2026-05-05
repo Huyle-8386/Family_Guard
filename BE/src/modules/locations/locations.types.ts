@@ -32,4 +32,10 @@ export interface UserLocationRecord {
   place_name: string | null;
   updated_at: string;
   created_at: string;
+  role?: string | null;
+  user_type?: string | null;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  avata?: string | null;
 }

@@ -6,7 +6,8 @@ const notificationsService = new notifications_service_1.NotificationsService();
 class NotificationsController {
     async createFall(req, res) {
         try {
-            const data = await notificationsService.createFallAlert(req.userId);
+            const location = req.body?.location ?? null;
+            const data = await notificationsService.createFallAlert(req.userId, location);
             return res.status(200).json({
                 message: 'Đã tạo thông báo té ngã',
                 data,

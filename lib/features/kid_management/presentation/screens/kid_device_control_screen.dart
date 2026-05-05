@@ -14,12 +14,12 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
   bool _internetEnabled = true;
   bool _installEnabled = true;
   bool _locationEnabled = true;
-  String _lastUpdated = '2 phút trước';
+  String _lastUpdated = '2 ph�t tru?c';
 
   @override
   Widget build(BuildContext context) {
     return KidDetailScaffold(
-      title: 'Điều khiển thiết bị',
+      title: '�i?u khi?n thi?t b?',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -37,7 +37,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Thiết bị đang hoạt động',
+                        'Thi?t b? dang ho?t d?ng',
                         style: kidTextStyle(
                           size: 14,
                           weight: FontWeight.w500,
@@ -69,7 +69,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'ĐƯỢC GIÁM SÁT',
+                            '�U?C GI�M S�T',
                             style: kidTextStyle(
                               size: 12,
                               weight: FontWeight.w500,
@@ -102,7 +102,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'TRUNG TÂM ĐIỀU KHIỂN',
+            'TRUNG T�M �I?U KHI?N',
             style: kidTextStyle(
               size: 12,
               weight: FontWeight.w600,
@@ -120,8 +120,8 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 KidDeviceToggleRow(
                   icon: Icons.lock_outline_rounded,
                   iconBackground: const Color(0xFFE3E9E9),
-                  title: 'Khóa thiết bị',
-                  subtitle: 'Khóa thiết bị từ xa tức thì',
+                  title: 'Kh�a thi?t b?',
+                  subtitle: 'Kh�a thi?t b? t? xa t?c th�',
                   value: _deviceLocked,
                   onChanged: (value) => setState(() => _deviceLocked = value),
                 ),
@@ -129,8 +129,8 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 KidDeviceToggleRow(
                   icon: Icons.wifi_rounded,
                   iconBackground: const Color(0x4DBDEBEC),
-                  title: 'Truy cập Internet',
-                  subtitle: 'Quản lý kết nối',
+                  title: 'Truy c?p Internet',
+                  subtitle: 'Qu?n l� k?t n?i',
                   value: _internetEnabled,
                   onChanged: (value) =>
                       setState(() => _internetEnabled = value),
@@ -139,8 +139,8 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 KidDeviceToggleRow(
                   icon: Icons.apps_rounded,
                   iconBackground: const Color(0xFFE3E9E9),
-                  title: 'Tải ứng dụng',
-                  subtitle: 'Cho phép tải ứng dụng',
+                  title: 'T?i ?ng d?ng',
+                  subtitle: 'Cho ph�p t?i ?ng d?ng',
                   value: _installEnabled,
                   onChanged: (value) => setState(() => _installEnabled = value),
                 ),
@@ -148,8 +148,8 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 KidDeviceToggleRow(
                   icon: Icons.location_on_rounded,
                   iconBackground: const Color(0xFFE3E9E9),
-                  title: 'Vị trí',
-                  subtitle: 'Kích hoạt theo dõi vị trí',
+                  title: 'V? tr�',
+                  subtitle: 'K�ch ho?t theo d�i v? tr�',
                   value: _locationEnabled,
                   onChanged: (value) =>
                       setState(() => _locationEnabled = value),
@@ -182,7 +182,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                     ],
                   ),
                   label: 'Pin',
-                  value: 'Tối ưu',
+                  value: 'T?i uu',
                 ),
               ),
               const SizedBox(width: 16),
@@ -193,7 +193,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                     size: 18,
                     color: Color(0xFF171D1D),
                   ),
-                  label: 'Phiên bản',
+                  label: 'Phi�n b?n',
                   value: 'iOS 17.4',
                 ),
               ),
@@ -224,7 +224,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Lần cuối cập nhật',
+                        'L?n cu?i c?p nh?t',
                         style: kidTextStyle(
                           size: 12,
                           weight: FontWeight.w500,
@@ -246,10 +246,10 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                   ),
                 ),
                 KidFilledPillButton(
-                  label: 'Tải lại',
+                  label: 'T?i l?i',
                   backgroundColor: const Color(0x3301ADB2),
                   foregroundColor: const Color(0xFF171D1D),
-                  onTap: () => setState(() => _lastUpdated = 'Vừa xong'),
+                  onTap: () => setState(() => _lastUpdated = 'V?a xong'),
                 ),
               ],
             ),
@@ -274,7 +274,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Tạm dừng mọi hoạt động',
+                    'T?m d?ng m?i ho?t d?ng',
                     style: kidTextStyle(
                       size: 16,
                       weight: FontWeight.w600,
@@ -330,7 +330,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Tạm dừng mọi hoạt động',
+                  'T?m d?ng m?i ho?t d?ng',
                   textAlign: TextAlign.center,
                   style: kidTextStyle(
                     size: 20,
@@ -341,7 +341,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Thiết bị sẽ bị vô hiệu hóa ngay lập tức',
+                  'Thi?t b? s? b? v� hi?u h�a ngay l?p t?c',
                   textAlign: TextAlign.center,
                   style: kidTextStyle(
                     size: 16,
@@ -359,7 +359,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
-                            'Thiết bị đã được chuyển sang chế độ tạm dừng.',
+                            'Thi?t b? d� du?c chuy?n sang ch? d? t?m d?ng.',
                           ),
                         ),
                       );
@@ -375,7 +375,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                       ),
                     ),
                     child: Text(
-                      'Tạm dừng',
+                      'T?m d?ng',
                       style: kidTextStyle(
                         size: 16,
                         weight: FontWeight.w600,
@@ -389,7 +389,7 @@ class _KidDeviceControlScreenState extends State<KidDeviceControlScreen> {
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child: Text(
-                    'Hủy',
+                    'H?y',
                     style: kidTextStyle(
                       size: 16,
                       weight: FontWeight.w500,

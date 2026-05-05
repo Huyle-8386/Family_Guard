@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -8,8 +8,8 @@ import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// SAFE ZONE EDIT SCREEN - Chá»‰nh sá»­a vÃ¹ng an toÃ n
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
+/// SAFE ZONE EDIT SCREEN - Chỉnh sửa vùng an toàn
+/// Được dịch và sửa lỗi từ Figma Dev Mode export
 /// ============================================================
 class SafeZoneEditScreen extends StatefulWidget {
   const SafeZoneEditScreen({super.key});
@@ -20,7 +20,7 @@ class SafeZoneEditScreen extends StatefulWidget {
 
 class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
   bool _isActive = true;
-  double _radius = 500; // metres (100 â†’ 2000)
+  double _radius = 500; // metres (100 → 2000)
 
   String get _radiusLabel {
     if (_radius >= 1000) {
@@ -33,11 +33,11 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBackHeaderBar(
-        title: 'Vùng an toàn',
+        title: 'V�ng an to�n',
         trailing: TextButton(
           onPressed: () => Navigator.of(context).maybePop(),
           child: Text(
-            'Lưu',
+            'Luu',
             style: TextStyle(
               color: const Color(0xFF00ACB2),
               fontSize: ResponsiveHelper.sp(context, 16),
@@ -50,15 +50,15 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // â”€â”€ Ná»n map + zone circle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Nền map + zone circle ──────────────────────────────
           _buildMapArea(),
 
-          // â”€â”€ Search bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Search bar ────────────────────────────────────────
           _buildSearchBar(),
 
-          // â”€â”€ AppBar trong suá»‘t â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── AppBar trong suốt ─────────────────────────────────
 
-          // â”€â”€ Bottom panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Bottom panel ──────────────────────────────────────
           Positioned(
             left: 0,
             right: 0,
@@ -70,9 +70,9 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ Map area (ná»n xanh xÃ¡m + hÃ¬nh trÃ²n zone) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Map area (nền xanh xám + hình tròn zone) ──────────────────────
   Widget _buildMapArea() {
-    // Use the first zone as default â€” in real usage, pass the zone id as argument
+    // Use the first zone as default — in real usage, pass the zone id as argument
     final service = SafeZoneProvider.of(context);
     final zones = service.zones;
     final zone = zones.isNotEmpty ? zones.first : null;
@@ -112,7 +112,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
             ),
           ),
 
-          // VÃ²ng trÃ²n vÃ¹ng an toÃ n
+          // Vòng tròn vùng an toàn
           Center(
             child: Stack(
               alignment: Alignment.center,
@@ -130,7 +130,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
                   ),
                 ),
 
-                // Location pin á»Ÿ giá»¯a
+                // Location pin ở giữa
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -157,7 +157,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
                   ],
                 ),
 
-                // Badge "500m" bÃªn dÆ°á»›i circle
+                // Badge "500m" bên dưới circle
                 Positioned(
                   bottom: 36,
                   child: Container(
@@ -192,7 +192,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
                   ),
                 ),
 
-                // Äiá»ƒm resize á»Ÿ rÃ¬a circle (pháº£i)
+                // Điểm resize ở rìa circle (phải)
                 Positioned(
                   right: 4,
                   top: 100,
@@ -230,7 +230,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
             ),
           ),
 
-          // NÃºt GPS (gÃ³c dÆ°á»›i pháº£i)
+          // Nút GPS (góc dưới phải)
           Positioned(
             right: 16,
             bottom: 80,
@@ -267,7 +267,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ Search bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Search bar ─────────────────────────────────────────────────────
   Widget _buildSearchBar() {
     return Positioned(
       left: 16,
@@ -301,7 +301,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
             Icon(Icons.search_rounded, color: Color(0xFF9CA3AF), size: 20),
             SizedBox(width: 8),
             Text(
-              'Tìm địa điểm mới',
+              'T�m d?a di?m m?i',
               style: TextStyle(
                 color: Color(0xFF9CA3AF),
                 fontSize: ResponsiveHelper.sp(context, 14),
@@ -315,7 +315,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ Overlay AppBar (trong suá»‘t, náº±m trÃªn map) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Overlay AppBar (trong suốt, nằm trên map) ──────────────────────
   Widget _buildOverlayAppBar(BuildContext context) {
     return Positioned(
       left: 0,
@@ -336,7 +336,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // NÃºt back
+            // Nút back
             Row(
               children: [
                 GestureDetector(
@@ -366,7 +366,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'VÃ¹ng an toÃ n',
+                  'Vùng an toàn',
                   style: TextStyle(
                     color: Color(0xFF111827),
                     fontSize: ResponsiveHelper.sp(context, 18),
@@ -378,11 +378,11 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
               ],
             ),
 
-            // NÃºt "LÆ°u"
+            // Nút "Lưu"
             TextButton(
               onPressed: () => Navigator.of(context).maybePop(),
               child: Text(
-                'LÆ°u',
+                'Lưu',
                 style: TextStyle(
                   color: Color(0xFF00ACB2),
                   fontSize: ResponsiveHelper.sp(context, 16),
@@ -397,7 +397,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ Bottom panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Bottom panel ────────────────────────────────────────────────────
   Widget _buildBottomPanel() {
     return Container(
       width: double.infinity,
@@ -436,29 +436,29 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
             ),
           ),
 
-          // TÃªn vÃ¹ng + Ä‘á»‹a chá»‰
+          // Tên vùng + địa chỉ
           _buildZoneHeader(),
 
           const SizedBox(height: 24),
 
-          // BÃ¡n kÃ­nh
+          // Bán kính
           _buildRadiusSection(),
 
           const SizedBox(height: 8),
 
-          // Tráº¡ng thÃ¡i hoáº¡t Ä‘á»™ng
+          // Trạng thái hoạt động
           _buildStatusRow(),
 
           const SizedBox(height: 24),
 
-          // NÃºt xÃ³a
+          // Nút xóa
           _buildDeleteButton(),
         ],
       ),
     );
   }
 
-  // â”€â”€ TÃªn vÃ¹ng + Ä‘á»‹a chá»‰ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Tên vùng + địa chỉ ────────────────────────────────────────────
   Widget _buildZoneHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,7 +467,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'NhÃ  riÃªng',
+              'Nhà riêng',
               style: TextStyle(
                 color: Color(0xFF111827),
                 fontSize: ResponsiveHelper.sp(context, 24),
@@ -484,7 +484,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
                 borderRadius: BorderRadius.circular(9999),
               ),
               child: Text(
-                'Äang hoáº¡t Ä‘á»™ng',
+                'Đang hoạt động',
                 style: TextStyle(
                   color: Color(0xFF00ACB2),
                   fontSize: ResponsiveHelper.sp(context, 12),
@@ -497,7 +497,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          '123 ÄÆ°á»ng Nguyá»…n Huá»‡, Quáº­n 1, TP. HCM',
+          '123 Đường Nguyễn Huệ, Quận 1, TP. HCM',
           style: TextStyle(
             color: Color(0xFF6B7280),
             fontSize: ResponsiveHelper.sp(context, 14),
@@ -510,7 +510,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ BÃ¡n kÃ­nh + slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Bán kính + slider ─────────────────────────────────────────────
   Widget _buildRadiusSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,7 +519,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'BÃ¡n kÃ­nh vÃ¹ng an toÃ n',
+              'Bán kính vùng an toàn',
               style: TextStyle(
                 color: Color(0xFF374151),
                 fontSize: ResponsiveHelper.sp(context, 14),
@@ -594,7 +594,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ Tráº¡ng thÃ¡i hoáº¡t Ä‘á»™ng + toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Trạng thái hoạt động + toggle ────────────────────────────────
   Widget _buildStatusRow() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
@@ -620,7 +620,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Tráº¡ng thÃ¡i hoáº¡t Ä‘á»™ng',
+                'Trạng thái hoạt động',
                 style: TextStyle(
                   color: Color(0xFF374151),
                   fontSize: ResponsiveHelper.sp(context, 14),
@@ -671,7 +671,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
     );
   }
 
-  // â”€â”€ NÃºt "XÃ³a vÃ¹ng an toÃ n" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Nút "Xóa vùng an toàn" ────────────────────────────────────────
   Widget _buildDeleteButton() {
     return OutlinedButton.icon(
       onPressed: () => _showDeleteDialog(),
@@ -682,7 +682,7 @@ class _SafeZoneEditScreenState extends State<SafeZoneEditScreen> {
         minimumSize: const Size(double.infinity, 56),
       ),
       icon: const Icon(Icons.delete_outline_rounded, size: 20),
-      label: const Text('XÃ³a vÃ¹ng an toÃ n'),
+      label: const Text('Xóa vùng an toàn'),
     );
   }
 

@@ -2,7 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RelationshipsService = void 0;
 const supabase_1 = require("../../config/supabase");
+const push_delivery_service_1 = require("../notifications/push-delivery.service");
 class RelationshipsService {
+    constructor() {
+        this.pushDeliveryService = new push_delivery_service_1.PushDeliveryService();
+    }
     normalizeRelationLabel(value) {
         const normalized = value?.toString().trim();
         return normalized && normalized.length > 0 ? normalized : 'Người thân';
@@ -107,6 +111,21 @@ class RelationshipsService {
             .single();
         if (notificationError)
             throw notificationError;
+        try {
+            await this.pushDeliveryService.sendToUser({
+                uid: targetUid,
+                title: 'Xác nhận mối quan hệ',
+                body: `Bạn có một lời mời xác nhận mối quan hệ từ ${inviterName}(${inviterRelation}).`,
+                data: {
+                    type: 'relationship_invite',
+                    notification_id: String(notification.id),
+                    relationship_id: String(relationship.id),
+                },
+            });
+        }
+        catch (error) {
+            console.error('Không thể gửi push lời mời quan hệ', error);
+        }
         return {
             relationship,
             notification,
@@ -211,6 +230,15 @@ class RelationshipsService {
                 title: 'Cập nhật mối quan hệ',
                 content,
             });
+            await this.pushDeliveryService.sendToUser({
+                uid: relationship.relation_id,
+                title: 'Cập nhật mối quan hệ',
+                body: content,
+                data: {
+                    type: 'relationship_updated',
+                    relationship_id: String(relationship.id),
+                },
+            });
         }
         catch (error) {
             console.error('Không thể tạo thông báo sửa quan hệ', error);
@@ -258,6 +286,15 @@ class RelationshipsService {
                 relationshipId: relationship.id,
                 title: 'Mối quan hệ đã bị xóa',
                 content: `${actorName}(${actorRelation}) đã xóa quan hệ với bạn.`,
+            });
+            await this.pushDeliveryService.sendToUser({
+                uid: relationship.relation_id,
+                title: 'Mối quan hệ đã bị xóa',
+                body: `${actorName}(${actorRelation}) đã xóa quan hệ với bạn.`,
+                data: {
+                    type: 'relationship_deleted',
+                    relationship_id: String(relationship.id),
+                },
             });
         }
         catch (error) {

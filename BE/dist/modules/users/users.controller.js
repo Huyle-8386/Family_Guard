@@ -4,6 +4,21 @@ exports.UsersController = void 0;
 const users_service_1 = require("./users.service");
 const users_validation_1 = require("./users.validation");
 const usersService = new users_service_1.UsersService();
+function resolveStatusCode(error) {
+    if (typeof error === 'object' &&
+        error !== null &&
+        'statusCode' in error &&
+        typeof error.statusCode === 'number') {
+        return error.statusCode;
+    }
+    return 500;
+}
+function resolveErrorMessage(error, fallback) {
+    if (error instanceof Error && error.message.trim().length > 0) {
+        return error.message.trim();
+    }
+    return fallback;
+}
 class UsersController {
     async getMe(req, res) {
         try {
@@ -18,13 +33,36 @@ class UsersController {
         try {
             const parsed = users_validation_1.updateMeSchema.safeParse(req.body);
             if (!parsed.success) {
-                return res.status(400).json({ message: 'Dữ liệu không hợp lệ', errors: parsed.error.flatten() });
+                return res
+                    .status(400)
+                    .json({ message: 'Dữ liệu không hợp lệ', errors: parsed.error.flatten() });
             }
             const data = await usersService.updateMe(req.userId, parsed.data);
             return res.json({ message: 'Cập nhật thành công', data });
         }
         catch (error) {
-            return res.status(500).json({ message: 'Không cập nhật được user', error });
+            return res.status(resolveStatusCode(error)).json({
+                message: resolveErrorMessage(error, 'Không cập nhật được user'),
+                error,
+            });
+        }
+    }
+    async uploadAvatar(req, res) {
+        try {
+            const parsed = users_validation_1.uploadAvatarSchema.safeParse(req.body);
+            if (!parsed.success) {
+                return res
+                    .status(400)
+                    .json({ message: 'Dữ liệu upload không hợp lệ', errors: parsed.error.flatten() });
+            }
+            const data = await usersService.uploadAvatar(req.userId, parsed.data);
+            return res.json({ message: 'Cập nhật ảnh đại diện thành công', data });
+        }
+        catch (error) {
+            return res.status(resolveStatusCode(error)).json({
+                message: resolveErrorMessage(error, 'Không tải lên được ảnh đại diện'),
+                error,
+            });
         }
     }
     async searchUsers(req, res) {

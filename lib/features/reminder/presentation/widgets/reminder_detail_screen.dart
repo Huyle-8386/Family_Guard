@@ -1,4 +1,4 @@
-﻿import 'dart:math';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:family_guard/core/widgets/app_dialog.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -7,7 +7,7 @@ import 'package:family_guard/core/widgets/app_back_header.dart';
 
 
 /// ============================================================
-/// MÃ€N HÃŒNH: Chi tiáº¿t lá»‹ch nháº¯c (Redesigned)
+/// MÀN HÌNH: Chi tiết lịch nhắc (Redesigned)
 /// ============================================================
 class ReminderDetailScreen extends StatefulWidget {
   const ReminderDetailScreen({super.key});
@@ -28,14 +28,14 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   late final TextEditingController _titleController;
   late final TextEditingController _subtitleController;
   TimeOfDay _selectedTime = const TimeOfDay(hour: 8, minute: 0);
-  String _selectedFrequency = 'Mỗi ngày';
-  final List<String> _frequencies = ['Mỗi ngày', 'Hằng tuần', 'Tùy chỉnh'];
+  String _selectedFrequency = 'M?i ng�y';
+  final List<String> _frequencies = ['M?i ng�y', 'H?ng tu?n', 'T�y ch?nh'];
 
-  // Snapshot Ä‘á»ƒ phÃ¡t hiá»‡n thay Ä‘á»•i
-  String _savedTitle = 'Uống thuốc huyết áp';
-  String _savedSubtitle = 'Nhắc nhở sức khỏe định kỳ';
+  // Snapshot để phát hiện thay đổi
+  String _savedTitle = 'U?ng thu?c huy?t �p';
+  String _savedSubtitle = 'Nh?c nh? s?c kh?e d?nh k?';
   TimeOfDay _savedTime = const TimeOfDay(hour: 8, minute: 0);
-  String _savedFrequency = 'Mỗi ngày';
+  String _savedFrequency = 'M?i ng�y';
   late List<String> _savedRecipientNames;
 
   // Animations
@@ -43,14 +43,14 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   late AnimationController _recordPulseController;
 
   final List<_Recipient> _recipients = [
-    const _Recipient(name: 'Bà Lan', imageUrl: 'https://i.pravatar.cc/150?img=47'),
+    const _Recipient(name: 'B� Lan', imageUrl: 'https://i.pravatar.cc/150?img=47'),
   ];
 
   final List<_Recipient> _availableMembers = [
-    const _Recipient(name: 'Ông Hùng', imageUrl: 'https://i.pravatar.cc/150?img=68'),
-    const _Recipient(name: 'Anh Tuấn', imageUrl: 'https://i.pravatar.cc/150?img=12'),
-    const _Recipient(name: 'Chị Mai', imageUrl: 'https://i.pravatar.cc/150?img=32'),
-    const _Recipient(name: 'Bé Bo', imageUrl: 'https://i.pravatar.cc/150?img=3'),
+    const _Recipient(name: '�ng H�ng', imageUrl: 'https://i.pravatar.cc/150?img=68'),
+    const _Recipient(name: 'Anh Tu?n', imageUrl: 'https://i.pravatar.cc/150?img=12'),
+    const _Recipient(name: 'Ch? Mai', imageUrl: 'https://i.pravatar.cc/150?img=32'),
+    const _Recipient(name: 'B� Bo', imageUrl: 'https://i.pravatar.cc/150?img=3'),
   ];
 
   @override
@@ -105,7 +105,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   String get _timeStr =>
       '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}';
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BUILD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ BUILD ═══════════════════════
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +143,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
 
   Widget _buildHeader() {
     return AppBackHeaderBar(
-      title: 'Chi tiết lịch nhắc',
+      title: 'Chi ti?t l?ch nh?c',
       trailing: _buildHeaderIcon(
         icon: _isEditing ? Icons.check_rounded : Icons.edit_outlined,
         onTap: _toggleEditMode,
@@ -172,7 +172,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TITLE CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ TITLE CARD ═══════════════════════
   Widget _buildTitleCard() {
     return _CardWrapper(
       child: Row(
@@ -201,7 +201,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF00ACB2),
-                        hint: 'Tên lịch nhắc...',
+                        hint: 'T�n l?ch nh?c...',
                       )
                     : Text(
                         _titleController.text,
@@ -220,7 +220,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         color: const Color(0xFF64748B),
-                        hint: 'Mô tả ngắn...',
+                        hint: 'M� t? ng?n...',
                       )
                     : Text(
                         _subtitleController.text,
@@ -279,13 +279,13 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TIME CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ TIME CARD ═══════════════════════
   Widget _buildTimeCard() {
     return _CardWrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionLabel('THỜI GIAN'),
+          _buildSectionLabel('TH?I GIAN'),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -383,7 +383,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• VOICE CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ VOICE CARD ═══════════════════════
   Widget _buildVoiceCard() {
     return _CardWrapper(
       child: Column(
@@ -535,7 +535,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  _isRecording ? 'Dừng ghi âm' : 'Ghi âm mới',
+                  _isRecording ? 'D?ng ghi �m' : 'Ghi �m m?i',
                   style: TextStyle(
                     color: _isRecording
                         ? const Color(0xFFEF4444)
@@ -564,13 +564,13 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RECIPIENT CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ RECIPIENT CARD ═══════════════════════
   Widget _buildRecipientCard() {
     return _CardWrapper(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionLabel('NGƯỜI NHẬN'),
+          _buildSectionLabel('NGU?I NH?N'),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -584,7 +584,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                   onPressed: _showAddRecipientSheet,
                   icon: const Icon(Icons.add_rounded, size: 18),
                   label: Text(
-                    'Thêm',
+                    'Th�m',
                     style: TextStyle(
                       fontSize: ResponsiveHelper.sp(context, 13),
                     ),
@@ -655,7 +655,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACTIVATION CARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ ACTIVATION CARD ═══════════════════════
   Widget _buildActivationCard() {
     return _CardWrapper(
       child: Row(
@@ -667,7 +667,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Kích hoạt',
+                  'K�ch ho?t',
                   style: TextStyle(
                     color: const Color(0xFF1E293B),
                     fontSize: ResponsiveHelper.sp(context, 15),
@@ -677,7 +677,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                   ),
                 ),
                 Text(
-                  _isActive ? 'Đang bật' : 'Đã tắt',
+                  _isActive ? '�ang b?t' : '�� t?t',
                   style: TextStyle(
                     color: _isActive
                         ? const Color(0xFF00ACB2)
@@ -735,7 +735,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PREVIEW BUTTON â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ PREVIEW BUTTON ═══════════════════════
   Widget _buildPreviewButton() {
     return OutlinedButton.icon(
       onPressed: _showNotificationPreview,
@@ -745,11 +745,11 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
         side: const BorderSide(color: Color(0x3300ACB2)),
       ),
       icon: const Icon(Icons.visibility_outlined, size: 20),
-      label: const Text('Xem trước thông báo'),
+      label: const Text('Xem tru?c th�ng b�o'),
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• BOTTOM BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ BOTTOM BAR ═══════════════════════
   Widget _buildBottomBar() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -771,7 +771,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                   foregroundColor: const Color(0xFFEF4444),
                   side: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
                 ),
-                child: const Text('Xóa lịch nhắc'),
+                child: const Text('X�a l?ch nh?c'),
               ),
             ),
             const SizedBox(width: 12),
@@ -782,7 +782,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Lưu thay đổi'),
+                    const Text('Luu thay d?i'),
                     if (_hasUnsavedChanges) ...[
                       const SizedBox(width: 8),
                       Container(
@@ -793,7 +793,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          'Chưa lưu',
+                          'Chua luu',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: ResponsiveHelper.sp(context, 10),
@@ -813,7 +813,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SHARED WIDGETS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ SHARED WIDGETS ═══════════════════════
   Widget _buildSectionLabel(String text) {
     return Text(
       text,
@@ -839,13 +839,13 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     );
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ACTIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══════════════════════ ACTIONS ═══════════════════════
   void _toggleEditMode() {
     if (_isEditing) {
       if (_titleController.text.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Tiêu đề không được để trống'),
+            content: Text('Ti�u d? kh�ng du?c d? tr?ng'),
             backgroundColor: Color(0xFFEF4444),
             behavior: SnackBarBehavior.floating,
           ),
@@ -873,7 +873,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     _recordPulseController.stop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Đã lưu thành công'),
+        content: Text('�� luu th�nh c�ng'),
         backgroundColor: Color(0xFF00ACB2),
         behavior: SnackBarBehavior.floating,
       ),
@@ -894,7 +894,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Tiêu đề không được để trống'),
+          content: Text('Ti�u d? kh�ng du?c d? tr?ng'),
           backgroundColor: Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
         ),
@@ -908,15 +908,15 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'Xóa lịch nhắc?',
-      content: 'Bạn có chắc chắn muốn xóa lịch nhắc "${_titleController.text}" không? Hành động này không thể hoàn tác.',
-      confirmText: 'Xóa',
+      title: 'X�a l?ch nh?c?',
+      content: 'B?n c� ch?c ch?n mu?n x�a l?ch nh?c "${_titleController.text}" kh�ng? H�nh d?ng n�y kh�ng th? ho�n t�c.',
+      confirmText: 'X�a',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Đã xóa lịch nhắc'),
+            content: Text('�� x�a l?ch nh?c'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -951,7 +951,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
     if (available.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Đã thêm tất cả thành viên'),
+          content: Text('�� th�m t?t c? th�nh vi�n'),
           backgroundColor: Color(0xFF00ACB2),
           behavior: SnackBarBehavior.floating,
         ),
@@ -985,7 +985,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Chọn người nhận',
+                  'Ch?n ngu?i nh?n',
                   style: TextStyle(
                     color: const Color(0xFF1E293B),
                     fontSize: ResponsiveHelper.sp(context, 18),
@@ -1105,7 +1105,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Nhắc nhở sức khỏe',
+                                'Nh?c nh? s?c kh?e',
                                 style: TextStyle(
                                   color: Color(0xFF1E293B),
                                   fontSize: 13,
@@ -1114,7 +1114,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                                 ),
                               ),
                               Text(
-                                'Bây giờ',
+                                'B�y gi?',
                                 style: TextStyle(
                                   color: const Color(0xFF94A3B8),
                                   fontSize: ResponsiveHelper.sp(context, 11),
@@ -1162,7 +1162,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Gửi đến: ${_recipients.map((r) => r.name).join(", ")}',
+                            'G?i d?n: ${_recipients.map((r) => r.name).join(", ")}',
                             style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 12,
@@ -1183,7 +1183,7 @@ class _ReminderDetailScreenState extends State<ReminderDetailScreen>
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CARD WRAPPER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════ CARD WRAPPER ═══════════════════════
 class _CardWrapper extends StatelessWidget {
   final Widget child;
   const _CardWrapper({required this.child});
@@ -1210,7 +1210,7 @@ class _CardWrapper extends StatelessWidget {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RECIPIENT MODEL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══════════════════════ RECIPIENT MODEL ═══════════════════════
 class _Recipient {
   final String name;
   final String imageUrl;

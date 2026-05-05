@@ -6,6 +6,7 @@ class ApiEndpoints {
   static const String authMe = '/auth/me';
 
   static const String me = '/me';
+  static const String meAvatar = '/me/avatar';
   static const String usersSearch = '/users/search';
 
   static const String relationships = '/relationships';

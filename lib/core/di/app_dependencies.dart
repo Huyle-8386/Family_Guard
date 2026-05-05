@@ -42,6 +42,7 @@ import 'package:family_guard/features/profile_security/data/datasources/profile_
 import 'package:family_guard/features/profile_security/data/repositories_impl/profile_repository_impl.dart';
 import 'package:family_guard/features/profile_security/domain/repositories/profile_repository.dart';
 import 'package:family_guard/features/profile_security/domain/usecases/get_profile_usecase.dart';
+import 'package:family_guard/features/profile_security/domain/usecases/upload_avatar_usecase.dart';
 import 'package:family_guard/features/profile_security/domain/usecases/update_profile_usecase.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_remote_data_source.dart';
 import 'package:family_guard/features/safe_zone/data/datasources/safe_zone_service.dart';
@@ -81,6 +82,7 @@ class AppDependencies {
   late final ProfileRepository profileRepository;
   late final GetProfileUseCase getProfileUseCase;
   late final UpdateProfileUseCase updateProfileUseCase;
+  late final UploadAvatarUseCase uploadAvatarUseCase;
 
   late final MemberManagementRemoteDataSource memberManagementRemoteDataSource;
   late final MemberManagementRepository memberManagementRepository;
@@ -147,6 +149,7 @@ class AppDependencies {
     );
     getProfileUseCase = GetProfileUseCase(profileRepository);
     updateProfileUseCase = UpdateProfileUseCase(profileRepository);
+    uploadAvatarUseCase = UploadAvatarUseCase(profileRepository);
 
     memberManagementRemoteDataSource = MemberManagementRemoteDataSourceImpl(
       apiClient: apiClient,

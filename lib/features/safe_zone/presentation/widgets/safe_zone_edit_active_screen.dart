@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:family_guard/core/utils/responsive/responsive.dart';
@@ -35,7 +35,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     return members.first;
   }
 
-  String get _displayName => _primaryMember?.name ?? 'Thành viên gia đình';
+  String get _displayName => _primaryMember?.name ?? 'Th�nh vi�n gia d�nh';
 
   String get _avatarLetter {
     final name = _displayName.trim();
@@ -57,9 +57,9 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     AppDialog.show(
       context: context,
       type: AppDialogType.delete,
-      title: 'Xóa vùng an toàn',
-      content: 'Bạn có chắc muốn xóa "${_zones[index].name}" không?',
-      confirmText: 'Xóa',
+      title: 'X�a v�ng an to�n',
+      content: 'B?n c� ch?c mu?n x�a "${_zones[index].name}" kh�ng?',
+      confirmText: 'X�a',
       icon: Icons.delete_outline_rounded,
       onConfirm: () {
         SafeZoneProvider.read(context).removeZone(_zones[index].id);
@@ -74,7 +74,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
 
     return Scaffold(
       appBar: const AppBackHeaderBar(
-        title: 'Vùng an toàn',
+        title: 'V�ng an to�n',
       ),
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -100,7 +100,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            'Vùng an toàn đang hoạt động',
+                            'V�ng an to�n dang ho?t d?ng',
                             style: TextStyle(
                               color: const Color(0xFF0C1D1A),
                               fontSize: ResponsiveHelper.sp(context, 18),
@@ -122,7 +122,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                               const Icon(Icons.swipe_left_rounded, size: 14, color: Color(0xFF00ACB2)),
                               const SizedBox(width: 4),
                               Text(
-                                'Vuốt để sửa/xóa',
+                                'Vu?t d? s?a/x�a',
                                 style: TextStyle(
                                   color: const Color(0xFF00ACB2),
                                   fontSize: ResponsiveHelper.sp(context, 11),
@@ -251,7 +251,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        '$_activeCount vùng an toàn đang bật',
+                        '$_activeCount v�ng an to�n dang b?t',
                         style: TextStyle(
                           color: const Color(0xFF45A191),
                           fontSize: ResponsiveHelper.sp(context, 14),
@@ -291,32 +291,32 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     );
   }
 
-  // â”€â”€ Ná»™i dung zone card - responsive, khÃ´ng overflow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Nội dung zone card - responsive, không overflow ────────────────
   Widget _buildZoneCardContent(int index) {
     final zone = _zones[index];
     final radiusLabel = zone.radius >= 1000
         ? '${(zone.radius / 1000).toStringAsFixed(zone.radius % 1000 == 0 ? 0 : 1)}KM'
         : '${zone.radius.round()}M';
     return Padding(
-      // Padding ngoÃ i thay Container Ä‘á»ƒ khÃ´ng bá»‹ Ã©p chiá»u cao
+      // Padding ngoài thay Container để không bị ép chiều cao
       padding: const EdgeInsets.all(12),
       child: Row(
         // mainAxisSize.max + crossAxisAlignment.center
-        // â†’ tá»± co ngang theo mÃ n, cÄƒn giá»¯a dá»c khÃ´ng cáº§n fixed height
+        // → tự co ngang theo màn, căn giữa dọc không cần fixed height
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Map thumbnail: kÃ­ch thÆ°á»›c cá»‘ Ä‘á»‹nh 80Ã—80 lÃ  há»£p lÃ½ (áº£nh báº£n Ä‘á»“)
+          // Map thumbnail: kích thước cố định 80×80 là hợp lý (ảnh bản đồ)
           _buildMapThumbnail(zone),
 
           const SizedBox(width: 16),
 
-          // TÃªn + bÃ¡n kÃ­nh + Ä‘á»‹a chá»‰ â€” Expanded Ä‘á»ƒ chiáº¿m pháº§n cÃ²n láº¡i
+          // Tên + bán kính + địa chỉ — Expanded để chiếm phần còn lại
           Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.min,  // khÃ´ng Ã©p chiá»u cao
+              mainAxisSize: MainAxisSize.min,  // không ép chiều cao
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // HÃ ng tÃªn + radius badge
+                // Hàng tên + radius badge
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -335,7 +335,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Badge bÃ¡n kÃ­nh: intrinsic size, khÃ´ng overflow
+                    // Badge bán kính: intrinsic size, không overflow
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
@@ -375,7 +375,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
 
           const SizedBox(width: 8),
 
-          // Toggle â€” Center Ä‘á»ƒ cÄƒn giá»¯a khÃ´ng cáº§n Padding thÃªm left:8
+          // Toggle — Center để căn giữa không cần Padding thêm left:8
           Center(
             child: GestureDetector(
               onTap: () {
@@ -422,7 +422,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     );
   }
 
-  // â”€â”€ Map thumbnail 80Ã—80 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Map thumbnail 80×80 ───────────────────────────────────────────
   Widget _buildMapThumbnail(SafeZone zone) {
     final center = LatLng(zone.latitude, zone.longitude);
     return Container(
@@ -462,7 +462,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
     );
   }
 
-  // â”€â”€ FAB â”€â”€ fix BoxShadow thiáº¿u `,` â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── FAB ── fix BoxShadow thiếu `,` ────────────────────────────────
   Widget _buildFAB(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(AppRoutes.safeZoneConfig),
@@ -473,7 +473,7 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
           color: Color(0xFF00ACB2),
           shape: BoxShape.circle,
           boxShadow: [
-            // fix: thiáº¿u `,` giá»¯a 2 BoxShadow
+            // fix: thiếu `,` giữa 2 BoxShadow
             BoxShadow(
               color: Color(0x6600ACB2),
               blurRadius: 6,
@@ -488,18 +488,18 @@ class _SafeZoneEditActiveScreenState extends State<SafeZoneEditActiveScreen> {
             ),
           ],
         ),
-        // fix: `children: [,]` rá»—ng â†’ Icon thá»±c táº¿
+        // fix: `children: [,]` rỗng → Icon thực tế
         child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
       ),
     );
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ══════════════════════════════════════════════════════════════════════
 // SWIPEABLE CARD WIDGET
-// Thay tháº¿: Container(width:518) + Positioned(left:160) Figma tuyá»‡t Ä‘á»‘i
-// báº±ng GestureDetector + AnimatedContainer Ä‘á»ƒ swipe-left reveal Sá»¬A/XÃ“A
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// Thay thế: Container(width:518) + Positioned(left:160) Figma tuyệt đối
+// bằng GestureDetector + AnimatedContainer để swipe-left reveal SỬA/XÓA
+// ══════════════════════════════════════════════════════════════════════
 class _SwipeableCard extends StatefulWidget {
   final Widget child;
   final VoidCallback onEdit;
@@ -518,10 +518,10 @@ class _SwipeableCard extends StatefulWidget {
 
 class _SwipeableCardState extends State<_SwipeableCard>
     with SingleTickerProviderStateMixin {
-  /// Chiá»u rá»™ng panel action = 2 Ã— 80px, khá»›p Figma left:160
+  /// Chiều rộng panel action = 2 × 80px, khớp Figma left:160
   static const double _actionWidth = 160.0;
 
-  /// Offset hiá»‡n táº¡i khi Ä‘ang kÃ©o tay (chá»‰ dÃ¹ng khi KHÃ”NG animate)
+  /// Offset hiện tại khi đang kéo tay (chỉ dùng khi KHÔNG animate)
   double _dragOffset = 0;
   bool _isOpen = false;
 
@@ -536,7 +536,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
       duration: const Duration(milliseconds: 280),
     );
     _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    // Rebuild má»—i tick animation Ä‘á»ƒ card trÆ°á»£t mÆ°á»£t
+    // Rebuild mỗi tick animation để card trượt mượt
     _anim.addListener(() => setState(() {}));
   }
 
@@ -563,7 +563,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
   }
 
   void _onHorizontalDragUpdate(DragUpdateDetails d) {
-    if (_ctrl.isAnimating) return; // bá» qua drag khi Ä‘ang snap
+    if (_ctrl.isAnimating) return; // bỏ qua drag khi đang snap
     final delta = d.primaryDelta ?? 0;
     setState(() {
       _dragOffset = (_dragOffset + delta).clamp(-_actionWidth, 0.0);
@@ -580,12 +580,12 @@ class _SwipeableCardState extends State<_SwipeableCard>
     }
   }
 
-  /// Offset dá»©t khoÃ¡t: animation cÃ³ Ä‘á»™ Æ°u tiÃªn cao hÆ¡n drag
+  /// Offset dứt khoát: animation có độ ưu tiên cao hơn drag
   double get _slideX {
     if (_ctrl.isAnimating) {
       return _isOpen
-          ? -_anim.value * _actionWidth          // Ä‘ang má»Ÿ
-          : -(1 - _anim.value) * _actionWidth;  // Ä‘ang Ä‘Ã³ng
+          ? -_anim.value * _actionWidth          // đang mở
+          : -(1 - _anim.value) * _actionWidth;  // đang đóng
     }
     return _dragOffset;
   }
@@ -594,18 +594,18 @@ class _SwipeableCardState extends State<_SwipeableCard>
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      // â”€â”€ IntrinsicHeight: tá»± co theo ná»™i dung thay vÃ¬ fixed 104px â”€â”€
-      // KhÃ´ng cÃ³ RenderFlex overflow khi font scale hoáº·c mÃ n nhá»
+      // ── IntrinsicHeight: tự co theo nội dung thay vì fixed 104px ──
+      // Không có RenderFlex overflow khi font scale hoặc màn nhỏ
       child: IntrinsicHeight(
         child: Stack(
           children: [
-            // â”€â”€ Action panel (Ä‘áº±ng sau, full height theo IntrinsicHeight) â”€
+            // ── Action panel (đằng sau, full height theo IntrinsicHeight) ─
             Positioned.fill(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Sá»¬A (xanh dÆ°Æ¡ng)
+                  // SỬA (xanh dương)
                   GestureDetector(
                     onTap: widget.onEdit,
                     child: SizedBox(
@@ -619,7 +619,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
                                 color: Colors.white, size: 22),
                             const SizedBox(height: 4),
                             Text(
-                              'Sửa',
+                              'S?a',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveHelper.sp(context, 12),
@@ -633,7 +633,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
                       ),
                     ),
                   ),
-                  // XÃ“A (Ä‘á»)
+                  // XÓA (đỏ)
                   GestureDetector(
                     onTap: widget.onDelete,
                     child: SizedBox(
@@ -647,7 +647,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
                                 color: Colors.white, size: 22),
                             const SizedBox(height: 4),
                             Text(
-                              'Xóa',
+                              'X�a',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ResponsiveHelper.sp(context, 12),
@@ -665,9 +665,9 @@ class _SwipeableCardState extends State<_SwipeableCard>
               ),
             ),
 
-            // â”€â”€ Card tráº¯ng (trÃªn cÃ¹ng, trÆ°á»£t sang trÃ¡i) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            // DÃ¹ng Transform.translate thay Positioned Ä‘á»ƒ khÃ´ng áº£nh
-            // hÆ°á»Ÿng layout flow, trÃ¡nh overflow khi card Ä‘ang má»Ÿ
+            // ── Card trắng (trên cùng, trượt sang trái) ──────────────
+            // Dùng Transform.translate thay Positioned để không ảnh
+            // hưởng layout flow, tránh overflow khi card đang mở
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onHorizontalDragUpdate: _onHorizontalDragUpdate,
@@ -699,7 +699,7 @@ class _SwipeableCardState extends State<_SwipeableCard>
   }
 }
 
-// â”€â”€ Painters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Painters ──────────────────────────────────────────────────────────
 class _ProfileAvatarPainter extends CustomPainter {
   const _ProfileAvatarPainter(this.letter);
 

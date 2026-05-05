@@ -1,11 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:family_guard/core/routes/app_routes.dart';
 import 'package:family_guard/core/theme/app_colors.dart';
 import 'package:family_guard/core/widgets/app_back_header.dart';
 
 /// ============================================================
-/// EMPTY SAFE ZONE SCREEN - ChÆ°a cÃ³ vÃ¹ng an toÃ n
-/// ÄÆ°á»£c dá»‹ch vÃ  sá»­a lá»—i tá»« Figma Dev Mode export
+/// EMPTY SAFE ZONE SCREEN - Chưa có vùng an toàn
+/// Được dịch và sửa lỗi từ Figma Dev Mode export
 /// ============================================================
 class SafeZoneEmptyScreen extends StatelessWidget {
   const SafeZoneEmptyScreen({super.key});
@@ -14,20 +14,20 @@ class SafeZoneEmptyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const AppBackHeaderBar(title: 'Vùng an toàn'),
+      appBar: const AppBackHeaderBar(title: 'V�ng an to�n'),
       body: Column(
         children: [
 
-          // â”€â”€ Body: empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // ── Body: empty state ──────────────────────────────────
           Expanded(
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Ná»™i dung chÃ­nh â€“ canh giá»¯a mÃ n hÃ¬nh
+                // Nội dung chính – canh giữa màn hình
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // â”€â”€ Illustration card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // ── Illustration card ────────────────────────
                     Container(
                       width: 280,
                       padding: const EdgeInsets.symmetric(vertical: 44),
@@ -43,7 +43,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            // Card tráº¯ng chá»©a map illustration
+                            // Card trắng chứa map illustration
                             Container(
                               width: 192,
                               height: 192,
@@ -75,7 +75,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  // VÃ²ng trÃ²n xanh nháº¡t bÃªn trong
+                                  // Vòng tròn xanh nhạt bên trong
                                   Container(
                                     padding: const EdgeInsets.all(28),
                                     decoration: BoxDecoration(
@@ -88,7 +88,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                                       size: 48,
                                     ),
                                   ),
-                                  // Badge cháº¥m xanh (avatar placeholder)
+                                  // Badge chấm xanh (avatar placeholder)
                                   Positioned(
                                     top: 16,
                                     right: 54,
@@ -128,7 +128,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                               ),
                             ),
 
-                            // Cháº¥m trang trÃ­ nhá» (trÃ¡i)
+                            // Chấm trang trí nhỏ (trái)
                             Positioned(
                               left: -40,
                               top: 8,
@@ -141,7 +141,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // Cháº¥m trang trÃ­ lá»›n hÆ¡n (pháº£i dÆ°á»›i)
+                            // Chấm trang trí lớn hơn (phải dưới)
                             Positioned(
                               right: -56,
                               bottom: -16,
@@ -161,9 +161,9 @@ class SafeZoneEmptyScreen extends StatelessWidget {
 
                     const SizedBox(height: 32),
 
-                    // â”€â”€ TiÃªu Ä‘á» empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // ── Tiêu đề empty state ──────────────────────
                     const Text(
-                      'Chưa có vùng an toàn nào',
+                      'Chua c� v�ng an to�n n�o',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF00ACB2),
@@ -175,11 +175,11 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 11),
 
-                    // â”€â”€ MÃ´ táº£ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // ── Mô tả ────────────────────────────────────
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 32),
                       child: Text(
-                        'Hãy tạo vùng an toàn đầu tiên để bắt đầu theo\ndõi người thân của bạn và nhận thông báo kịp\nthời.',
+                        'H�y t?o v�ng an to�n d?u ti�n d? b?t d?u theo\nd�i ngu?i th�n c?a b?n v� nh?n th�ng b�o k?p\nth?i.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF64748B),
@@ -193,7 +193,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
 
                     const SizedBox(height: 40),
 
-                    // â”€â”€ NÃºt "ThÃªm vÃ¹ng an toÃ n ngay" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // ── Nút "Thêm vùng an toàn ngay" ─────────────
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32),
                       child: ElevatedButton.icon(
@@ -201,7 +201,7 @@ class SafeZoneEmptyScreen extends StatelessWidget {
                           Navigator.of(context).pushNamed(AppRoutes.safeZoneAdd);
                         },
                         icon: const Icon(Icons.add_location_alt_rounded, size: 20),
-                        label: const Text('Thêm vùng an toàn ngay'),
+                        label: const Text('Th�m v�ng an to�n ngay'),
                       ),
                     ),
                   ],

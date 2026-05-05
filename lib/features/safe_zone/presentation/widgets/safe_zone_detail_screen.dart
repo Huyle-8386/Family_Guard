@@ -16,10 +16,10 @@ class _SafeZoneDetailScreenState extends State<SafeZoneDetailScreen> {
   bool _instantNotifications = true;
 
   final List<_Member> _members = [
-    _Member(name: 'Trần Như Kha', role: 'Người lớn', avatarColor: Color(0xFFFED7AA), selected: false),
-    _Member(name: 'Bố Xôi', role: 'Người lớn', avatarColor: Color(0xFFDBEAFE), selected: false),
-    _Member(name: 'Xôi', role: 'Trẻ em', avatarColor: Color(0xFFE0E7FF), selected: false),
-    _Member(name: 'Bà Nội', role: 'Người già', avatarColor: Color(0xFFDCFCE7), selected: true),
+    _Member(name: 'Tr?n Nhu Kha', role: 'Ngu?i l?n', avatarColor: Color(0xFFFED7AA), selected: false),
+    _Member(name: 'B? X�i', role: 'Ngu?i l?n', avatarColor: Color(0xFFDBEAFE), selected: false),
+    _Member(name: 'X�i', role: 'Tr? em', avatarColor: Color(0xFFE0E7FF), selected: false),
+    _Member(name: 'B� N?i', role: 'Ngu?i gi�', avatarColor: Color(0xFFDCFCE7), selected: true),
   ];
 
   @override
@@ -58,22 +58,22 @@ class _SafeZoneDetailScreenState extends State<SafeZoneDetailScreen> {
                       const SizedBox(height: 16),
                       _GhostButton(
                         icon: Icons.person_add_alt_1_rounded,
-                        label: 'Thêm thành viên',
+                        label: 'Th�m th�nh vi�n',
                         onPressed: () {},
                       ),
                       const SizedBox(height: 24),
-                      const _SectionLabel('LỊCH HOẠT ĐỘNG'),
+                      const _SectionLabel('L?CH HO?T �?NG'),
                       const SizedBox(height: 12),
                       _ScheduleCard(
                         alwaysActive: _alwaysActive,
                         onAlwaysActiveChanged: (value) => setState(() => _alwaysActive = value),
                       ),
                       const SizedBox(height: 20),
-                      const _SectionLabel('TRẠNG THÁI'),
+                      const _SectionLabel('TR?NG TH�I'),
                       const SizedBox(height: 12),
                       const _StatusCard(),
                       const SizedBox(height: 20),
-                      const _SectionLabel('CÀI ĐẶT NÂNG CAO'),
+                      const _SectionLabel('C�I �?T N�NG CAO'),
                       const SizedBox(height: 12),
                       _AdvancedCard(
                         instantNotifications: _instantNotifications,
@@ -82,7 +82,7 @@ class _SafeZoneDetailScreenState extends State<SafeZoneDetailScreen> {
                       const SizedBox(height: 20),
                       _DangerButton(
                         icon: Icons.delete_outline,
-                        label: 'Xóa Vùng An Toàn',
+                        label: 'X�a V�ng An To�n',
                         onPressed: () {},
                       ),
                     ],
@@ -117,7 +117,7 @@ class _TopBar extends StatelessWidget {
               children: [
                 const Center(
                   child: Text(
-                    'Nhà Bà Nội',
+                    'Nh� B� N?i',
                     style: TextStyle(
                       color: Color(0xFF111818),
                       fontSize: 17,
@@ -137,7 +137,7 @@ class _TopBar extends StatelessWidget {
                           Icon(Icons.chevron_left_rounded, color: Color(0xFF17E8E8), size: 20),
                           SizedBox(width: 2),
                           Text(
-                            'Vùng An ...',
+                            'V�ng An ...',
                             style: TextStyle(
                               color: Color(0xFF17E8E8),
                               fontSize: 17,
@@ -161,7 +161,7 @@ class _TopBar extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                     ),
                     child: const Text(
-                      'Lưu',
+                      'Luu',
                       style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -260,7 +260,7 @@ class _MapRadiusCard extends StatelessWidget {
                 Row(
                   children: [
                     const Text(
-                      'Bán Kính',
+                      'B�n K�nh',
                       style: TextStyle(
                         color: Color(0xFF111818),
                         fontSize: 15,
@@ -335,7 +335,7 @@ class _MembersHeading extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Thành Viên Được Chỉ Định',
+            'Th�nh Vi�n �u?c Ch? �?nh',
             style: TextStyle(
               color: Color(0xFF111818),
               fontSize: 17,
@@ -344,7 +344,7 @@ class _MembersHeading extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            'Chọn các thành viên gia đình được giám sát bởi khu vực này.',
+            'Ch?n c�c th�nh vi�n gia d�nh du?c gi�m s�t b?i khu v?c n�y.',
             style: TextStyle(
               color: Color(0xFF638888),
               fontSize: 13,
@@ -390,8 +390,8 @@ class _MemberTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final roleColor = switch (member.role) {
-      'Trẻ em' => const Color(0xFF2563EB),
-      'Người già' => const Color(0xFF16A34A),
+      'Tr? em' => const Color(0xFF2563EB),
+      'Ngu?i gi�' => const Color(0xFF16A34A),
       _ => const Color(0xFF638888),
     };
 
@@ -482,7 +482,7 @@ class _ScheduleCard extends StatelessWidget {
       child: Column(
         children: [
           _SwitchRow(
-            title: 'Luôn Hoạt Động',
+            title: 'Lu�n Ho?t �?ng',
             value: alwaysActive,
             onChanged: onAlwaysActiveChanged,
           ),
@@ -496,11 +496,11 @@ class _ScheduleCard extends StatelessWidget {
             ),
             child: const Row(
               children: [
-                _TimeChip(label: 'TỪ', value: '8:00 AM'),
+                _TimeChip(label: 'T?', value: '8:00 AM'),
                 Spacer(),
                 Icon(Icons.arrow_forward_rounded, color: Color(0xFF638888), size: 16),
                 Spacer(),
-                _TimeChip(label: 'ĐẾN', value: '4:00 PM', alignRight: true),
+                _TimeChip(label: '�?N', value: '4:00 PM', alignRight: true),
               ],
             ),
           ),
@@ -579,7 +579,7 @@ class _StatusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Trạng Thái',
+                  'Tr?ng Th�i',
                   style: TextStyle(
                     color: Color(0xFF111818),
                     fontSize: 15,
@@ -588,7 +588,7 @@ class _StatusCard extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  'Tất cả thành viên đều trong vùng an toàn',
+                  'T?t c? th�nh vi�n d?u trong v�ng an to�n',
                   style: TextStyle(
                     color: Color(0xFF16A34A),
                     fontSize: 13,
@@ -636,7 +636,7 @@ class _AdvancedCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: _SwitchRow(
-              title: 'Thông báo ngay lập tức',
+              title: 'Th�ng b�o ngay l?p t?c',
               value: instantNotifications,
               onChanged: onNotificationsChanged,
             ),
@@ -647,7 +647,7 @@ class _AdvancedCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Thời gian lặp lại',
+                  'Th?i gian l?p l?i',
                   style: TextStyle(
                     color: Color(0xFF111818),
                     fontSize: 15,
@@ -656,7 +656,7 @@ class _AdvancedCard extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                  '5 phút',
+                  '5 ph�t',
                   style: TextStyle(
                     color: Color(0xFF638888),
                     fontSize: 15,
