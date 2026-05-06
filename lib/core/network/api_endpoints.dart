@@ -20,10 +20,12 @@ class ApiEndpoints {
   static const String locationsMe = '/locations/me';
   static const String locationsFamily = '/locations/family';
   static const String safeZones = '/safe-zones';
+  static const String kidReminders = '/kid-reminders';
 
   static String relationshipById(int id) => '$relationships/$id';
 
   static String notificationRespond(int id) => '$notifications/$id/respond';
   static String chatByPeer(String peerUid) => '/messages/$peerUid';
   static String safeZoneById(String id) => '$safeZones/$id';
+  static String kidReminderById(int id) => '$kidReminders/$id';
 }

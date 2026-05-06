@@ -5,6 +5,7 @@ import 'package:family_guard/features/chat/presentation/screens/chat_conversatio
 import 'package:family_guard/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:family_guard/features/camera/presentation/screens/camera_list_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/screens/checkin_reminder_screen.dart';
+import 'package:family_guard/features/checkin_reminder/presentation/screens/checkin_reminder_kid_reminder_screen.dart';
 import 'package:family_guard/features/checkin_reminder/presentation/widgets/checkin_reminder_selected_screen.dart';
 import 'package:family_guard/features/emotion/presentation/screens/emotion_pulse_screen.dart';
 import 'package:family_guard/features/emotion/presentation/widgets/emotion_journal_screen.dart';
@@ -195,6 +196,9 @@ class AppRouter {
     // AppRoutes.priorityContacts: (context) => const PriorityContactsScreen(),
     // AppRoutes.addPriorityContact: (context) => const AddPriorityContactScreen(),
     AppRoutes.checkinReminder: (context) => const CheckinReminderScreen(),
+    AppRoutes.checkinReminderKid: (context) => CheckinReminderKidReminderScreen(
+      args: CheckinReminderKidReminderScreen.fromRoute(context),
+    ),
     AppRoutes.checkinReminderSelected: (context) =>
         const CheckinReminderSelectedScreen(),
     AppRoutes.reminderManagement: (context) => const ReminderListScreen(),

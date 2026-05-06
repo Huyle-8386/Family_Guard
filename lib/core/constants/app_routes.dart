@@ -42,6 +42,7 @@ class AppRoutes {
   static const priorityContacts = '/priority-contacts';
   static const addPriorityContact = '/add-priority-contact';
   static const checkinReminder = '/checkin-reminder';
+  static const checkinReminderKid = '/checkin-reminder-kid';
   static const cameraList = '/camera-list';
   static const cameraAddConnect = '/camera-add-connect';
   static const cameraAddConnectPreview = '/camera-add-connect-preview';

@@ -1,13 +1,25 @@
 import 'package:family_guard/core/constants/app_routes.dart';
 import 'package:family_guard/core/di/app_dependencies.dart';
+import 'package:family_guard/core/network/api_endpoints.dart';
+import 'package:family_guard/core/services/kid_reminder_notification_scheduler.dart';
 import 'package:family_guard/core/widgets/app_bottom_menu.dart';
 import 'package:family_guard/features/calling/presentation/screens/call_flow_models.dart';
+import 'package:family_guard/features/checkin_reminder/presentation/screens/checkin_reminder_kid_reminder_screen.dart';
+import 'package:family_guard/features/location_tracking/domain/entities/user_location.dart';
 import 'package:family_guard/features/tracking/presentation/screens/member_tracking/member_tracking_models.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ChildHomePage extends StatelessWidget {
+class ChildHomePage extends StatefulWidget {
   const ChildHomePage({super.key});
+
+  @override
+  State<ChildHomePage> createState() => _ChildHomePageState();
+}
+
+class _ChildHomePageState extends State<ChildHomePage> {
+  late final Future<List<_ChildMission>> _missionsFuture;
+  late final Future<_ChildHeroData> _heroFuture;
 
   static const _bg = Color(0xFFF5FBFF);
   static const _surface = Colors.white;
@@ -52,37 +64,20 @@ class ChildHomePage extends StatelessWidget {
     ),
     _ChildAction(
       title: 'Nh\u1EAFc nh\u1EDF',
-      subtitle: 'L\u1ECBch h\u1ECDc v\u00E0 gi\u1EDD v\u1EC1 nh\u00E0',
+      subtitle: 'Xem nh\u1EAFc nh\u1EDF t\u1EEB gia \u0111\u00ECnh',
       icon: Icons.alarm_rounded,
       color: _yellow,
-      routeName: AppRoutes.reminderManagement,
+      routeName: AppRoutes.checkinReminderKid,
     ),
   ];
 
-  static const _missions = [
-    _ChildMission(
-      title: 'L\u1EDBp h\u1ECDc th\u00EAm',
-      subtitle: '16:00 - 17:30 t\u1EA1i Trung t\u00E2m Sao Vi\u1EC7t',
-      badge: '\u0110ang di\u1EC5n ra',
-      color: _blue,
-      routeName: AppRoutes.reminderManagement,
-    ),
-    _ChildMission(
-      title: 'V\u1EC1 nh\u00E0 tr\u01B0\u1EDBc 18:30',
-      subtitle:
-          'Ba v\u00E0 M\u1EB9 \u0111ang theo d\u00F5i \u0111\u01B0\u1EDDng v\u1EC1',
-      badge: 'Quan tr\u1ECDng',
-      color: _danger,
-      routeName: AppRoutes.safeZone,
-    ),
-    _ChildMission(
-      title: 'S\u1EA1c m\u00E1y khi v\u1EC1',
-      subtitle: 'Pin hi\u1EC7n t\u1EA1i c\u00F2n 18%',
-      badge: 'Pin y\u1EBFu',
-      color: _yellow,
-      routeName: AppRoutes.reminderManagement,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _missionsFuture = _loadMissions();
+    _heroFuture = _loadHeroData();
+    _missionsFuture.then(_scheduleReminderNotifications);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,289 +134,288 @@ class ChildHomePage extends StatelessWidget {
   }
 
   Widget _buildHero(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: _surface,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x141FA5FF),
-            blurRadius: 26,
-            offset: Offset(0, 10),
-            spreadRadius: -12,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFA9E5FF), Color(0xFF5EC8FF)],
-                  ),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0x331FA5FF), width: 2),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'A',
-                  style: GoogleFonts.lexend(
-                    color: _blueDark,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+    return FutureBuilder<_ChildHeroData>(
+      future: _heroFuture,
+      builder: (context, snapshot) {
+        final data = snapshot.data ?? _ChildHeroData.fallback();
+        final locationLabel = data.locationLabel;
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: _surface,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x141FA5FF),
+                blurRadius: 26,
+                offset: Offset(0, 10),
+                spreadRadius: -12,
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Xin ch\u00E0o An',
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 68,
+                    height: 68,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFFA9E5FF), Color(0xFF5EC8FF)],
+                      ),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0x331FA5FF),
+                        width: 2,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      data.initial,
                       style: GoogleFonts.lexend(
                         color: _blueDark,
-                        fontSize: 24,
+                        fontSize: 30,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Nguy\u1EC5n Minh An',
-                      style: GoogleFonts.beVietnamPro(
-                        color: _muted,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Xin ch\u00E0o ${data.shortName}',
+                          style: GoogleFonts.lexend(
+                            color: _blueDark,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          data.fullName,
+                          style: GoogleFonts.beVietnamPro(
+                            color: _muted,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          locationLabel,
+                          style: GoogleFonts.beVietnamPro(
+                            color: _text,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '\u0110ang h\u1ECDc th\u00EAm t\u1EA1i Trung t\u00E2m Sao Vi\u1EC7t',
-                      style: GoogleFonts.beVietnamPro(
-                        color: _text,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  _HeroRoundAction(
+                    icon: Icons.chat_bubble_rounded,
+                    color: _blue,
+                    onTap: () =>
+                        Navigator.pushNamed(context, AppRoutes.kidChatList),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF28B0FF), Color(0xFF0E8DE2)],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.school_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            locationLabel,
+                            style: GoogleFonts.beVietnamPro(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _KidMetric(
+                            label: 'Pin',
+                            value: '18%',
+                            icon: Icons.battery_3_bar_rounded,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _KidMetric(
+                            label: 'V\u00F9ng hi\u1EC7n t\u1EA1i',
+                            value: data.placeLabel,
+                            icon: Icons.place_rounded,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _KidMetric(
+                            label: 'Gia \u0111\u00ECnh',
+                            value: '${data.familyCount} online',
+                            icon: Icons.groups_rounded,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              _HeroRoundAction(
-                icon: Icons.chat_bubble_rounded,
-                color: _blue,
-                onTap: () =>
-                    Navigator.pushNamed(context, AppRoutes.kidChatList),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF28B0FF), Color(0xFF0E8DE2)],
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.school_rounded,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Trung t\u00E2m Anh ng\u1EEF Sao Vi\u1EC7t, Qu\u1EADn 7',
-                        style: GoogleFonts.beVietnamPro(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, AppRoutes.kidLocation),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: const Color(0xFFE6F6FF),
+                        foregroundColor: _blueDark,
+                        minimumSize: const Size.fromHeight(56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: const [
-                    Expanded(
-                      child: _KidMetric(
-                        label: 'Pin',
-                        value: '18%',
-                        icon: Icons.battery_3_bar_rounded,
+                      icon: const Icon(Icons.map_rounded),
+                      label: Text(
+                        'Xem b\u1EA3n \u0111\u1ED3',
+                        style: GoogleFonts.lexend(fontWeight: FontWeight.w700),
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: _KidMetric(
-                        label: 'V\u00F9ng hi\u1EC7n t\u1EA1i',
-                        value: 'H\u1ECDc th\u00EAm',
-                        icon: Icons.place_rounded,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showSosSheet(context),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: const Color(0xFFFFECEE),
+                        foregroundColor: _danger,
+                        minimumSize: const Size.fromHeight(56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      icon: const Icon(Icons.sos_rounded),
+                      label: Text(
+                        'SOS',
+                        style: GoogleFonts.lexend(fontWeight: FontWeight.w700),
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: _KidMetric(
-                        label: 'Gia \u0111\u00ECnh',
-                        value: '3 online',
-                        icon: Icons.groups_rounded,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AppRoutes.kidLocation),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: const Color(0xFFE6F6FF),
-                    foregroundColor: _blueDark,
-                    minimumSize: const Size.fromHeight(56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
                   ),
-                  icon: const Icon(Icons.map_rounded),
-                  label: Text(
-                    'Xem b\u1EA3n \u0111\u1ED3',
-                    style: GoogleFonts.lexend(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _showSosSheet(context),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: const Color(0xFFFFECEE),
-                    foregroundColor: _danger,
-                    minimumSize: const Size.fromHeight(56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                  icon: const Icon(Icons.sos_rounded),
-                  label: Text(
-                    'SOS',
-                    style: GoogleFonts.lexend(fontWeight: FontWeight.w700),
-                  ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildTodayCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: _surface,
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1212C4C0),
-            blurRadius: 20,
-            offset: Offset(0, 8),
-            spreadRadius: -12,
+    return FutureBuilder<List<_ChildMission>>(
+      future: _missionsFuture,
+      builder: (context, snapshot) {
+        final missions = snapshot.data ?? const <_ChildMission>[];
+        final chips = missions.take(3).map(_StatusChip.fromMission).toList();
+
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: _surface,
+            borderRadius: BorderRadius.circular(26),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x1212C4C0),
+                blurRadius: 20,
+                offset: Offset(0, 8),
+                spreadRadius: -12,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6FFFD),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(Icons.verified_rounded, color: _cyan),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'H\u00F4m nay b\u1EA1n \u0111ang an to\u00E0n',
-                      style: GoogleFonts.lexend(
-                        color: _text,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
+              Row(
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE6FFFD),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Ba v\u00E0 M\u1EB9 \u0111\u00E3 nh\u1EADn \u0111\u01B0\u1EE3c v\u1ECB tr\u00ED c\u1EE7a b\u1EA1n.',
-                      style: GoogleFonts.beVietnamPro(
-                        color: _muted,
-                        fontSize: 14,
-                        height: 1.45,
-                      ),
+                    child: const Icon(Icons.verified_rounded, color: _cyan),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'H\u00F4m nay b\u1EA1n \u0111ang an to\u00E0n',
+                          style: GoogleFonts.lexend(
+                            color: _text,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          missions.isEmpty
+                              ? 'Gia \u0111\u00ECnh \u0111\u00E3 nh\u1EADn \u0111\u01B0\u1EE3c v\u1ECB tr\u00ED c\u1EE7a b\u1EA1n.'
+                              : 'B\u1EA1n c\u00F3 ${missions.length} nh\u1EAFc nh\u1EDF trong h\u00F4m nay.',
+                          style: GoogleFonts.beVietnamPro(
+                            color: _muted,
+                            fontSize: 14,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 14),
+              if (chips.isNotEmpty)
+                Wrap(spacing: 10, runSpacing: 10, children: chips),
             ],
           ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: const [
-              _StatusChip(
-                icon: Icons.schedule_rounded,
-                label: 'Tan h\u1ECDc 17:30',
-                bgColor: Color(0xFFEAF4FF),
-                color: _blueDark,
-              ),
-              _StatusChip(
-                icon: Icons.bolt_rounded,
-                label: 'Pin 18%',
-                bgColor: Color(0xFFFFF5D9),
-                color: Color(0xFFB88100),
-              ),
-              _StatusChip(
-                icon: Icons.home_rounded,
-                label: 'Nh\u00E0 tr\u01B0\u1EDBc 18:30',
-                bgColor: Color(0xFFEAFBF3),
-                color: _green,
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -521,10 +515,7 @@ class ChildHomePage extends StatelessWidget {
             ),
             child: Text(
               'Ch\u01B0a c\u00F3 ng\u01B0\u1EDDi th\u00E2n \u0111\u00E3 x\u00E1c nh\u1EADn.',
-              style: GoogleFonts.beVietnamPro(
-                color: _muted,
-                fontSize: 14,
-              ),
+              style: GoogleFonts.beVietnamPro(color: _muted, fontSize: 14),
             ),
           );
         }
@@ -620,88 +611,175 @@ class ChildHomePage extends StatelessWidget {
   }
 
   Widget _buildMissions(BuildContext context) {
-    return Column(
-      children: _missions.map((mission) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            onTap: () => Navigator.pushNamed(context, mission.routeName),
-            borderRadius: BorderRadius.circular(24),
-            child: Ink(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: _surface,
+    return FutureBuilder<List<_ChildMission>>(
+      future: _missionsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return _MissionMessageCard(
+            message:
+                'Kh\u00F4ng th\u1EC3 t\u1EA3i nh\u1EAFc nh\u1EDF h\u00F4m nay.',
+          );
+        }
+
+        final missions = snapshot.data ?? const <_ChildMission>[];
+        if (missions.isEmpty) {
+          return _MissionMessageCard(
+            message:
+                'H\u00F4m nay b\u1EA1n ch\u01B0a c\u00F3 nh\u1EAFc nh\u1EDF.',
+          );
+        }
+
+        return Column(
+          children: missions.map((mission) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: InkWell(
+                onTap: () => _openKidReminder(context),
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x121FA5FF),
-                    blurRadius: 20,
-                    offset: Offset(0, 8),
-                    spreadRadius: -12,
+                child: Ink(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: _surface,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x121FA5FF),
+                        blurRadius: 20,
+                        offset: Offset(0, 8),
+                        spreadRadius: -12,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: mission.color.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Icon(Icons.flag_rounded, color: mission.color),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          mission.title,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: mission.color.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Icon(Icons.flag_rounded, color: mission.color),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              mission.title,
+                              style: GoogleFonts.lexend(
+                                color: _text,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              mission.subtitle,
+                              style: GoogleFonts.beVietnamPro(
+                                color: _muted,
+                                fontSize: 14,
+                                height: 1.45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: mission.color.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          mission.badge,
                           style: GoogleFonts.lexend(
-                            color: _text,
-                            fontSize: 17,
+                            color: mission.color,
+                            fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          mission.subtitle,
-                          style: GoogleFonts.beVietnamPro(
-                            color: _muted,
-                            fontSize: 14,
-                            height: 1.45,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: mission.color.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      mission.badge,
-                      style: GoogleFonts.lexend(
-                        color: mission.color,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
+  }
+
+  static Future<List<_ChildMission>> _loadMissions() async {
+    final session = await AppDependencies.instance.authLocalDataSource
+        .getSavedSession();
+    final memberId = session?.userId.trim() ?? '';
+    if (memberId.isEmpty) {
+      return const <_ChildMission>[];
+    }
+
+    final data = await AppDependencies.instance.apiClient.get(
+      ApiEndpoints.kidReminders,
+      queryParameters: {'member_uid': memberId},
+    );
+
+    if (data is! List) {
+      return const <_ChildMission>[];
+    }
+
+    final missions =
+        data
+            .map(_ChildMission.fromJson)
+            .whereType<_ChildMission>()
+            .where((mission) => mission.isActive)
+            .toList()
+          ..sort((a, b) => a.sortTime.compareTo(b.sortTime));
+
+    return missions;
+  }
+
+  static Future<_ChildHeroData> _loadHeroData() async {
+    final session = await AppDependencies.instance.authLocalDataSource
+        .getSavedSession();
+    final fullName = _resolveName(
+      session?.profile.name,
+      session?.profile.email,
+    );
+    final location = await AppDependencies.instance.getMyLocationUseCase();
+    final contacts = await _loadContacts();
+
+    return _ChildHeroData(
+      fullName: fullName,
+      shortName: _shortName(fullName),
+      initial: _initialFromName(fullName),
+      location: location,
+      familyCount: contacts.length,
+    );
+  }
+
+  static void _scheduleReminderNotifications(List<_ChildMission> missions) {
+    final notifications = missions
+        .map(
+          (mission) => KidReminderNotification(
+            id: mission.id,
+            title: mission.title,
+            reminderTime: mission.sortTime,
+          ),
+        )
+        .toList();
+    KidReminderNotificationScheduler.instance.scheduleToday(notifications);
   }
 
   Widget _buildSectionTitle(String title) {
@@ -715,14 +793,39 @@ class ChildHomePage extends StatelessWidget {
     );
   }
 
-  static void _handleActionTap(BuildContext context, _ChildAction action) {
+  static Future<void> _handleActionTap(
+    BuildContext context,
+    _ChildAction action,
+  ) async {
     if (action.isPrimary) {
       _showSosSheet(context);
+      return;
+    }
+    if (action.routeName == AppRoutes.checkinReminderKid) {
+      await _openKidReminder(context);
       return;
     }
     if (action.routeName != null) {
       Navigator.pushNamed(context, action.routeName!);
     }
+  }
+
+  static Future<void> _openKidReminder(BuildContext context) async {
+    final session = await AppDependencies.instance.authLocalDataSource
+        .getSavedSession();
+    if (!context.mounted || session == null) {
+      return;
+    }
+
+    Navigator.pushNamed(
+      context,
+      AppRoutes.checkinReminderKid,
+      arguments: CheckinReminderKidReminderArgs(
+        memberId: session.userId,
+        memberName: _resolveName(session.profile.name, session.profile.email),
+        avatarUrl: session.profile.avata ?? '',
+      ),
+    );
   }
 
   static void _showSosSheet(BuildContext context) {
@@ -817,8 +920,8 @@ class ChildHomePage extends StatelessWidget {
   }
 
   static Future<List<_ChildContact>> _loadContacts() async {
-    final relationships =
-        await AppDependencies.instance.getRelationshipsUseCase();
+    final relationships = await AppDependencies.instance
+        .getRelationshipsUseCase();
     final confirmed = relationships.where((item) {
       return item.processing.trim().toLowerCase() == 'xacnhan' &&
           item.relationId.trim().isNotEmpty;
@@ -865,6 +968,18 @@ class ChildHomePage extends StatelessWidget {
       return 'N';
     }
     return String.fromCharCode(trimmed.runes.first).toUpperCase();
+  }
+
+  static String _shortName(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) {
+      return name;
+    }
+    return parts.last;
   }
 
   static String _displayRelation(String relation) {
@@ -957,6 +1072,40 @@ class ChildHomePage extends StatelessWidget {
       age--;
     }
     return age;
+  }
+}
+
+class _MissionMessageCard extends StatelessWidget {
+  const _MissionMessageCard({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _ChildHomePageState._surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x121FA5FF),
+            blurRadius: 20,
+            offset: Offset(0, 8),
+            spreadRadius: -12,
+          ),
+        ],
+      ),
+      child: Text(
+        message,
+        style: GoogleFonts.beVietnamPro(
+          color: _ChildHomePageState._muted,
+          fontSize: 14,
+          height: 1.45,
+        ),
+      ),
+    );
   }
 }
 
@@ -1081,6 +1230,15 @@ class _StatusChip extends StatelessWidget {
     required this.color,
   });
 
+  factory _StatusChip.fromMission(_ChildMission mission) {
+    return _StatusChip(
+      icon: Icons.schedule_rounded,
+      label: '${mission.title} ${mission.sortTime}',
+      bgColor: mission.color.withValues(alpha: 0.12),
+      color: mission.color,
+    );
+  }
+
   final IconData icon;
   final String label;
   final Color bgColor;
@@ -1187,7 +1345,7 @@ class _BottomActionTile extends StatelessWidget {
                   Text(
                     title,
                     style: GoogleFonts.lexend(
-                      color: ChildHomePage._text,
+                      color: _ChildHomePageState._text,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1196,7 +1354,7 @@ class _BottomActionTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style: GoogleFonts.beVietnamPro(
-                      color: ChildHomePage._muted,
+                      color: _ChildHomePageState._muted,
                       fontSize: 14,
                     ),
                   ),
@@ -1229,20 +1387,119 @@ class _ChildAction {
   final bool isPrimary;
 }
 
+class _ChildHeroData {
+  const _ChildHeroData({
+    required this.fullName,
+    required this.shortName,
+    required this.initial,
+    required this.location,
+    required this.familyCount,
+  });
+
+  final String fullName;
+  final String shortName;
+  final String initial;
+  final UserLocation? location;
+  final int familyCount;
+
+  String get locationLabel =>
+      location?.formattedAddress ??
+      location?.coordinateLabel ??
+      'Ch\u01B0a c\u00F3 v\u1ECB tr\u00ED hi\u1EC7n t\u1EA1i';
+
+  String get placeLabel {
+    final place = location?.placeName?.trim();
+    if (place != null && place.isNotEmpty) {
+      return place;
+    }
+    final district = location?.district?.trim();
+    if (district != null && district.isNotEmpty) {
+      return district;
+    }
+    return location?.hasLocation == true
+        ? 'Hi\u1EC7n t\u1EA1i'
+        : 'Ch\u01B0a c\u00F3';
+  }
+
+  factory _ChildHeroData.fallback() {
+    return const _ChildHeroData(
+      fullName: 'B\u1EA1n',
+      shortName: 'b\u1EA1n',
+      initial: 'B',
+      location: null,
+      familyCount: 0,
+    );
+  }
+}
+
 class _ChildMission {
   const _ChildMission({
+    required this.id,
     required this.title,
     required this.subtitle,
     required this.badge,
     required this.color,
-    required this.routeName,
+    required this.isActive,
+    required this.sortTime,
   });
 
+  final int id;
   final String title;
   final String subtitle;
   final String badge;
   final Color color;
-  final String routeName;
+  final bool isActive;
+  final String sortTime;
+
+  static _ChildMission? fromJson(dynamic json) {
+    if (json is! Map) {
+      return null;
+    }
+
+    final map = json.cast<String, dynamic>();
+    final id = _intFromJson(map['id']);
+    final title = (map['title'] ?? '').toString().trim();
+    if (id == null || title.isEmpty) {
+      return null;
+    }
+
+    final reminderTime = (map['reminder_time'] ?? '').toString().trim();
+    final isActive = map['is_active'] != false;
+    final color = _colorForReminder(title, reminderTime);
+
+    return _ChildMission(
+      id: id,
+      title: title,
+      subtitle: reminderTime.isEmpty
+          ? 'Gia \u0111\u00ECnh \u0111\u00E3 \u0111\u1EB7t nh\u1EAFc nh\u1EDF cho b\u1EA1n'
+          : 'Nh\u1EAFc l\u00FAc $reminderTime',
+      badge: isActive ? 'S\u1EAFp t\u1EDBi' : 'T\u1EA1m t\u1EAFt',
+      color: color,
+      isActive: isActive,
+      sortTime: reminderTime,
+    );
+  }
+
+  static int? _intFromJson(Object? value) {
+    if (value is int) {
+      return value;
+    }
+    return int.tryParse(value?.toString() ?? '');
+  }
+
+  static Color _colorForReminder(String title, String reminderTime) {
+    final normalized = '$title $reminderTime'.toLowerCase();
+    if (normalized.contains('v\u1EC1 nh\u00E0') ||
+        normalized.contains('quan tr\u1ECDng')) {
+      return _ChildHomePageState._danger;
+    }
+    if (normalized.contains('pin') ||
+        normalized.contains('s\u1EA1c') ||
+        normalized.contains('sac')) {
+      return _ChildHomePageState._yellow;
+    }
+    return _ChildHomePageState._blue;
+  }
 }
 
 class _ChildContact {
